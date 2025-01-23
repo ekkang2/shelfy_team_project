@@ -30,7 +30,7 @@ class SearchPage extends StatelessWidget {
               backgroundColor: WidgetStatePropertyAll(Colors.grey[200]),
               shape: WidgetStatePropertyAll(
                 RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.0),
+                  borderRadius: BorderRadius.circular(0),
                 ),
               ),
             ),

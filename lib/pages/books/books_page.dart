@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shelfy_team_project/models/book_record_doing.dart';
+import 'package:shelfy_team_project/theme.dart';
+
+import 'components/doing_book_item.dart';
+import 'components/done_book_list.dart';
 
 class BooksPage extends StatelessWidget {
   const BooksPage({super.key});
@@ -52,8 +57,15 @@ class _ProfileTabState extends State<ProfileTab>
       controller: _tabController,
       children: [
         // 끝맺은 책
-        Text('1'),
-        Text('2'),
+        DoneBookList(),
+        Expanded(
+          child: ListView.builder(
+            itemBuilder: (context, index) {
+              return DoingBookItem(doing: bookRecordDoingList[index]);
+            },
+            itemCount: bookRecordDoingList.length,
+          ),
+        ),
         Text('3'),
         Text('4'),
         // 여정 중인 책
@@ -65,26 +77,34 @@ class _ProfileTabState extends State<ProfileTab>
 
   TabBar _buildTabBar() {
     return TabBar(
-      indicatorColor: const Color(0xFF4D77B2),
+      indicatorSize: TabBarIndicatorSize.tab,
+      indicator: UnderlineTabIndicator(
+        borderSide: BorderSide(
+          color: const Color(0xFF4D77B2),
+          width: 3.0,
+        ),
+        insets: EdgeInsets.symmetric(horizontal: 0),
+      ),
       labelColor: const Color(0xFF4D77B2),
       unselectedLabelColor: Colors.black38,
       dividerHeight: 3,
       dividerColor: Colors.black26,
+      labelStyle: textTheme().displayMedium,
       // 중간 매개체로 연결
       controller: _tabController,
       tabs: [
         Tab(
-          text: '끝맺은 책',
+          child: Text('끝맺은 책'),
         ),
         Tab(
-          text: '여정중인 책',
+          child: Text(
+            '여정 중인 책',
+            overflow: TextOverflow.visible,
+            maxLines: 1,
+          ),
         ),
-        Tab(
-          text: '기다리는 책',
-        ),
-        Tab(
-          text: '잠든 책',
-        ),
+        Tab(text: '기다리는 책'),
+        Tab(text: '잠든 책'),
       ],
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shelfy_team_project/theme.dart';
 
 AppBar HomeAppBar() {
   return AppBar(
@@ -86,15 +87,8 @@ AppBar BooksAppBar() {
             width: 40,
           ),
         ),
-        const SizedBox(width: 14),
-        Text(
-          '나의 책장',
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.white,
-            fontFamily: 'JUA',
-          ),
-        )
+        const SizedBox(width: 10),
+        Text('나의 책장', style: textTheme().displayLarge)
       ],
     ),
     actions: [

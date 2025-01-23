@@ -1,21 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // 텍스트 테마
 TextTheme textTheme() {
   return TextTheme(
-    // 가장 큰 제목 스타일
-    displayLarge: GoogleFonts.openSans(fontSize: 18.0, color: Colors.black),
-    // 중간 크기의 제목 스타일
-    displayMedium: GoogleFonts.openSans(
-        fontSize: 16.0, color: Colors.black, fontWeight: FontWeight.bold),
-    // 본문 텍스트 스타일 (기사, 설명)
-    bodyLarge: GoogleFonts.openSans(fontSize: 16.0, color: Colors.black),
-    // 부제목, 작은 본문 텍스트 스타일
-    bodyMedium: GoogleFonts.openSans(fontSize: 14.0, color: Colors.grey),
-    // 중간 크기의 제목 스타일
-    titleMedium: GoogleFonts.openSans(fontSize: 15.0, color: Colors.black),
+    // 앱바 타이틀 화이트
+    displayLarge: TextStyle(
+        fontSize: 20.0,
+        color: Colors.white,
+        fontFamily: 'JUA',
+        fontWeight: FontWeight.normal),
+    // 탭바 라벨 타이틀 블루
+    displayMedium: TextStyle(
+        fontSize: 14.8,
+        color: const Color(0xFF4D77B2),
+        fontFamily: 'Pretendard-Bold'),
+    // title... 블랙 두껍게
+    titleLarge: TextStyle(
+        fontSize: 17.0, color: Colors.black87, fontFamily: 'Pretendard-Bold'),
+    titleMedium: TextStyle(
+        fontSize: 16.0, color: Colors.black, fontFamily: 'Pretendard-Bold'),
+    titleSmall: TextStyle(
+        fontSize: 14.0, color: Colors.black, fontFamily: 'Pretendard-Bold'),
+    // body... 블랙 기본얇기
+    bodyLarge: TextStyle(
+        fontSize: 16.0, color: Colors.black, fontFamily: 'Pretendard-Regular'),
+    bodyMedium: TextStyle(
+        fontSize: 14.0, color: Colors.black, fontFamily: 'Pretendard-Regular'),
+    bodySmall: TextStyle(
+        fontSize: 12.0, color: Colors.black, fontFamily: 'Pretendard-Regular'),
+    // label... 그레이 기본얇기
+    labelLarge: TextStyle(
+        fontSize: 16.0, color: Colors.grey, fontFamily: 'Pretendard-Regular'),
+    labelMedium: TextStyle(
+        fontSize: 13.0, color: Colors.grey, fontFamily: 'Pretendard-Regular'),
+    labelSmall: TextStyle(
+        fontSize: 12.0, color: Colors.grey, fontFamily: 'Pretendard-Regular'),
   );
 }
 
@@ -26,11 +46,11 @@ AppBarTheme appBarTheme() {
     color: const Color(0xFF4D77B2), // AppBar 배경색
     elevation: 0.0,
     iconTheme: IconThemeData(color: Colors.white),
-    titleTextStyle: GoogleFonts.openSans(
-      fontSize: 16,
-      fontWeight: FontWeight.bold,
-      color: Colors.white,
-    ),
+    titleTextStyle: TextStyle(
+        fontSize: 20.0,
+        color: Colors.white,
+        fontFamily: 'JUA',
+        fontWeight: FontWeight.normal),
   );
 }
 

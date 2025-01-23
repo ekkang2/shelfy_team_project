@@ -89,9 +89,33 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: Pretendard
+    - family: Pretendard-Black
       fonts:
-        - asset: assets/fonts/PretendardVariable.ttf
+        - asset: assets/fonts/Pretendard-Black.otf
+    - family: Pretendard-Bold
+      fonts:
+        - asset: assets/fonts/Pretendard-Bold.otf
+    - family: Pretendard-ExtraBold
+      fonts:
+        - asset: assets/fonts/Pretendard-ExtraBold.otf
+    - family: Pretendard-ExtraLight
+      fonts:
+        - asset: assets/fonts/Pretendard-ExtraLight.otf
+    - family: Pretendard-Light
+      fonts:
+        - asset: assets/fonts/Pretendard-Light.otf
+    - family: Pretendard-Medium
+      fonts:
+        - asset: assets/fonts/Pretendard-Medium.otf
+    - family: Pretendard-Regular
+      fonts:
+        - asset: assets/fonts/Pretendard-Regular.otf
+    - family: Pretendard-SemiBold
+      fonts:
+        - asset: assets/fonts/Pretendard-SemiBold.otf
+    - family: Pretendard-Thin
+      fonts:
+        - asset: assets/fonts/Pretendard-Thin.otf
     - family: JUA
       fonts:
         - asset: assets/fonts/BMJUA_ttf.ttf
