@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../components/custom_appbar.dart';
 import 'books/books_page.dart';
 import 'home/home_page.dart';
-import 'memo/memo_page.dart';
+import 'note/note_page.dart';
 import 'my/my_page.dart';
 import 'search/search_page.dart';
 
@@ -32,6 +32,7 @@ class _MainPageState extends State<MainScreen> {
               HomeAppBar(),
               SearchAppBar(),
               BooksAppBar(),
+              NoteAppBar(context),
             ],
           ),
         ),
@@ -42,7 +43,7 @@ class _MainPageState extends State<MainScreen> {
             HomePage(),
             SearchPage(),
             BooksPage(),
-            MemoPage(),
+            NotePage(),
             MyPage(),
           ],
         ),
