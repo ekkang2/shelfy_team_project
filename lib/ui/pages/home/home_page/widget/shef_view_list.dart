@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../data/model/book.dart';
+import '../../../../../data/model/book.dart';
 
 class ShefViewList extends StatefulWidget {
   final Book book;

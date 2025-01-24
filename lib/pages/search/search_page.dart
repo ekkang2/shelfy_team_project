@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shelfy_team_project/models/book.dart';
+import 'package:shelfy_team_project/data/model/book.dart';
 
 import 'components/book_item.dart';
 
