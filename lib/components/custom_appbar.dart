@@ -132,7 +132,10 @@ AppBar NoteAppBar(BuildContext context) {
     actions: [
       IconButton(
         onPressed: () {
-          Navigator.of(context).pushNamed("/test");
+          Navigator.of(context).pushNamed(
+              "/test"); // 현재 context에서 Navigator 객체를 가져와 '/test' 경로로 이동
+          Navigator.pushNamed(
+              context, '/test'); // '/test' 경로로 이동하여 NoteWritePage 화면을 표시
         },
         icon: Icon(
           CupertinoIcons.square_pencil,
@@ -190,15 +193,6 @@ AppBar WriteAppBar(BuildContext context) {
                 .displayLarge
                 ?.copyWith(color: Colors.white),
           )),
-      // IconButton(
-      //   onPressed: () {
-      //     Navigator.of(context).pushNamed("/test");
-      //   },
-      //   icon: Icon(
-      //     CupertinoIcons.square_pencil,
-      //     color: Colors.white,
-      //   ),
-      // ),
     ],
   );
 }
