@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shelfy_team_project/theme.dart';
 
-AppBar HomeAppBar(VoidCallback onSearchPressed) {
+AppBar HomeAppBar(VoidCallback onSearchPressed, BuildContext context) {
   return AppBar(
     // 타이틀 위치
     titleSpacing: 8,
-    backgroundColor: const Color(0xFF4D77B2),
+    // backgroundColor: const Color(0xFF4D77B2),
     scrolledUnderElevation: 0,
     title: Row(
       children: [
@@ -38,11 +38,11 @@ AppBar HomeAppBar(VoidCallback onSearchPressed) {
   );
 }
 
-AppBar SearchAppBar() {
+AppBar SearchAppBar(BuildContext context) {
   return AppBar(
     // 타이틀 위치
     titleSpacing: 8,
-    backgroundColor: const Color(0xFF4D77B2),
+    // backgroundColor: const Color(0xFF4D77B2),
     scrolledUnderElevation: 0,
     title: Row(
       children: [
@@ -76,11 +76,11 @@ AppBar SearchAppBar() {
   );
 }
 
-AppBar BooksAppBar() {
+AppBar BooksAppBar(BuildContext context) {
   return AppBar(
     // 타이틀 위치
     titleSpacing: 8,
-    backgroundColor: const Color(0xFF4D77B2),
+    // backgroundColor: const Color(0xFF4D77B2),
     scrolledUnderElevation: 0,
     title: Row(
       children: [
