@@ -133,7 +133,7 @@ AppBar NoteAppBar(BuildContext context) {
       IconButton(
         onPressed: () {
           Navigator.of(context).pushNamed(
-              "/test"); // 현재 context에서 Navigator 객체를 가져와 '/test' 경로로 이동
+              "/note"); // 현재 context에서 Navigator 객체를 가져와 '/test' 경로로 이동
           Navigator.pushNamed(
               context, '/test'); // '/test' 경로로 이동하여 NoteWritePage 화면을 표시
         },

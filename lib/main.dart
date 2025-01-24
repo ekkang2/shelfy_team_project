@@ -24,7 +24,7 @@ class ShelfUI extends ConsumerWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const MainScreen(),
-        '/test': (context) => const NoteWritePage(),
+        '/note': (context) => const NoteWritePage(),
       },
     );
   }
