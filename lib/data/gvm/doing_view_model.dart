@@ -27,9 +27,9 @@ class DoingViewModel extends Notifier<List<BookRecordDoing>> {
     ];
   }
 
-  String formatSingleDate(BookRecordDoing doing) {
+  String formatSingleDateByKor(DateTime time) {
     final dateFormatter = DateFormat('yyyy년 MM월 dd일');
-    return dateFormatter.format(doing.startDate);
+    return dateFormatter.format(time);
   }
 
   String ceilProgressPages(BookRecordDoing doing) {
@@ -39,7 +39,6 @@ class DoingViewModel extends Notifier<List<BookRecordDoing>> {
 
   double progressPages(BookRecordDoing doing) {
     return (doing.currentPage / doing.book.book_page) * 100;
-    ;
   }
 }
 

@@ -21,6 +21,14 @@ class BookRecordDoing {
     this.comment,
     required this.book,
   });
+
+  String ceilProgressPages() {
+    return ((this.currentPage / this.book.book_page) * 100).toStringAsFixed(1);
+  }
+
+  double progressPages() {
+    return (this.currentPage / this.book.book_page) * 100;
+  }
 }
 
 List<BookRecordDoing> doingBookList = [

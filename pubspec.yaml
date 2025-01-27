@@ -126,6 +126,12 @@ flutter:
     - family: KCCB
       fonts:
         - asset: assets/fonts/KCCBangJeonghwanTTF.ttf
+    - family: Book-Bold
+      fonts:
+        - asset: assets/fonts/BookkMyungjo_Bold.ttf
+    - family: Book-Light
+      fonts:
+        - asset: assets/fonts/BookkMyungjo_Light.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

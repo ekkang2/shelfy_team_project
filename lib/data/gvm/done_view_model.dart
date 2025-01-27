@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../model/book.dart';
 import '../model/book_record_done.dart';
@@ -33,6 +34,11 @@ class DoneViewModel extends Notifier<List<BookRecordDone>> {
           endDate: endDate,
           rating: rating)
     ];
+  }
+
+  String formatSingleDate(DateTime time) {
+    final dateFormatter = DateFormat('yyyy.MM.dd');
+    return dateFormatter.format(time);
   }
 }
 

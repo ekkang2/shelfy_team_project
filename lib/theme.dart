@@ -14,6 +14,11 @@ TextTheme textTheme() {
         fontSize: 14.8,
         color: const Color(0xFF4D77B2),
         fontFamily: 'Pretendard-Bold'),
+    headlineLarge: TextStyle(
+      fontFamily: 'Pretendard-Bold',
+      color: Colors.black,
+      fontSize: 22,
+    ),
     // title... 블랙 두껍게
     titleLarge: TextStyle(
         fontSize: 17.0, color: Colors.black87, fontFamily: 'Pretendard-Bold'),

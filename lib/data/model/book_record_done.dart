@@ -28,7 +28,6 @@ List<BookRecordDone> doneBookList = [
     startDate: DateTime(2025, 1, 10),
     endDate: DateTime(2025, 1, 20),
     rating: 4.5,
-    comment: '재미있게 읽었습니다!',
     book: bookList[0],
   ),
   BookRecordDone(
@@ -37,7 +36,6 @@ List<BookRecordDone> doneBookList = [
     startDate: DateTime(2025, 1, 15),
     endDate: DateTime(2025, 1, 30),
     rating: 3.5,
-    comment: '프로그래밍 초보자가 읽기 딱 좋아요!',
     book: bookList[1],
   ),
   BookRecordDone(

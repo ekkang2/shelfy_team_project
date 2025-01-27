@@ -79,31 +79,25 @@ AppBar SearchAppBar(BuildContext context) {
 AppBar BooksAppBar(BuildContext context) {
   return AppBar(
     // 타이틀 위치
-    titleSpacing: 8,
+    titleSpacing: (ModalRoute.of(context)?.canPop ?? false) ? -10 : 8,
     // backgroundColor: const Color(0xFF4D77B2),
     scrolledUnderElevation: 0,
     title: Row(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 6.0, top: 6.0, bottom: 6.0),
-          child: Image.asset(
-            'assets/images/shelfy_kitty_logo.png',
-            width: 40,
+        Visibility(
+          visible: !(ModalRoute.of(context)?.canPop ?? false),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 6.0, top: 6.0, bottom: 6.0),
+            child: Image.asset(
+              'assets/images/shelfy_kitty_logo.png',
+              width: 40,
+            ),
           ),
         ),
         const SizedBox(width: 10),
         Text('나의 책장', style: textTheme().displayLarge)
       ],
     ),
-    actions: [
-      IconButton(
-        onPressed: () {},
-        icon: Icon(
-          CupertinoIcons.search,
-          color: Colors.white,
-        ),
-      ),
-    ],
   );
 }
 
