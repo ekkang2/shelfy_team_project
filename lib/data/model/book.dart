@@ -33,7 +33,7 @@ List<Book> bookList = [
       book_author: '별미디어 지음',
       book_publisher: '다른아이',
       book_isbn: 'K402036379',
-      book_page: 260,
+      book_page: 200,
       book_published_at: '2025-01-09'),
   Book(
       book_id: 2,

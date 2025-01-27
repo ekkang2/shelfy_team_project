@@ -64,16 +64,7 @@ class BooksPage extends ConsumerWidget {
     return TabBarView(
       children: [
         // 끝맺은 책
-        // ListView.builder(
-        //   itemBuilder: (context, index) {
-        //     final doneRecord = doneList[index];
-        //     return ShelfBookItem(
-        //       done: doneRecord,
-        //       widget: doingWidget(record, doneNoti), // 여기에 창고에서 프로그래스 함수 호출
-        //     );
-        //   },
-        //   itemCount: doneList.length,
-        // ),
+        Text('끝맺은 책'),
         // 여정 중인 책
         ListView.builder(
           itemBuilder: (context, index) {

@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:shelfy_team_project/data/model/book.dart';
-import 'package:shelfy_team_project/pages/search/components/book_item.dart';
+import 'package:shelfy_team_project/ui/pages/search/search_page/widget/book_item.dart';
 
 import 'shef_view_list.dart';
 

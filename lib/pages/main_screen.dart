@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../components/custom_appbar.dart';
+import '../ui/pages/home/home_page/home_page.dart';
 import '../ui/pages/my/my_page/my_page.dart';
 import 'books/books_page.dart';
-import 'home/home_page.dart';
 import 'note/note_page.dart';
-import 'search/search_page.dart';
+import '../ui/pages/search/search_page/search_page.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

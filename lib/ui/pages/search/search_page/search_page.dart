@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shelfy_team_project/data/model/book.dart';
 
-import 'components/book_item.dart';
+import 'widget/book_item.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});

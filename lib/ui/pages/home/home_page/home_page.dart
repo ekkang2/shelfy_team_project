@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shelfy_team_project/pages/home/components/shelf_view.dart';
 
-import '../../../../pages/home/components/stack_view.dart';
+import 'widget/shelf_view.dart';
+import 'widget/stack_view.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -22,10 +22,28 @@ class HomeTab extends StatefulWidget {
 class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   TabController? _tabController;
 
+  // 현재 날짜 필터 상태
+  late String selectedYear;
+  late String selectedMonth;
+
+  late List<String> years;
+  final List<String> months =
+      List.generate(12, (index) => (index + 1).toString().padLeft(2, '0'));
+
   // 단 한번 호출되는 메서드
   @override
   void initState() {
     super.initState();
+
+    // 현재 날짜를 기본값으로 설정
+    DateTime now = DateTime.now();
+    selectedYear = now.year.toString();
+    selectedMonth = now.month.toString().padLeft(2, '0');
+
+    // 2010년부터 현재년도까지 리스트 생성
+    years = List.generate(
+        now.year - 2010 + 1, (index) => (2010 + index).toString());
+
     _tabController = TabController(length: 2, vsync: this);
   }
 
