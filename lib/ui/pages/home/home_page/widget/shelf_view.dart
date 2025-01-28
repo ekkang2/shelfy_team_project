@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shelfy_team_project/data/model/book.dart';
 import 'package:shelfy_team_project/ui/pages/search/search_page/widget/book_item.dart';
 
+import '../../../../../data/model/book_record_done.dart';
 import 'shef_view_list.dart';
 
 class ShelfView extends StatefulWidget {
@@ -36,15 +37,15 @@ class _ShelfViewState extends State<ShelfView> {
 
         // 내용 위젯
         ListView.builder(
-          itemCount: (bookList.length / 3).ceil(), // 3개씩 묶은 줄 수 계산
+          itemCount: (doneBookList.length / 3).ceil(), // 3개씩 묶은 줄 수 계산
           itemBuilder: (context, index) {
             // 3개씩 묶어서 한 줄에 표시
             final startIndex = index * 3;
             final endIndex = startIndex + 3;
             // sublist는 start index를 포함하고 end를 포함하지 않는 범위 요소들의 리스트를 리턴
-            final items = bookList.sublist(
+            final items = doneBookList.sublist(
               startIndex,
-              endIndex > bookList.length ? bookList.length : endIndex,
+              endIndex > doneBookList.length ? doneBookList.length : endIndex,
             );
             return Column(
               children: [
