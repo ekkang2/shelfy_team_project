@@ -62,7 +62,7 @@ class ShelfBookItemWish extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 10),
-                customStarRating(book.rating, 2),
+                customStarRating(book.rating, 2, 18),
                 Container(
                   width: 270,
                   alignment: Alignment.bottomRight,

@@ -54,7 +54,7 @@ class ShelfBookItemStop extends StatelessWidget {
                   style: textTheme().titleLarge,
                 ),
                 SizedBox(height: 4),
-                customStarRating(book.rating, 1),
+                customStarRating(book.rating, 1, 18),
                 const SizedBox(height: 10),
                 book.comment != null
                     ? Container(

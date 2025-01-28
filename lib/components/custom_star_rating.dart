@@ -5,17 +5,18 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 /*
   박연화 2025/01/27
   별점 출력 위젯
-  매개변수 : 실수형 별점, 정수형 타입 ( 1 - star / 0 - heart)
+  매개변수 : 실수형 별점, 정수형 타입 ( 1 - star / 0 - heart), 별점 사이즈 (별 한 개의 크기 / 리스트 18 상세보기 25)
  */
-Widget customStarRating(double rating, int type) {
+Widget customStarRating(double rating, int type, double size) {
   return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
     children: List.generate(5, (index) {
       if (index + 1 <= rating) {
         // 완전한 별
         return Icon(
             type == 1 ? CupertinoIcons.star_fill : CupertinoIcons.heart_fill,
             color: type == 1 ? Colors.amber : Colors.redAccent[100],
-            size: 18);
+            size: size);
       } else if (index < rating && rating - index < 1) {
         // 반쪽 별
         return Stack(
@@ -25,7 +26,7 @@ Widget customStarRating(double rating, int type) {
                     ? CupertinoIcons.star_fill
                     : CupertinoIcons.heart_fill,
                 color: Colors.grey[300],
-                size: 18), // 회색 별
+                size: size), // 회색 별
             ClipRect(
               clipper: HalfClipper(),
               child: Icon(
@@ -33,7 +34,7 @@ Widget customStarRating(double rating, int type) {
                       ? CupertinoIcons.star_fill
                       : CupertinoIcons.heart_fill,
                   color: type == 1 ? Colors.amber : Colors.redAccent[100],
-                  size: 18), // 노란색 반쪽
+                  size: size), // 노란색 반쪽
             ),
           ],
         );
@@ -42,7 +43,7 @@ Widget customStarRating(double rating, int type) {
         return Icon(
             type == 1 ? CupertinoIcons.star_fill : CupertinoIcons.heart_fill,
             color: Colors.grey[300],
-            size: 18);
+            size: size);
       }
     }),
   );

@@ -70,7 +70,7 @@ Widget DoneWidget(BookRecordDone book, DoneViewModel notifier) {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            customStarRating(book.rating, 1),
+            customStarRating(book.rating, 1, 18),
             Visibility(
               visible: book.comment != null,
               child: Icon(

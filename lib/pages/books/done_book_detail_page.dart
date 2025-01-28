@@ -4,25 +4,26 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shelfy_team_project/components/custom_appbar.dart';
 import 'package:shelfy_team_project/components/custom_record_label.dart';
 import 'package:shelfy_team_project/components/custom_star_rating.dart';
-import 'package:shelfy_team_project/data/model/book_record_doing.dart';
-import 'package:shelfy_team_project/pages/books/components/book_detail_progress_bar.dart';
+import 'package:shelfy_team_project/data/model/book_record_done.dart';
 import 'package:shelfy_team_project/theme.dart';
 
-class BookDetailPage extends StatefulWidget {
-  final BookRecordDoing book;
-  const BookDetailPage({required this.book, super.key});
+class DoneBookDetailPage extends StatefulWidget {
+  final BookRecordDone book;
+  const DoneBookDetailPage({required this.book, super.key});
 
   @override
-  _BookDetailPageState createState() => _BookDetailPageState();
+  _DoneBookDetailPageState createState() => _DoneBookDetailPageState();
 }
 
-class _BookDetailPageState extends State<BookDetailPage> {
+class _DoneBookDetailPageState extends State<DoneBookDetailPage> {
   late DateTime startDate;
+  late DateTime endDate;
 
   @override
   void initState() {
     super.initState();
-    startDate = widget.book.startDate;
+    startDate = widget.book.startDate; // 초기 시작일 설정
+    endDate = widget.book.endDate ?? DateTime.now(); // 초기 종료일 설정 (null이면 오늘 날짜)
   }
 
   @override
@@ -60,56 +61,57 @@ class _BookDetailPageState extends State<BookDetailPage> {
               style: textTheme().labelLarge,
             ),
             const SizedBox(height: 10),
-            customRecordLabel(2),
+            customRecordLabel(1),
             const SizedBox(height: 20),
-
+            Divider(
+              color: Colors.grey[300],
+              thickness: 1,
+              indent: 20,
+              endIndent: 20,
+            ),
             // ListView를 스크롤 가능하도록 수정
             Expanded(
-              child: ListView(
-                children: [
-                  AdjustableProgressBar(bookRecord: widget.book),
-                  const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: readPeriod(),
-                  ),
-                  const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text('예상 별점'),
-                        const SizedBox(width: 10),
-                        customStarRating(3.5, 2, 18),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        print('여정 종료: 시작일 $startDate');
-                      },
-                      child: Text(
-                        '여정이 끝났어요!',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Color(0xFF4D77B2)),
-                        fixedSize: MaterialStatePropertyAll(Size(300, 50)),
-                        shape: MaterialStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: ListView(
+                  children: [
+                    const SizedBox(height: 20),
+                    Container(
+                        width: double.infinity,
+                        child: customStarRating(widget.book.rating, 1, 25)),
+                    const SizedBox(height: 30),
+                    readPeriod(),
+                    const SizedBox(height: 20),
+                    Visibility(
+                      visible: widget.book.comment != null,
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Icon(FontAwesomeIcons.penClip,
+                                  size: 15, color: Color(0xFF4D77B2)),
+                              const SizedBox(width: 5),
+                              Text('나의 한 줄'),
+                            ],
                           ),
-                        ),
+                          const SizedBox(height: 6),
+                          Container(
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.symmetric(vertical: 15),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[100],
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                            child: Text(
+                              '\"${widget.book.comment}\"',
+                              style: textTheme().bodyLarge,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
@@ -118,9 +120,14 @@ class _BookDetailPageState extends State<BookDetailPage> {
     );
   }
 
-  int dateCalculation(DateTime startDate) {
-    int period = DateTime.now().difference(startDate).inDays;
+  int dateCalculation(DateTime startDate, DateTime endDate) {
+    int period = endDate.difference(startDate).inDays;
     return period;
+  }
+
+  // 날짜 포맷 함수
+  String formatDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 
   Widget readPeriod() {
@@ -137,18 +144,20 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 size: 20,
               ),
               const SizedBox(width: 4),
-              Text('${dateCalculation(startDate)}일 동안 읽었어요.'),
+              Text('${dateCalculation(startDate, endDate)}일 동안 읽었어요.'),
             ],
           ),
           const SizedBox(height: 10),
           Container(
             decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(3)),
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(3),
+            ),
             padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
+                // 시작일 선택
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -168,17 +177,36 @@ class _BookDetailPageState extends State<BookDetailPage> {
                         }
                       },
                       child: Text(
-                        '${widget.book.formatSingleDate(startDate)}',
+                        '${formatDate(startDate)}', // 날짜 포맷 적용
                         style: textTheme().bodyLarge,
                       ),
                     ),
                   ],
                 ),
+                // 종료일 선택
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('종료일'),
-                    Text('-'),
+                    TextButton(
+                      onPressed: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          firstDate: startDate, // 종료일은 시작일 이후만 가능
+                          lastDate: DateTime(2100),
+                          initialDate: endDate,
+                        );
+                        if (pickedDate != null) {
+                          setState(() {
+                            endDate = pickedDate;
+                          });
+                        }
+                      },
+                      child: Text(
+                        '${formatDate(endDate)}', // 날짜 포맷 적용
+                        style: textTheme().bodyLarge,
+                      ),
+                    ),
                   ],
                 ),
               ],

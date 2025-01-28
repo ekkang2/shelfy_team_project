@@ -29,6 +29,16 @@ class BookRecordDoing {
   double progressPages() {
     return (this.currentPage / this.book.book_page) * 100;
   }
+
+  String formatSingleDateByKor(DateTime time) {
+    final dateFormatter = DateFormat('yyyy년 MM월 dd일');
+    return dateFormatter.format(time);
+  }
+
+  String formatSingleDate(DateTime time) {
+    final dateFormatter = DateFormat('yyyy.MM.dd');
+    return dateFormatter.format(time);
+  }
 }
 
 List<BookRecordDoing> doingBookList = [
