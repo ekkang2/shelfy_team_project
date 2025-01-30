@@ -37,7 +37,7 @@ class NoteWritePage extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        '제목을 입력하세요.', // 제목 텍스트
+                        '제목22을 입력하세요.', // 제목 텍스트
                         style: Theme.of(context).textTheme.labelLarge,
                       ),
                     ],

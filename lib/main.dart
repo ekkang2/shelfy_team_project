@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shelfy_team_project/theme.dart';
+import 'package:shelfy_team_project/ui/pages/note/note_page/note_add_book.dart';
+import 'package:shelfy_team_project/ui/pages/note/note_page/note_view_page.dart';
+import 'package:shelfy_team_project/ui/pages/note/note_page/note_write_page.dart';
 
 import 'data/gvm/darkmode_model.dart';
 import 'pages/main_screen.dart';
-import 'pages/note/note_write_page.dart';
 
 void main() {
   runApp(ProviderScope(child: const ShelfUI()));
@@ -25,6 +27,8 @@ class ShelfUI extends ConsumerWidget {
       routes: {
         '/': (context) => const MainScreen(),
         '/note': (context) => const NoteWritePage(),
+        '/noteView': (context) => const NoteViewPage(),
+        '/noteAddBook': (context) => const NoteAddBookPage(),
       },
     );
   }

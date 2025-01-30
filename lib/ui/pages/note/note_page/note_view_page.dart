@@ -1,18 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:shelfy_team_project/components/custom_appbar.dart';
 
-class NoteWritePage extends StatelessWidget {
-  const NoteWritePage({super.key});
+class NoteViewPage extends StatefulWidget {
+  const NoteViewPage({super.key});
+
+  @override
+  State<NoteViewPage> createState() => _NoteViewPageState();
+}
+
+class _NoteViewPageState extends State<NoteViewPage> {
+  late TextEditingController _titleController;
+  late TextEditingController _contentController;
+  bool isBookmarked = false; // ✅ 북마크 상태 추가
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: '파과를 읽고'); // ✅ 더미 제목
+    _contentController = TextEditingController(
+      text: '파과를 읽었다. 구병모 작가님 팬이 되었다.\n' * 20, // ✅ 긴 본문
+    );
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _contentController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final ScrollController _scrollController =
-        ScrollController(); // ✅ 스크롤 컨트롤러 추가
-
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomInset: false, // ✅ 키보드 올라와도 UI 깨지지 않도록 설정
-        appBar: WriteAppBar(context),
+        resizeToAvoidBottomInset: true,
+        appBar: ViewAppBar(context),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -38,15 +60,27 @@ class NoteWritePage extends StatelessWidget {
                       ),
                       SizedBox(
                         width: 200,
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: '제목을 입력해주세요',
-                            hintStyle: Theme.of(context).textTheme.labelMedium,
+                        child: TextFormField(
+                          controller: _titleController, // ✅ 제목 유지
+                          style: Theme.of(context).textTheme.titleMedium,
+                          decoration: const InputDecoration(
                             border: InputBorder.none,
                           ),
                         ),
                       ),
                     ],
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: Icon(
+                      isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                      color: isBookmarked ? Colors.amber : Colors.grey,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        isBookmarked = !isBookmarked;
+                      });
+                    },
                   ),
                 ],
               ),
@@ -59,19 +93,14 @@ class NoteWritePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                     color: Colors.grey[100],
                   ),
-                  child: Scrollbar(
-                    controller: _scrollController,
-                    child: SingleChildScrollView(
-                      controller: _scrollController,
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: '오늘 기록할 조각을 남겨주세요.',
-                          hintStyle: Theme.of(context).textTheme.labelMedium,
-                          border: InputBorder.none,
-                        ),
-                        maxLines: null, // ✅ 여러 줄 입력 가능
-                      ),
+                  child: TextFormField(
+                    controller: _contentController, // ✅ 본문 유지
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
                     ),
+                    maxLines: null, // ✅ 여러 줄 입력 가능
+                    expands: true, // ✅ 컨테이너 크기에 맞게 확장
                   ),
                 ),
               ),
@@ -99,19 +128,14 @@ class NoteWritePage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          '책을 추가해주세요',
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                          '책 제목 표시',
+                          style: TextStyle(fontSize: 14, color: Colors.black),
                         ),
-                        ElevatedButton(
+                        IconButton(
+                          icon: const Icon(Icons.arrow_forward_ios, size: 16),
                           onPressed: () {
-                            Navigator.pushNamed(
-                                context, '/noteAddBook'); // ✅ 추가된 코드
+                            print("책 상세 정보 보기");
                           },
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(36, 36),
-                            padding: EdgeInsets.zero,
-                          ),
-                          child: const Icon(Icons.add, size: 18),
                         ),
                       ],
                     ),
@@ -124,14 +148,19 @@ class NoteWritePage extends StatelessWidget {
         ),
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                print("기록 추가 버튼 클릭됨");
-              },
-              child: const Text('기록 추가', style: TextStyle(fontSize: 16)),
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(
+                  Icons.delete,
+                  color: Colors.grey,
+                ),
+                onPressed: () {
+                  print("노트 삭제됨");
+                },
+              ),
+            ],
           ),
         ),
       ),

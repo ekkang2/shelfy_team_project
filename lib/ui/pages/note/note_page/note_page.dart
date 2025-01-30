@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../pages/note/components/note_item.dart';
-import '../../../../pages/note/components/note_tab.dart';
+import 'package:shelfy_team_project/pages/note/components/note_tab.dart';
+import 'package:shelfy_team_project/ui/pages/note/note_page/widget/note_item.dart';
 
 class NotePage extends StatelessWidget {
   const NotePage({super.key});
@@ -73,6 +73,8 @@ class _NoteStatsTabState extends State<NoteStatsTab>
             children: [
               // 노트 리스트 화면
               ListView(
+                shrinkWrap: true, // ✅ 리스트 크기 자동 조절 (터치 문제 해결)
+                physics: const NeverScrollableScrollPhysics(), // ✅ 내부 스크롤 막기
                 padding: const EdgeInsets.symmetric(
                     horizontal: 28.0, vertical: 16.0), // 공통 패딩
                 children: [
@@ -154,7 +156,13 @@ class NoteSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8.0), // 섹션 제목과 리스트 간 간격
-        ...notes.map((note) => NoteItem(note: note)).toList(),
+// ✅ 리스트 아이템 클릭 가능하도록 GestureDetector 추가
+        ...notes.map(
+          (note) => Padding(
+            padding: const EdgeInsets.only(bottom: 12.0), // ✅ 리스트 아이템 간 여백 추가
+            child: NoteItem(note: note),
+          ),
+        ),
       ],
     );
   }

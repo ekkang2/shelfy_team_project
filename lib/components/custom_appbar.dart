@@ -126,10 +126,10 @@ AppBar NoteAppBar(BuildContext context) {
     actions: [
       IconButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(
-              "/note"); // 현재 context에서 Navigator 객체를 가져와 '/test' 경로로 이동
+          // Navigator.of(context).pushNamed(
+          //     "/note"); // 현재 context에서 Navigator 객체를 가져와 '/test' 경로로 이동
           Navigator.pushNamed(
-              context, '/test'); // '/test' 경로로 이동하여 NoteWritePage 화면을 표시
+              context, '/note'); // '/test' 경로로 이동하여 NoteWritePage 화면을 표시
         },
         icon: Icon(
           CupertinoIcons.square_pencil,
@@ -182,6 +182,32 @@ AppBar WriteAppBar(BuildContext context) {
           onPressed: () {},
           child: Text(
             '완료',
+            style: Theme.of(context)
+                .textTheme
+                .displayLarge
+                ?.copyWith(color: Colors.white),
+          )),
+    ],
+  );
+}
+
+AppBar ViewAppBar(BuildContext context) {
+  return AppBar(
+    // 타이틀 위치
+    titleSpacing: 8,
+    // backgroundColor: const Color(0xFF4D77B2),
+    scrolledUnderElevation: 0,
+    title: Center(
+      child: Text(
+        '글보기',
+        style: TextStyle(fontSize: 20),
+      ),
+    ),
+    actions: [
+      TextButton(
+          onPressed: () {},
+          child: Text(
+            '수정',
             style: Theme.of(context)
                 .textTheme
                 .displayLarge

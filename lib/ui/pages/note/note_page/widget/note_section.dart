@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'note_item.dart';
+import '../../../../../pages/note/components/note_item.dart';
 
 final logger = Logger(); // Logger 인스턴스 생성
 
