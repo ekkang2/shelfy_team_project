@@ -7,11 +7,12 @@ class NoteWritePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ScrollController _scrollController =
-        ScrollController(); // ✅ 스크롤 컨트롤러 추가
+        ScrollController(); // 스크롤 컨트롤러 추가
 
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomInset: false, // ✅ 키보드 올라와도 UI 깨지지 않도록 설정
+        // 키보드 올라와도 UI 깨지지 않도록 설정
+        resizeToAvoidBottomInset: false, // 키보드가 떠도 레이아웃이 유지되면서 입력창이 밀리지 않음
         appBar: WriteAppBar(context),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -51,7 +52,8 @@ class NoteWritePage extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              Expanded(
+              SizedBox(
+                height: 300, // 높이 조정
                 child: Container(
                   padding: const EdgeInsets.all(12.0),
                   decoration: BoxDecoration(
@@ -69,7 +71,7 @@ class NoteWritePage extends StatelessWidget {
                           hintStyle: Theme.of(context).textTheme.labelMedium,
                           border: InputBorder.none,
                         ),
-                        maxLines: null, // ✅ 여러 줄 입력 가능
+                        maxLines: null, // 여러 줄 입력 가능
                       ),
                     ),
                   ),
@@ -104,8 +106,7 @@ class NoteWritePage extends StatelessWidget {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.pushNamed(
-                                context, '/noteAddBook'); // ✅ 추가된 코드
+                            Navigator.pushNamed(context, '/noteAddBook');
                           },
                           style: ElevatedButton.styleFrom(
                             minimumSize: const Size(36, 36),
