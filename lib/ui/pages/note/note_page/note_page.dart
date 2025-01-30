@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shelfy_team_project/pages/note/components/note_tab.dart';
 import 'package:shelfy_team_project/ui/pages/note/note_page/widget/note_item.dart';
+import 'package:shelfy_team_project/ui/pages/note/note_page/widget/note_tab.dart';
 
 class NotePage extends StatelessWidget {
   const NotePage({super.key});

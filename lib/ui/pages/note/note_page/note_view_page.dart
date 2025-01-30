@@ -132,7 +132,7 @@ class _NoteViewPageState extends State<NoteViewPage> {
                           style: TextStyle(fontSize: 14, color: Colors.black),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.arrow_forward_ios, size: 16),
+                          icon: const Icon(Icons.text_snippet, size: 16),
                           onPressed: () {
                             print("책 상세 정보 보기");
                           },
