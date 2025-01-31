@@ -103,7 +103,43 @@ class _WishBookDetailPageState extends State<WishBookDetailPage> {
                           ),
                           Text(
                             '${formatDate(widget.book.startDate)}', // 날짜 포맷 적용
-                            style: Theme.of(context).textTheme.bodyLarge,
+                            style: Theme.of(context).textTheme.labelMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(FontAwesomeIcons.penClip,
+                                  size: 15, color: Color(0xFF4D77B2)),
+                              const SizedBox(width: 5),
+                              Text('책 정보'),
+                            ],
+                          ),
+                          SizedBox(height: 13),
+                          Text(
+                            '${widget.book.book.book_page.toString()}쪽',
+                            style: textTheme().labelMedium,
+                          ),
+                          SizedBox(height: 14),
+                          Text(
+                            widget.book.book.book_desc,
+                            style: textTheme().labelMedium,
+                          ),
+                          SizedBox(height: 14),
+                          Text(
+                            '${widget.book.book.book_author} · ${widget.book.book.book_publisher}',
+                            style: textTheme().labelMedium,
+                          ),
+                          SizedBox(height: 14),
+                          Text(
+                            'ISBN : ${widget.book.book.book_isbn}',
+                            style: textTheme().labelMedium,
                           ),
                         ],
                       ),

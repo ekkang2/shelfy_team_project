@@ -47,9 +47,9 @@ class _StackViewState extends State<StackView> {
         ),
         // 블러 효과
         BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
+          filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 20.0),
           child: Container(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withOpacity(0.2),
           ),
         ),
         // 책 정보와 목록

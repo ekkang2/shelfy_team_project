@@ -40,7 +40,7 @@ class _ShelfViewState extends State<ShelfView> {
         ),
         // 블러 효과
         BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
+          filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 20.0),
           child: Container(
             color: Colors.black.withOpacity(0.1),
           ),
