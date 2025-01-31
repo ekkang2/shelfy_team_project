@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shelfy_team_project/components/custom_interactive_star_rating.dart';
 
 class CustomTabBar extends StatefulWidget {
   @override
@@ -55,7 +56,50 @@ class _CustomTabBarState extends State<CustomTabBar>
           child: TabBarView(
             controller: _tabController,
             children: [
-              Center(child: Text('끝맺은 책 내용')),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      child: Text('다 읽으셨군요.'),
+                    ),
+                    const SizedBox(height: 20),
+                    InteractiveStarRating(
+                        type: 1, size: 25, onRatingChanged: (newRating) {}),
+                    const SizedBox(height: 20),
+                    Text(
+                      '독서기간',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      width: double.infinity,
+                      child: Column(
+                        children: [
+                          Text('기간 들어가는 겁니다'),
+                          Text('기간 들어가는 겁니다'),
+                        ],
+                      ),
+                      decoration:
+                          BoxDecoration(color: Colors.grey.withOpacity(0.3)),
+                    ),
+                    const SizedBox(height: 20),
+                    Text('한줄평을 남겨보세요!'),
+                    TextField(),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: Text('기록 남기기'),
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(Colors.black12),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               Center(child: Text('여정 중인 책 내용')),
               Center(child: Text('기다리는 책 내용')),
               Center(child: Text('잠든 책 내용')),

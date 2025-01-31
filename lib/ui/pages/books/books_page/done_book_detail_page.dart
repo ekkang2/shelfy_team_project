@@ -150,7 +150,7 @@ class _DoneBookDetailPageState extends State<DoneBookDetailPage> {
           const SizedBox(height: 10),
           Container(
             decoration: BoxDecoration(
-              color: Colors.grey[100],
+              color: Colors.grey.withOpacity(0.3),
               borderRadius: BorderRadius.circular(3),
             ),
             padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
