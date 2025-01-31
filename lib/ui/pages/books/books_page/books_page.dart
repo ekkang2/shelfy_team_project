@@ -4,15 +4,15 @@ import 'package:shelfy_team_project/data/gvm/doing_view_model.dart';
 import 'package:shelfy_team_project/data/gvm/done_view_model.dart';
 import 'package:shelfy_team_project/data/model/book_record_doing.dart';
 import 'package:shelfy_team_project/data/model/book_record_done.dart';
-import 'package:shelfy_team_project/pages/books/components/shelf_book_item_done.dart';
-import 'package:shelfy_team_project/pages/books/components/shelf_book_item_stop.dart';
-import 'package:shelfy_team_project/pages/books/components/shelf_book_item_wish.dart';
+import 'package:shelfy_team_project/ui/pages/books/books_page/widget/shelf_book_item_stop.dart';
 import 'package:shelfy_team_project/theme.dart';
 
-import '../../data/gvm/stop_view_model.dart';
-import '../../data/gvm/wish_view_model.dart';
-import 'components/shelf_book_item_doing.dart';
-import 'components/shelf_status_widget.dart';
+import '../../../../data/gvm/stop_view_model.dart';
+import '../../../../data/gvm/wish_view_model.dart';
+import 'widget/shelf_book_item_doing.dart';
+import 'widget/shelf_book_item_done.dart';
+import 'widget/shelf_book_item_wish.dart';
+import 'widget/shelf_status_widget.dart';
 
 class BooksPage extends ConsumerWidget {
   const BooksPage({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shelfy_team_project/data/model/book_record_done.dart';
-import 'package:shelfy_team_project/pages/books/done_book_detail_page.dart';
+import 'package:shelfy_team_project/ui/pages/books/books_page/done_book_detail_page.dart';
 import 'package:shelfy_team_project/theme.dart';
 
 class ShelfBookItemDone extends StatelessWidget {

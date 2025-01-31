@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shelfy_team_project/theme.dart';
 
-import '../../../data/model/book_record_doing.dart';
+import '../../../../../data/model/book_record_doing.dart';
 
 class AdjustableProgressBar extends StatefulWidget {
   final BookRecordDoing bookRecord; // BookRecordDoing 타입의 데이터 받기

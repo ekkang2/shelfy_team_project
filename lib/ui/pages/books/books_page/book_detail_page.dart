@@ -6,8 +6,10 @@ import 'package:shelfy_team_project/components/custom_interactive_star_rating.da
 import 'package:shelfy_team_project/components/custom_record_label.dart';
 import 'package:shelfy_team_project/components/custom_star_rating.dart';
 import 'package:shelfy_team_project/data/model/book_record_doing.dart';
-import 'package:shelfy_team_project/pages/books/components/book_detail_progress_bar.dart';
+import 'package:shelfy_team_project/ui/pages/books/books_page/widget/book_detail_progress_bar.dart';
 import 'package:shelfy_team_project/theme.dart';
+
+import '../../../../components/book_record_state.dart';
 
 class BookDetailPage extends StatefulWidget {
   final BookRecordDoing book;
@@ -50,7 +52,8 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 ),
               ),
             ),
-            InteractiveStarRating(type: 1, size: 25, onRatingChanged: (newRating){}),
+            InteractiveStarRating(
+                type: 1, size: 25, onRatingChanged: (newRating) {}),
             const SizedBox(height: 15),
             Text(
               '${widget.book.book.book_title}',
@@ -92,7 +95,21 @@ class _BookDetailPageState extends State<BookDetailPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
                     child: ElevatedButton(
                       onPressed: () {
-                        print('여정 종료: 시작일 $startDate');
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true, // 모달 크기 조정 가능하게 설정
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.vertical(top: Radius.circular(16)),
+                          ),
+                          builder: (context) {
+                            return Container(
+                              height: MediaQuery.of(context).size.height *
+                                  0.5, // 50% 크기로 설정
+                              child: CustomTabBar(), // ✅ 수정된 `CustomTabBar` 적용
+                            );
+                          },
+                        );
                       },
                       child: Text(
                         '여정이 끝났어요!',

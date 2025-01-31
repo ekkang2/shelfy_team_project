@@ -1,11 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shelfy_team_project/data/model/book_record_done.dart';
-import 'package:shelfy_team_project/pages/books/book_detail_page.dart';
+import 'package:shelfy_team_project/ui/pages/books/books_page/book_detail_page.dart';
 import 'package:shelfy_team_project/theme.dart';
 
-import '../../../data/model/book_record_doing.dart';
+import '../../../../../data/model/book_record_doing.dart';
 
 class ShelfBookItemDoing extends StatelessWidget {
   final Widget widget;

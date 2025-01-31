@@ -6,7 +6,7 @@ import 'package:shelfy_team_project/ui/pages/note/note_page/note_view_page.dart'
 import 'package:shelfy_team_project/ui/pages/note/note_page/note_write_page.dart';
 
 import 'data/gvm/darkmode_model.dart';
-import 'pages/main_screen.dart';
+import 'ui/pages/main_screen.dart';
 
 void main() {
   runApp(ProviderScope(child: const ShelfUI()));
