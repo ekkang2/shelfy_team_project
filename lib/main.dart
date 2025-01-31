@@ -21,7 +21,7 @@ class ShelfUI extends ConsumerWidget {
     return MaterialApp(
       title: 'shelfy_ui',
       debugShowCheckedModeBanner: false,
-      theme: !_isDarkMode ? mTheme() : darkMTheme(),
+      theme: mTheme(_isDarkMode),
       // 테마를 적용
       initialRoute: '/',
       routes: {

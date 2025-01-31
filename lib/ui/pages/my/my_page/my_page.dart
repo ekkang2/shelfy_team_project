@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shelfy_team_project/common/utils/logger.dart';
 import 'package:shelfy_team_project/data/gvm/darkmode_model.dart';
-import 'package:shelfy_team_project/theme.dart';
 
 class MyPage extends ConsumerWidget {
   const MyPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    bool _isDarkMode = ref.watch(darkModeNotiProvider);
+    bool isDarkMode = ref.watch(darkModeNotiProvider);
     DarkModeNotifier darkModeNotifier = ref.read(darkModeNotiProvider.notifier);
 
-    logger.d(_isDarkMode);
+    logger.d(isDarkMode);
 
     return SizedBox(
       width: double.infinity,
@@ -22,7 +21,7 @@ class MyPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            buildProfile(),
+            buildProfile(context),
             Expanded(
               child: ListView(
                 children: [
@@ -30,7 +29,7 @@ class MyPage extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Text(
                       '유저 설정',
-                      style: textTheme().labelMedium,
+                      style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ),
                   buildMyListTile(
@@ -59,11 +58,11 @@ class MyPage extends ConsumerWidget {
                     ),
                     title: Text(
                       '다크모드',
-                      style: TextStyle(color: Colors.grey[600]),
+                      style: Theme.of(context).textTheme.labelLarge,
                     ),
                     trailing: CupertinoSwitch(
-                      activeColor: Colors.black54,
-                      value: _isDarkMode,
+                      activeColor: Colors.grey,
+                      value: isDarkMode,
                       onChanged: (value) {
                         darkModeNotifier.changeDarkMode();
                       },
@@ -73,7 +72,7 @@ class MyPage extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Text(
                       '지원',
-                      style: textTheme().labelMedium,
+                      style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ),
                   buildMyListTile(
@@ -88,17 +87,11 @@ class MyPage extends ConsumerWidget {
                     text: '문의하기',
                     url: '/inquiry',
                   ),
-                  buildMyListTile(
-                    icon: Icons.chat_bubble,
-                    context: context,
-                    text: '의견 보내기',
-                    url: '/sendOpinion',
-                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Text(
                       '앱 정보',
-                      style: textTheme().labelMedium,
+                      style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ),
                   buildMyListTile(
@@ -121,7 +114,7 @@ class MyPage extends ConsumerWidget {
                     ),
                     title: Text(
                       '서비스 이용약관',
-                      style: TextStyle(color: Colors.grey[600]),
+                      style: Theme.of(context).textTheme.labelLarge,
                     ),
                     trailing: null,
                     onTap: () {},
@@ -149,7 +142,7 @@ class MyPage extends ConsumerWidget {
       ),
       title: Text(
         text,
-        style: TextStyle(color: Colors.grey[600]),
+        style: Theme.of(context).textTheme.labelLarge,
       ),
       onTap: () {
         Navigator.pushNamed(context, url);
@@ -157,7 +150,7 @@ class MyPage extends ConsumerWidget {
     );
   }
 
-  Column buildProfile() {
+  Column buildProfile(BuildContext context) {
     return Column(
       children: [
         const SizedBox(height: 16.0),
@@ -174,7 +167,7 @@ class MyPage extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(vertical: 16.0),
           child: Text(
             '닉네임',
-            style: textTheme().titleLarge,
+            style: Theme.of(context).textTheme.headlineLarge,
           ),
         ),
       ],

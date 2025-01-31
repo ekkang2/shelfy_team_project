@@ -44,10 +44,10 @@ TextTheme textTheme() {
 }
 
 // AppBar 테마 설정
-AppBarTheme appBarTheme() {
+AppBarTheme appBarTheme(bool isDarkMode) {
   return AppBarTheme(
     centerTitle: false,
-    color: const Color(0xFF4D77B2),
+    color: !isDarkMode ? const Color(0xFF4D77B2) : Colors.black54,
     // AppBar 배경색
     elevation: 0.0,
     iconTheme: IconThemeData(color: Colors.white),
@@ -60,32 +60,38 @@ AppBarTheme appBarTheme() {
 }
 
 // 바텀네비게이션바 테마 설정
-BottomNavigationBarThemeData bottomNavigationBarTheme() {
+BottomNavigationBarThemeData bottomNavigationBarTheme(bool isDarkMode) {
   return BottomNavigationBarThemeData(
-    backgroundColor: Colors.white, // BottomNavigationBar 배경색
-    selectedItemColor: const Color(0xFF4D77B2), // 선택된 아이템 색상
-    unselectedItemColor: Colors.grey.withOpacity(0.6), // 선택되지 않은 아이템 색상
+    backgroundColor: !isDarkMode ? Colors.white : Colors.black54,
+    // BottomNavigationBar 배경색
+    selectedItemColor: !isDarkMode ? const Color(0xFF4D77B2) : Colors.white,
+    // 선택된 아이템 색상
+    unselectedItemColor: Colors.grey.withOpacity(0.6),
+    // 선택되지 않은 아이템 색상
     showUnselectedLabels: true, // 선택 안된 라벨 표시 여부 설정
   );
 }
 
 // 전체 ThemeData 설정
-ThemeData mTheme() {
+ThemeData mTheme(bool isDarkMode) {
   return ThemeData(
     // 머터리얼 3 때부터 변경 됨..
     // 자동 셋팅
     // colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange)
     // 우리가 직접 지정 함
-    colorScheme: ColorScheme.fromSwatch(
-      primarySwatch: Colors.blue,
-    ).copyWith(
-      primary: const Color(0xFF4D77B2), // 주요 색상
-      secondary: const Color(0xFF5B6A95), // 보조 색상
-    ),
-    scaffoldBackgroundColor: Colors.white,
-    textTheme: textTheme(),
-    appBarTheme: appBarTheme(),
-    bottomNavigationBarTheme: bottomNavigationBarTheme(),
+    brightness: !isDarkMode ? Brightness.light : Brightness.dark,
+    colorScheme: !isDarkMode
+        ? ColorScheme.fromSwatch(
+            primarySwatch: Colors.blue,
+          ).copyWith(
+            primary: const Color(0xFF4D77B2), // 주요 색상
+            secondary: const Color(0xFF5B6A95), // 보조 색상
+          )
+        : ColorScheme.dark(),
+    scaffoldBackgroundColor: !isDarkMode ? Colors.white : Colors.black,
+    textTheme: !isDarkMode ? textTheme() : darkTextTheme(),
+    appBarTheme: appBarTheme(isDarkMode),
+    bottomNavigationBarTheme: bottomNavigationBarTheme(isDarkMode),
   );
 }
 
@@ -102,28 +108,33 @@ TextTheme darkTextTheme() {
         fontWeight: FontWeight.normal),
     // 탭바 라벨 타이틀 블루
     displayMedium: TextStyle(
-        fontSize: 14.8, color: Colors.black, fontFamily: 'Pretendard-Bold'),
+        fontSize: 14.8, color: Colors.white, fontFamily: 'Pretendard-Bold'),
+    headlineLarge: TextStyle(
+      fontFamily: 'Pretendard-Bold',
+      color: Colors.white,
+      fontSize: 22,
+    ),
     // title... 블랙 두껍게
     titleLarge: TextStyle(
-        fontSize: 17.0, color: Colors.black87, fontFamily: 'Pretendard-Bold'),
+        fontSize: 17.0, color: Colors.white, fontFamily: 'Pretendard-Bold'),
     titleMedium: TextStyle(
-        fontSize: 16.0, color: Colors.black, fontFamily: 'Pretendard-Bold'),
+        fontSize: 16.0, color: Colors.white, fontFamily: 'Pretendard-Bold'),
     titleSmall: TextStyle(
-        fontSize: 14.0, color: Colors.black, fontFamily: 'Pretendard-Bold'),
+        fontSize: 14.0, color: Colors.white, fontFamily: 'Pretendard-Bold'),
     // body... 블랙 기본얇기
     bodyLarge: TextStyle(
-        fontSize: 16.0, color: Colors.black, fontFamily: 'Pretendard-Regular'),
+        fontSize: 16.0, color: Colors.white, fontFamily: 'Pretendard-Regular'),
     bodyMedium: TextStyle(
-        fontSize: 14.0, color: Colors.black, fontFamily: 'Pretendard-Regular'),
+        fontSize: 14.0, color: Colors.white, fontFamily: 'Pretendard-Regular'),
     bodySmall: TextStyle(
-        fontSize: 12.0, color: Colors.black, fontFamily: 'Pretendard-Regular'),
+        fontSize: 12.0, color: Colors.white, fontFamily: 'Pretendard-Regular'),
     // label... 그레이 기본얇기
     labelLarge: TextStyle(
-        fontSize: 16.0, color: Colors.grey, fontFamily: 'Pretendard-Regular'),
+        fontSize: 16.0, color: Colors.white, fontFamily: 'Pretendard-Regular'),
     labelMedium: TextStyle(
-        fontSize: 13.0, color: Colors.grey, fontFamily: 'Pretendard-Regular'),
+        fontSize: 13.0, color: Colors.white, fontFamily: 'Pretendard-Regular'),
     labelSmall: TextStyle(
-        fontSize: 12.0, color: Colors.grey, fontFamily: 'Pretendard-Regular'),
+        fontSize: 12.0, color: Colors.white, fontFamily: 'Pretendard-Regular'),
   );
 }
 
@@ -166,7 +177,7 @@ ThemeData darkMTheme() {
     // 우리가 직접 지정 함
     iconTheme: darkIconTheme(),
     colorScheme: ColorScheme.dark(),
-    scaffoldBackgroundColor: Colors.white,
+    scaffoldBackgroundColor: Colors.black,
     textTheme: darkTextTheme(),
     appBarTheme: darkAppBarTheme(),
     bottomNavigationBarTheme: darkBottomNavigationBarTheme(),

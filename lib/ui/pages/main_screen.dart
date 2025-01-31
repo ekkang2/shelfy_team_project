@@ -23,7 +23,6 @@ class _MainPageState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(60),
           child: IndexedStack(
