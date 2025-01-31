@@ -31,6 +31,7 @@ class _NoteViewPageState extends State<NoteViewPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: true,
@@ -93,9 +94,11 @@ class _NoteViewPageState extends State<NoteViewPage> {
                   width: double.infinity, // 부모 크기만큼 확장
                   padding: const EdgeInsets.all(12.0),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey[300]!),
+                    border: !isDarkMode
+                        ? Border.all(color: Colors.grey[300]!)
+                        : null,
                     borderRadius: BorderRadius.circular(8),
-                    color: Colors.grey[100],
+                    color: !isDarkMode ? Colors.grey[100] : Colors.grey[900],
                   ),
                   child: TextFormField(
                     controller: _contentController, // 본문 유지

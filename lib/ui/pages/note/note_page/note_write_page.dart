@@ -8,7 +8,7 @@ class NoteWritePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final ScrollController _scrollController =
         ScrollController(); // 스크롤 컨트롤러 추가
-
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return SafeArea(
       child: Scaffold(
         // 키보드 올라와도 UI 깨지지 않도록 설정
@@ -57,9 +57,11 @@ class NoteWritePage extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(12.0),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey[300]!),
+                    border: !isDarkMode
+                        ? Border.all(color: Colors.grey[300]!)
+                        : null,
                     borderRadius: BorderRadius.circular(8),
-                    color: Colors.grey[100],
+                    color: !isDarkMode ? Colors.grey[100] : Colors.grey[900],
                   ),
                   child: Scrollbar(
                     controller: _scrollController,
@@ -104,15 +106,14 @@ class NoteWritePage extends StatelessWidget {
                           '책을 추가해주세요',
                           style: TextStyle(fontSize: 14, color: Colors.grey),
                         ),
-                        ElevatedButton(
+                        // ✅ 테두리 없는 `IconButton`으로 변경
+                        IconButton(
                           onPressed: () {
-                            Navigator.pushNamed(context, '/noteAddBook');
+                            Navigator.pushNamed(
+                                context, '/noteAddBook'); // 📌 페이지 이동
                           },
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(36, 36),
-                            padding: EdgeInsets.zero,
-                          ),
-                          child: const Icon(Icons.add, size: 18),
+                          icon: const Icon(Icons.add_box,
+                              size: 28, color: Color(0xFF3B73C9)), // 📌 파란색 아이콘
                         ),
                       ],
                     ),
@@ -131,7 +132,16 @@ class NoteWritePage extends StatelessWidget {
               onPressed: () {
                 print("기록 추가 버튼 클릭됨");
               },
-              child: const Text('기록 추가', style: TextStyle(fontSize: 16)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF3B73C9),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text(
+                '기록 추가',
+                style: Theme.of(context).textTheme.displayLarge,
+              ),
             ),
           ),
         ),
