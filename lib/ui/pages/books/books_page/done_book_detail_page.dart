@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:shelfy_team_project/components/custom_appbar.dart';
-import 'package:shelfy_team_project/components/custom_record_label.dart';
-import 'package:shelfy_team_project/components/custom_star_rating.dart';
+import 'package:shelfy_team_project/ui/widgets/custom_appbar.dart';
+import 'package:shelfy_team_project/ui/widgets/custom_star_rating.dart';
 import 'package:shelfy_team_project/data/model/book_record_done.dart';
 import 'package:shelfy_team_project/theme.dart';
+
+import '../../../widgets/custom_record_label.dart';
 
 class DoneBookDetailPage extends StatefulWidget {
   final BookRecordDone book;

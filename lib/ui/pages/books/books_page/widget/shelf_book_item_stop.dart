@@ -6,7 +6,7 @@ import 'package:shelfy_team_project/data/model/book_record_stop.dart';
 import 'package:shelfy_team_project/data/model/book_record_wish.dart';
 import 'package:shelfy_team_project/theme.dart';
 
-import '../../../../../components/custom_star_rating.dart';
+import '../../../../widgets/custom_star_rating.dart';
 
 class ShelfBookItemStop extends StatelessWidget {
   final BookRecordStop book;

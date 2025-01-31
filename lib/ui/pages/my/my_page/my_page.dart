@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shelfy_team_project/common/utils/logger.dart';
 import 'package:shelfy_team_project/data/gvm/darkmode_model.dart';
+
+import '../../../../_core/utils/logger.dart';
 
 class MyPage extends ConsumerWidget {
   const MyPage({super.key});
@@ -14,6 +15,7 @@ class MyPage extends ConsumerWidget {
 
     logger.d(isDarkMode);
 
+    bool isDarkMode2 = Theme.of(context).brightness == Brightness.dark;
     return SizedBox(
       width: double.infinity,
       child: Padding(

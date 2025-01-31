@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shelfy_team_project/theme.dart';
 
-import '../ui/pages/search/search_page/widget/add_book.dart';
+import '../pages/search/search_page/widget/add_book.dart';
 
 AppBar HomeAppBar(VoidCallback onSearchPressed, BuildContext context) {
   return AppBar(

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:shelfy_team_project/components/custom_star_rating.dart';
 
 import '../../../../../data/gvm/doing_view_model.dart';
 import '../../../../../data/gvm/done_view_model.dart';
 import '../../../../../data/model/book_record_doing.dart';
 import '../../../../../data/model/book_record_done.dart';
 import '../../../../../theme.dart';
+import '../../../../widgets/custom_star_rating.dart';
 
 Widget doingWidget(BookRecordDoing doing, DoingViewModel notifier) {
   return Column(

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../components/custom_appbar.dart';
+import '../widgets/custom_appbar.dart';
 import 'books/books_page/books_page.dart';
 import 'home/home_page/home_page.dart';
 import 'my/my_page/my_page.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shelfy_team_project/components/custom_appbar.dart';
+import 'package:shelfy_team_project/ui/widgets/custom_appbar.dart';
 
 class NoteViewPage extends StatefulWidget {
   const NoteViewPage({super.key});
