@@ -27,10 +27,9 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   late String selectedMonth;
 
   late List<String> years;
-  final List<String> months =
+  final List<String> months = ['전체보기'] +
       List.generate(12, (index) => (index + 1).toString().padLeft(2, '0'));
 
-  // 단 한번 호출되는 메서드
   @override
   void initState() {
     super.initState();
@@ -38,7 +37,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     // 현재 날짜를 기본값으로 설정
     DateTime now = DateTime.now();
     selectedYear = now.year.toString();
-    selectedMonth = now.month.toString().padLeft(2, '0');
+    selectedMonth = '전체보기';
 
     // 2010년부터 현재년도까지 리스트 생성
     years = List.generate(
@@ -51,6 +50,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        _buildHeaderWithYearAndMonth(),
         _buildTabBar(),
         Expanded(
           child: _buildTabBarView(),
@@ -59,14 +59,97 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     );
   }
 
+  Widget _buildHeaderWithYearAndMonth() {
+    String displayDate =
+        selectedMonth == '전체보기' ? selectedYear : "$selectedYear-$selectedMonth";
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 75.0, vertical: 3.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF4D77B2)),
+            onPressed: () {
+              setState(() {
+                int currentIndex = years.indexOf(selectedYear);
+                if (currentIndex > 0) {
+                  selectedYear = years[currentIndex - 1];
+                  selectedMonth = '전체보기'; // 연도 변경 시 월을 전체보기로 초기화
+                }
+              });
+            },
+          ),
+          GestureDetector(
+            onTap: () => _showMonthSelectionDialog(),
+            child: Text(
+              displayDate,
+              style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF4D77B2)),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.arrow_forward_ios, color: Color(0xFF4D77B2)),
+            onPressed: () {
+              setState(() {
+                int currentIndex = years.indexOf(selectedYear);
+                if (currentIndex < years.length - 1) {
+                  selectedYear = years[currentIndex + 1];
+                  selectedMonth = '전체보기'; // 연도 변경 시 월을 전체보기로 초기화
+                }
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showMonthSelectionDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('월 선택'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: months
+                  .map(
+                    (month) => ListTile(
+                      title: Text(month),
+                      onTap: () {
+                        setState(() {
+                          selectedMonth = month;
+                        });
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   TabBarView _buildTabBarView() {
     return TabBarView(
       controller: _tabController,
       children: [
         // 쌓아보기
-        StackView(),
+        StackView(
+          selectedYear: selectedYear,
+          selectedMonth: selectedMonth,
+        ),
         // 책장보기
-        ShelfView(),
+        ShelfView(
+          selectedYear: selectedYear,
+          selectedMonth: selectedMonth,
+        ),
       ],
     );
   }

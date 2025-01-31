@@ -3,9 +3,14 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../../../../../data/model/book.dart';
+import '../../../../../data/model/book_record_done.dart';
 
 class StackView extends StatefulWidget {
-  const StackView({super.key});
+  final String selectedYear;
+  final String selectedMonth;
+
+  const StackView(
+      {super.key, required this.selectedYear, required this.selectedMonth});
 
   @override
   State<StackView> createState() => _StackViewState();
@@ -14,10 +19,19 @@ class StackView extends StatefulWidget {
 class _StackViewState extends State<StackView> {
   @override
   Widget build(BuildContext context) {
+    // 종료일 기준으로 데이터 필터링
+    final filteredBooks = doneBookList.where((record) {
+      final endDate = record.endDate;
+      final yearMatch = endDate.year.toString() == widget.selectedYear;
+      final monthMatch = widget.selectedMonth == '전체보기' ||
+          endDate.month.toString().padLeft(2, '0') == widget.selectedMonth;
+
+      return yearMatch && monthMatch;
+    }).toList();
+
     // 전체 페이지와 cm 계산
-    // fold : 리스트의 모든 요소를 누적하여 단일 값으로 줄이는 작업
-    final totalPages =
-        bookList.fold<int>(0, (sum, book) => sum + book.book_page); // 전체 페이지 합산
+    final totalPages = filteredBooks.fold<int>(
+        0, (sum, record) => sum + record.book.book_page); // 전체 페이지 합산
     final totalCm = (totalPages * 0.2).toStringAsFixed(1); // 전체 두께(cm)
 
     return Stack(
@@ -61,9 +75,10 @@ class _StackViewState extends State<StackView> {
                   padding: const EdgeInsets.only(bottom: 20), // 하단 여백
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: bookList.asMap().entries.map((entry) {
+                    children: filteredBooks.asMap().entries.map((entry) {
                       final index = entry.key;
-                      final book = entry.value;
+                      final record = entry.value;
+                      final book = record.book;
 
                       // 책 두께 계산
                       final bookHeight = book.book_page * 0.2; // 1페이지 = 0.2cm

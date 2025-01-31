@@ -1,13 +1,14 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:shelfy_team_project/data/model/book.dart';
-import 'package:shelfy_team_project/ui/pages/search/search_page/widget/book_item.dart';
-
-import '../../../../../data/model/book_record_done.dart';
+import 'package:shelfy_team_project/data/model/book_record_done.dart';
 import 'shef_view_list.dart';
 
 class ShelfView extends StatefulWidget {
-  const ShelfView({super.key});
+  final String selectedYear;
+  final String selectedMonth;
+
+  const ShelfView(
+      {super.key, required this.selectedYear, required this.selectedMonth});
 
   @override
   State<ShelfView> createState() => _ShelfViewState();
@@ -16,6 +17,16 @@ class ShelfView extends StatefulWidget {
 class _ShelfViewState extends State<ShelfView> {
   @override
   Widget build(BuildContext context) {
+    // 종료일 기준으로 데이터 필터링
+    final filteredBooks = doneBookList.where((record) {
+      final endDate = record.endDate;
+      final yearMatch = endDate.year.toString() == widget.selectedYear;
+      final monthMatch = widget.selectedMonth == '전체보기' ||
+          endDate.month.toString().padLeft(2, '0') == widget.selectedMonth;
+
+      return yearMatch && monthMatch;
+    }).toList();
+
     return Stack(
       children: [
         // 배경 이미지
@@ -37,29 +48,29 @@ class _ShelfViewState extends State<ShelfView> {
 
         // 내용 위젯
         ListView.builder(
-          itemCount: (doneBookList.length / 3).ceil(), // 3개씩 묶은 줄 수 계산
+          itemCount: (filteredBooks.length / 3).ceil(), // 필터링된 데이터를 기준으로 묶음 계산
           itemBuilder: (context, index) {
             // 3개씩 묶어서 한 줄에 표시
             final startIndex = index * 3;
             final endIndex = startIndex + 3;
             // sublist는 start index를 포함하고 end를 포함하지 않는 범위 요소들의 리스트를 리턴
-            final items = doneBookList.sublist(
+            final items = filteredBooks.sublist(
               startIndex,
-              endIndex > doneBookList.length ? doneBookList.length : endIndex,
+              endIndex > filteredBooks.length ? filteredBooks.length : endIndex,
             );
             return Column(
               children: [
-                SizedBox(height: 55),
+                SizedBox(height: 30),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: items
-                        .map((book) => Expanded(
+                        .map((record) => Expanded(
                               child: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 4.0),
-                                child: ShefViewList(book: book),
+                                child: ShefViewList(book: record),
                               ),
                             ))
                         .toList(),

@@ -19,15 +19,6 @@ class _ShefViewListState extends State<ShefViewList> {
     return Column(
       children: [
         Container(
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 6,
-                offset: Offset(2, 4),
-              ),
-            ],
-          ),
           child: Column(
             children: [
               customStarRating(widget.book.rating, 1, 18),
