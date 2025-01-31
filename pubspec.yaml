@@ -51,6 +51,7 @@ dependencies:
   flutter_riverpod: ^2.3.6 # 상태관리 Riverpod 라이브러리 입니다.
   flutter_secure_storage: ^8.0.0 # 어플리케이션 Secure Storage를 쉽게 사용할 수 있도록 도와주는 라이브러리입니다.
   pull_to_refresh: ^2.0.0
+  fl_chart: ^0.67.0
 
 dev_dependencies:
   flutter_test:

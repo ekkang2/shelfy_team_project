@@ -22,9 +22,7 @@ class NoteItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      behavior: HitTestBehavior.opaque, // ✅ 터치 강제 활성화
       onTap: () {
-        print("✅ 제목 클릭됨: ${note.title}"); // 터치 확인 로그
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => NoteViewPage(),
