@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shelfy_team_project/components/custom_appbar.dart';
+import 'package:shelfy_team_project/components/custom_interactive_star_rating.dart';
 import 'package:shelfy_team_project/components/custom_record_label.dart';
 import 'package:shelfy_team_project/components/custom_star_rating.dart';
 import 'package:shelfy_team_project/data/model/book_record_doing.dart';
@@ -49,7 +50,8 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 5),
+            InteractiveStarRating(type: 1, size: 25, onRatingChanged: (newRating){}),
+            const SizedBox(height: 15),
             Text(
               '${widget.book.book.book_title}',
               style: textTheme().headlineLarge,
