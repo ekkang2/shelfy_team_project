@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shelfy_team_project/ui/widgets/custom_appbar.dart';
 
+import '../../../../_core/constants/theme.dart';
 import '../../../../data/model/book_record_wish.dart';
 import '../../../widgets/custom_record_label.dart';
 import '../../../widgets/custom_star_rating.dart';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shelfy_team_project/components/custom_interactive_star_rating.dart';
+
+import 'custom_interactive_star_rating.dart';
 
 class CustomTabBar extends StatefulWidget {
   @override
