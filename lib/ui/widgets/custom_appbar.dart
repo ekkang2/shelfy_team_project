@@ -254,3 +254,31 @@ AppBar BookDetailBar(BuildContext context) {
     ),
   );
 }
+
+AppBar BasicAppBar(BuildContext context, String title) {
+  return AppBar(
+    leading: IconButton(
+      onPressed: () {
+        // 현재 포커스된 위젯의 포커스를 해제
+        FocusScope.of(context).unfocus();
+        Navigator.pop(context);
+      },
+      icon: Icon(CupertinoIcons.arrow_left),
+    ),
+    // 타이틀 위치
+    titleSpacing: 8,
+    scrolledUnderElevation: 0,
+    title: Row(
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 20,
+            color: Colors.white,
+            fontFamily: 'JUA',
+          ),
+        )
+      ],
+    ),
+  );
+}

@@ -53,7 +53,7 @@ AppBarTheme appBarTheme(bool isDarkMode) {
     iconTheme: IconThemeData(color: Colors.white),
     titleTextStyle: TextStyle(
         fontSize: 20.0,
-        color: !isDarkMode ? Colors.white : Colors.grey[400],
+        color: !isDarkMode ? Colors.white : Colors.grey[300],
         fontFamily: 'JUA',
         fontWeight: FontWeight.normal),
   );
@@ -109,7 +109,11 @@ ThemeData mTheme(bool isDarkMode) {
             primary: const Color(0xFF4D77B2), // 주요 색상
             secondary: const Color(0xFF5B6A95), // 보조 색상
           )
-        : ColorScheme.dark(),
+        : ColorScheme.dark(
+            primary: Colors.grey[300] as Color,
+            onPrimary: Colors.grey[700] as Color,
+            onSecondary: Colors.grey[300] as Color,
+          ),
     scaffoldBackgroundColor: !isDarkMode ? Colors.white : Colors.grey[900],
     textTheme: !isDarkMode ? textTheme() : darkTextTheme(),
     appBarTheme: appBarTheme(isDarkMode),
@@ -127,49 +131,49 @@ TextTheme darkTextTheme() {
     // 앱바 타이틀 화이트
     displayLarge: TextStyle(
         fontSize: 20.0,
-        color: Colors.grey[400],
+        color: Colors.grey[300],
         fontFamily: 'JUA',
         fontWeight: FontWeight.normal),
     // 탭바 라벨 타이틀 블루
     displayMedium: TextStyle(
-        fontSize: 14.8, color: Colors.grey[400], fontFamily: 'Pretendard-Bold'),
+        fontSize: 14.8, color: Colors.grey[300], fontFamily: 'Pretendard-Bold'),
     headlineLarge: TextStyle(
       fontFamily: 'Pretendard-Bold',
-      color: Colors.grey[400],
+      color: Colors.grey[300],
       fontSize: 22,
     ),
     // title... 블랙 두껍게
     titleLarge: TextStyle(
-        fontSize: 17.0, color: Colors.grey[400], fontFamily: 'Pretendard-Bold'),
+        fontSize: 17.0, color: Colors.grey[300], fontFamily: 'Pretendard-Bold'),
     titleMedium: TextStyle(
-        fontSize: 16.0, color: Colors.grey[400], fontFamily: 'Pretendard-Bold'),
+        fontSize: 16.0, color: Colors.grey[300], fontFamily: 'Pretendard-Bold'),
     titleSmall: TextStyle(
-        fontSize: 14.0, color: Colors.grey[400], fontFamily: 'Pretendard-Bold'),
+        fontSize: 14.0, color: Colors.grey[300], fontFamily: 'Pretendard-Bold'),
     // body... 블랙 기본얇기
     bodyLarge: TextStyle(
         fontSize: 16.0,
-        color: Colors.grey[400],
+        color: Colors.grey[300],
         fontFamily: 'Pretendard-Regular'),
     bodyMedium: TextStyle(
         fontSize: 14.0,
-        color: Colors.grey[400],
+        color: Colors.grey[300],
         fontFamily: 'Pretendard-Regular'),
     bodySmall: TextStyle(
         fontSize: 12.0,
-        color: Colors.grey[400],
+        color: Colors.grey[300],
         fontFamily: 'Pretendard-Regular'),
     // label... 그레이 기본얇기
     labelLarge: TextStyle(
         fontSize: 16.0,
-        color: Colors.grey[400],
+        color: Colors.grey[300],
         fontFamily: 'Pretendard-Regular'),
     labelMedium: TextStyle(
         fontSize: 13.0,
-        color: Colors.grey[400],
+        color: Colors.grey[300],
         fontFamily: 'Pretendard-Regular'),
     labelSmall: TextStyle(
         fontSize: 12.0,
-        color: Colors.grey[400],
+        color: Colors.grey[300],
         fontFamily: 'Pretendard-Regular'),
   );
 }

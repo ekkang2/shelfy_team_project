@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shelfy_team_project/data/gvm/darkmode_model.dart';
 
-import '../../../../_core/utils/logger.dart';
-
 class MyPage extends ConsumerWidget {
   const MyPage({super.key});
 
@@ -12,8 +10,6 @@ class MyPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     bool isDarkMode = ref.watch(darkModeNotiProvider);
     DarkModeNotifier darkModeNotifier = ref.read(darkModeNotiProvider.notifier);
-
-    logger.d(isDarkMode);
 
     bool isDarkMode2 = Theme.of(context).brightness == Brightness.dark;
     return SizedBox(
@@ -69,6 +65,12 @@ class MyPage extends ConsumerWidget {
                         darkModeNotifier.changeDarkMode();
                       },
                     ),
+                  ),
+                  buildMyListTile(
+                    icon: Icons.login,
+                    context: context,
+                    text: '로그인',
+                    url: '/login',
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
