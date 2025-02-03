@@ -125,22 +125,22 @@ class _WishBookDetailPageState extends State<WishBookDetailPage> {
                           SizedBox(height: 13),
                           Text(
                             '${widget.book.book.book_page.toString()}쪽',
-                            style: textTheme().labelMedium,
+                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                           SizedBox(height: 14),
                           Text(
                             widget.book.book.book_desc,
-                            style: textTheme().labelMedium,
+                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                           SizedBox(height: 14),
                           Text(
                             '${widget.book.book.book_author} · ${widget.book.book.book_publisher}',
-                            style: textTheme().labelMedium,
+                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                           SizedBox(height: 14),
                           Text(
                             'ISBN : ${widget.book.book.book_isbn}',
-                            style: textTheme().labelMedium,
+                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ],
                       ),
