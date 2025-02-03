@@ -68,6 +68,7 @@ AppBar SearchAppBar(BuildContext context) {
     actions: [
       IconButton(
         onPressed: () {
+          // TODO - 페이지 이동 임포트 빼기
           // 페이지 이동
           Navigator.push(
             context,
@@ -126,19 +127,16 @@ AppBar NoteAppBar(BuildContext context) {
           ),
         ),
         const SizedBox(width: 6),
-        Text(
-          '나의 기록',
-          style: TextStyle(fontSize: 20, color: Colors.white),
-        )
+        Text('나의 기록', style: Theme.of(context).textTheme.displayLarge)
       ],
     ),
     actions: [
       IconButton(
         onPressed: () {
-          // Navigator.of(context).pushNamed(
-          //     "/note"); // 현재 context에서 Navigator 객체를 가져와 '/test' 경로로 이동
-          Navigator.pushNamed(
-              context, '/note'); // '/test' 경로로 이동하여 NoteWritePage 화면을 표시
+          // 현재 위젯 트리(context)에서 Navigator 객체를 가져와서 '/note' 페이지로 이동
+          // 다중 Navigator가 있을 경우, 정확히 어떤 Navigator를 사용할지 명확하게 지정
+          // Navigator.of(context).pushNamed("/note");
+          Navigator.pushNamed(context, '/noteWrite'); // 단순한 페이지 이동
         },
         icon: Icon(
           CupertinoIcons.square_pencil,
@@ -174,54 +172,28 @@ AppBar MyAppbar(BuildContext context) {
   );
 }
 
-AppBar WriteAppBar(BuildContext context) {
+// 노트 페이지 공통 AppBar
+AppBar NoteCustomAppBar({
+  required BuildContext context,
+  required String title, // 타이틀 텍스트
+  String? actionText, // 우측 버튼 텍스트 (null 가능)
+  VoidCallback? onActionPressed, // 버튼 클릭 시 실행할 함수 (null 가능)
+}) {
   return AppBar(
-    // 타이틀 위치
     titleSpacing: 8,
-    // backgroundColor: const Color(0xFF4D77B2),
     scrolledUnderElevation: 0,
-    title: Center(
-      child: Text(
-        '글쓰기',
-        style: TextStyle(fontSize: 20),
-      ),
+    title: Row(
+      children: [
+        Text(title, style: Theme.of(context).textTheme.displayLarge), // 타이틀 표시
+      ],
     ),
     actions: [
-      TextButton(
-          onPressed: () {},
-          child: Text(
-            '완료',
-            style: Theme.of(context)
-                .textTheme
-                .displayLarge
-                ?.copyWith(color: Colors.white),
-          )),
-    ],
-  );
-}
-
-AppBar ViewAppBar(BuildContext context) {
-  return AppBar(
-    // 타이틀 위치
-    titleSpacing: 8,
-    // backgroundColor: const Color(0xFF4D77B2),
-    scrolledUnderElevation: 0,
-    title: Center(
-      child: Text(
-        '글보기',
-        style: TextStyle(fontSize: 20),
-      ),
-    ),
-    actions: [
-      TextButton(
-          onPressed: () {},
-          child: Text(
-            '수정',
-            style: Theme.of(context)
-                .textTheme
-                .displayLarge
-                ?.copyWith(color: Colors.white),
-          )),
+      if (actionText != null && onActionPressed != null) // 조건부로 TextButton 표시
+        TextButton(
+          onPressed: onActionPressed,
+          child:
+              Text(actionText, style: Theme.of(context).textTheme.displayLarge),
+        ),
     ],
   );
 }

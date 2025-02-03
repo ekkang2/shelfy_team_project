@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shelfy_team_project/ui/widgets/custom_appbar.dart';
 import '../../../../../data/model/book.dart'; // 기존 모델 파일 import
 
 class NoteAddBookPage extends StatefulWidget {
@@ -35,14 +36,9 @@ class _NoteAddBookPageState extends State<NoteAddBookPage>
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            '책 추가',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          // backgroundColor: const Color(0xFF4D77B2),
-          centerTitle: true,
-          elevation: 0,
+        appBar: NoteCustomAppBar(
+          context: context,
+          title: '책 추가', // 버튼 없음
         ),
         body: Column(
           children: [
@@ -138,9 +134,11 @@ class _NoteAddBookPageState extends State<NoteAddBookPage>
               style: const TextStyle(fontSize: 14),
               decoration: InputDecoration(
                 hintText: '책 제목이나 작가를 검색하세요',
-                hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
-                prefixIcon: Icon(Icons.search, color: Colors.grey), // 돋보기 아이콘
-                border: InputBorder.none, // 기본 테두리 제거
+                hintStyle: Theme.of(context).textTheme.labelLarge,
+                prefixIcon: Icon(Icons.search, color: Colors.grey),
+                // 돋보기 아이콘
+                border: InputBorder.none,
+                // 기본 테두리 제거
                 contentPadding: const EdgeInsets.symmetric(vertical: 10),
               ),
             ),
@@ -167,9 +165,16 @@ class _NoteAddBookPageState extends State<NoteAddBookPage>
         return GestureDetector(
           onTap: () {
             setState(() {
-              _selectedBookId =
-                  isSelected ? null : book.book_id; // 하나만 선택 가능하게 설정
+              _selectedBookId = isSelected ? null : book.book_id;
             });
+
+            if (!isSelected) {
+              Navigator.pop(context, {
+                'book_image': book.book_image,
+                'book_title': book.book_title,
+                'book_author': book.book_author,
+              });
+            }
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -200,22 +205,12 @@ class _NoteAddBookPageState extends State<NoteAddBookPage>
                     ],
                   ),
                 ),
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? Theme.of(context).primaryColorLight
-                        : Colors.grey[200], // 기본 배경색
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Icon(
-                    Icons.add,
-                    color: isSelected
-                        ? Theme.of(context).primaryColor
-                        : Colors.grey, // 기본 아이콘 색상
-                    size: 24,
-                  ),
+                Icon(
+                  Icons.add_box, // 아이콘만 표시
+                  color: isSelected
+                      ? Theme.of(context).primaryColor // 선택 시 주요 색상
+                      : Colors.grey, // 기본 색상
+                  size: 28,
                 ),
               ],
             ),

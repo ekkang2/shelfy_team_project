@@ -30,7 +30,7 @@ class NoteSection extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(icon, color: Color(0xFF4D77B2)),
+                Icon(icon, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8.0),
                 Text(
                   title,
