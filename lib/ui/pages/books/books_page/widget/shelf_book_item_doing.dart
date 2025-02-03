@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shelfy_team_project/ui/pages/books/books_page/book_detail_page.dart';
+import 'package:shelfy_team_project/ui/pages/books/book_detail_page/book_detail_page.dart';
 
 import '../../../../../data/model/book_record_doing.dart';
 

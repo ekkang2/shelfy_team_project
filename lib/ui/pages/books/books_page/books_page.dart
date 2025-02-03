@@ -45,16 +45,19 @@ class BooksPage extends ConsumerWidget {
   }
 
   TabBar _buildTabBar(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return TabBar(
       indicatorSize: TabBarIndicatorSize.tab,
-      indicator: const UnderlineTabIndicator(
+      indicator: UnderlineTabIndicator(
         borderSide: BorderSide(
-          color: Color(0xFF4D77B2),
+          color: !isDarkMode ? Color(0xFF4D77B2) : Colors.grey,
           width: 3.0,
         ),
       ),
-      labelColor: const Color(0xFF4D77B2),
-      unselectedLabelColor: Colors.black38,
+      dividerColor: Colors.transparent,
+      labelColor: !isDarkMode ? const Color(0xFF4D77B2) : Colors.grey[400],
+      unselectedLabelColor: !isDarkMode ? Colors.black38 : Colors.grey[600],
       labelStyle: Theme.of(context).textTheme.displayMedium,
       tabs: const [
         Tab(text: '끝맺은 책'),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shelfy_team_project/data/model/book_record_done.dart';
-import 'package:shelfy_team_project/ui/pages/books/books_page/done_book_detail_page.dart';
+import 'package:shelfy_team_project/ui/pages/books/book_detail_page/done_book_detail_page.dart';
 
 class ShelfBookItemDone extends StatelessWidget {
   final Widget widget;
