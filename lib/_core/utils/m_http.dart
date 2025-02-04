@@ -3,7 +3,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final baseUrl = 'http://192.168.0.115:8080';
+final baseUrl = 'http://10.0.2.2:8082';
 
 // 전역 변수 dio <--
 final dio = Dio(

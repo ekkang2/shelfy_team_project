@@ -17,10 +17,15 @@ class UserRepository {
     Map<String, dynamic> responseBody = response.data;
     logger.d(accessToken);
     logger.i(responseBody);
-    
+
     return (responseBody, accessToken);
   }
-// 회원가입 기능
+
+  // 회원가입 기능
+  Future<Map<String, dynamic>> insertUser(Map<String, dynamic> reqData) async {
+    Response response = await dio.post('/join', data: reqData);
+    return response.data;
+  }
 
 // 로그아웃 기능
 

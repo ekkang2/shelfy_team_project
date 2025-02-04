@@ -28,91 +28,89 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
     final mediaQuery = MediaQuery.of(context);
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.only(
-          bottom: mediaQuery.viewInsets.bottom,
-          left: 16,
-          right: 16,
-          top: 16,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            buildCheckBoxListTile(
-                title: '(필수) 서비스 이용약관 동의',
-                value: _isTerm1Agreed,
-                url: '/terms1',
+      child: SizedBox(
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              buildCheckBoxListTile(
+                  title: '(필수) 서비스 이용약관 동의',
+                  value: _isTerm1Agreed,
+                  url: '/terms1',
+                  onChanged: (newValue) {
+                    setState(() {
+                      _isTerm1Agreed = newValue ?? false;
+                    });
+                  }),
+              buildCheckBoxListTile(
+                title: '(필수) 개인정보 수집 및 이용 동의',
+                value: _isTerm2Agreed,
+                url: '/terms2',
                 onChanged: (newValue) {
                   setState(() {
-                    _isTerm1Agreed = newValue ?? false;
+                    _isTerm2Agreed = newValue ?? false;
                   });
-                }),
-            buildCheckBoxListTile(
-              title: '(필수) 개인정보 수집 및 이용 동의',
-              value: _isTerm2Agreed,
-              url: '/terms2',
-              onChanged: (newValue) {
-                setState(() {
-                  _isTerm2Agreed = newValue ?? false;
-                });
-              },
-            ),
-            Divider(color: Colors.grey[300]),
-            Text('최소 연령 확인', style: Theme.of(context).textTheme.titleMedium),
-            // radio 선택지 1 ( 만 14세 이상 )
-            buildRadioListTile(
-              title: '만 14세 이상',
-              valueText: 'over14',
-              groupValue: _selectedAge,
-              onChanged: (value) {
-                setState(() {
-                  _selectedAge = value;
-                });
-              },
-            ),
-            // radio 선택지 2 ( 만 14세 미만 )
-            buildRadioListTile(
-              title: '만 14세 미만',
-              valueText: 'under14',
-              groupValue: _selectedAge,
-              onChanged: (value) {
-                setState(() {
-                  _selectedAge = value;
-                });
-              },
-            ),
-            ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(
-                    !_isAllAgreed
-                        ? Colors.grey[500]
-                        : !isDarkMode
-                            ? const Color(0xFF4D77B2)
-                            : Colors.white,
-                  ),
-                  shape: WidgetStatePropertyAll(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5.0),
+                },
+              ),
+              Divider(color: Colors.grey[300]),
+              Text('최소 연령 확인', style: Theme.of(context).textTheme.titleMedium),
+              // radio 선택지 1 ( 만 14세 이상 )
+              buildRadioListTile(
+                title: '만 14세 이상',
+                valueText: 'over14',
+                groupValue: _selectedAge,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedAge = value;
+                  });
+                },
+              ),
+              // radio 선택지 2 ( 만 14세 미만 )
+              buildRadioListTile(
+                title: '만 14세 미만',
+                valueText: 'under14',
+                groupValue: _selectedAge,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedAge = value;
+                  });
+                },
+              ),
+              ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll(
+                      !_isAllAgreed
+                          ? Colors.grey[500]
+                          : !isDarkMode
+                              ? const Color(0xFF4D77B2)
+                              : Colors.white,
+                    ),
+                    shape: WidgetStatePropertyAll(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                    ),
+                    minimumSize: WidgetStatePropertyAll(
+                      Size(double.infinity, 35.0),
                     ),
                   ),
-                  minimumSize: WidgetStatePropertyAll(
-                    Size(double.infinity, 35.0),
-                  ),
-                ),
-                onPressed: _isAllAgreed
-                    ? () {
-                        // 모두 동의되었다면?
-                        Navigator.popAndPushNamed(context, '/join');
-                      }
-                    : null,
-                child: Text(
-                  '시작하기',
-                  style: TextStyle(
-                    color: !isDarkMode ? Colors.white : Colors.grey[800],
-                  ),
-                ))
-          ],
+                  onPressed: _isAllAgreed
+                      ? () {
+                          // 모두 동의되었다면?
+                          Navigator.pushNamed(context, '/join');
+                        }
+                      : null,
+                  child: Text(
+                    '시작하기',
+                    style: TextStyle(
+                      color: !isDarkMode ? Colors.white : Colors.grey[800],
+                    ),
+                  ))
+            ],
+          ),
         ),
       ),
     );
@@ -139,9 +137,30 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
     required onChanged,
   }) {
     return CheckboxListTile(
-      title: Text(title),
+      title: Row(
+        children: [
+          Expanded(
+            flex: 9,
+            child: Text(title),
+          ),
+          Expanded(
+            flex: 1,
+            child: IconButton(
+              highlightColor: Colors.transparent,
+              onPressed: () {
+                if (mounted) {
+                  Navigator.pushNamed(context, url);
+                }
+                return;
+              },
+              icon: Icon(Icons.keyboard_arrow_right),
+            ),
+          ),
+        ],
+      ),
       value: value,
       onChanged: onChanged,
+      controlAffinity: ListTileControlAffinity.leading,
     );
   }
 }

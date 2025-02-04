@@ -39,7 +39,7 @@ class CustomTextformfield extends StatelessWidget {
           },
           autofocus: false,
           decoration: InputDecoration(
-            hintText: '$title를 입력해주세요',
+            hintText: title,
             hintStyle: Theme.of(buildContext).textTheme.labelLarge,
             prefixIcon: Icon(
               iconData,
