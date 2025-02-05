@@ -18,8 +18,8 @@ class LoginPage extends ConsumerWidget {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     SessionVM sessionVM = ref.read(sessionProvider.notifier);
     SessionUser sessionUser = ref.watch(sessionProvider);
-    TextEditingController usernameController = TextEditingController();
-    TextEditingController passwordController = TextEditingController();
+    TextEditingController userUidController = TextEditingController();
+    TextEditingController userPwdController = TextEditingController();
 
     return SafeArea(
       child: Scaffold(
@@ -53,7 +53,7 @@ class LoginPage extends ConsumerWidget {
                             title: '아이디',
                             iconData: Icons.person,
                             obscureText: false,
-                            controller: usernameController,
+                            controller: userUidController,
                             isDarkMode: isDarkMode,
                             buildContext: context,
                           ),
@@ -62,7 +62,7 @@ class LoginPage extends ConsumerWidget {
                             title: '비밀번호',
                             iconData: Icons.lock,
                             obscureText: true,
-                            controller: passwordController,
+                            controller: userPwdController,
                             isDarkMode: isDarkMode,
                             buildContext: context,
                           ),
@@ -83,13 +83,13 @@ class LoginPage extends ConsumerWidget {
                             ),
                             onPressed: () {
                               // 아이디 controller 로 추출
-                              String username = usernameController.text.trim();
+                              String userUid = userUidController.text.trim();
                               // 비밀번호 controller 로 추출
-                              String password = usernameController.text.trim();
+                              String userPwd = userPwdController.text.trim();
                               // view-model 의 로그인 기능 호출
                               sessionVM.login(
-                                username: username,
-                                password: password,
+                                userUid: userUid,
+                                userPwd: userPwd,
                               );
                             },
                             child: Text(

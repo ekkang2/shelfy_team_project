@@ -6,8 +6,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shelfy_team_project/_core/utils/logger.dart';
 import 'package:shelfy_team_project/_core/utils/m_http.dart';
-import 'package:shelfy_team_project/data/repository/user_repository/user_repository.dart';
+import 'package:shelfy_team_project/data/repository/user_repository.dart';
 import 'package:shelfy_team_project/main.dart';
 
 import '../../../_core/utils/exception_handler.dart';
@@ -35,14 +36,14 @@ class SessionVM extends Notifier<SessionUser> {
    */
   Future<void> login({
     // 아이디
-    required String username,
+    required String userUid,
     // 비밀번호
-    required String password,
+    required String userPwd,
   }) async {
     try {
       final body = {
-        'username': username,
-        'password': password,
+        'userUid': userUid,
+        'userPwd': userPwd,
       };
       // 레코드 문법으로 2 가지 리턴 값이 존재함 ( body 와 token )
       final (resBody, accessToken) =
@@ -65,8 +66,13 @@ class SessionVM extends Notifier<SessionUser> {
         isLogined: true,
       );
 
+      logger.d(state);
+
       // 추후 dio를 통한 api 요청에 토큰을 포함시키기 위한 dio Option 수정
       dio.options.headers['Authorization'] = accessToken;
+
+      // 홈 화면으로 페이지 이동
+      Navigator.pushNamedAndRemoveUntil(mContext, '/', (route) => false);
 
       //
     } catch (e, stackTrace) {
