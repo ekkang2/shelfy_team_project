@@ -58,72 +58,75 @@ class _NoteStatsTabState extends State<NoteStatsTab>
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start, // 전체 좌측 정렬 유지
-      children: [
-        NoteTabBar(tabController: _tabController), // 커스텀 탭바 사용
-        Expanded(
-          // 남은 공간을 확장하여 활용
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              // 노트 리스트 화면
-              ListView(
-                shrinkWrap: true, // 리스트 크기 자동 조절 (터치 문제 해결)
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 28.0, vertical: 16.0), // 공통 패딩
-                children: [
-                  NoteSection(
-                    title: '기록 서랍',
-                    notes: noteDrawer,
-                    icon: Icons.bookmarks,
-                  ),
-                  const SizedBox(height: 16.0), // 섹션 간 간격
-                  NoteSection(
-                    title: '기록 조각',
-                    notes: _sortedNotes(noteFragments), // 정렬된 노트 리스트 사용
-                    // notes: noteFragments,
-                    icon: Icons.menu_book,
-                    trailing: PopupMenuButton<String>(
-                      onSelected: (value) {
-                        setState(() {
-                          isLatestFirst =
-                              (value == 'latest'); // 선택한 값에 따라 정렬 상태 변경
-                          noteDrawer.sort(_compareDates); // 노트 즉시 정렬
-                          noteFragments.sort(_compareDates);
-                        });
-                      },
-                      itemBuilder: (BuildContext context) => [
-                        const PopupMenuItem<String>(
-                          value: 'latest',
-                          child: Text('최신 순'),
-                        ),
-                        const PopupMenuItem<String>(
-                          value: 'oldest',
-                          child: Text('오래된 순'),
-                        ),
-                      ],
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            isLatestFirst ? '최신 순' : '오래된 순',
-                            style: const TextStyle(
-                                fontSize: 12, color: Colors.grey),
+    return Material(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start, // 전체 좌측 정렬 유지
+        children: [
+          NoteTabBar(tabController: _tabController), // 커스텀 탭바 사용
+          Expanded(
+            // 남은 공간을 확장하여 활용
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                // 노트 리스트 화면
+                ListView(
+                  shrinkWrap: true, // 리스트 크기 자동 조절 (터치 문제 해결)
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 28.0, vertical: 16.0), // 공통 패딩
+                  children: [
+                    NoteSection(
+                      title: '기록 서랍',
+                      notes: noteDrawer,
+                      icon: Icons.bookmarks,
+                    ),
+                    const SizedBox(height: 16.0), // 섹션 간 간격
+                    NoteSection(
+                      title: '기록 조각',
+                      notes: _sortedNotes(noteFragments), // 정렬된 노트 리스트 사용
+                      // notes: noteFragments,
+                      icon: Icons.menu_book,
+                      trailing: PopupMenuButton<String>(
+                        onSelected: (value) {
+                          setState(() {
+                            isLatestFirst =
+                                (value == 'latest'); // 선택한 값에 따라 정렬 상태 변경
+                            noteDrawer.sort(_compareDates); // 노트 즉시 정렬
+                            noteFragments.sort(_compareDates);
+                          });
+                        },
+                        itemBuilder: (BuildContext context) => [
+                          const PopupMenuItem<String>(
+                            value: 'latest',
+                            child: Text('최신 순'),
                           ),
-                          const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                          const PopupMenuItem<String>(
+                            value: 'oldest',
+                            child: Text('오래된 순'),
+                          ),
                         ],
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              isLatestFirst ? '최신 순' : '오래된 순',
+                              style: const TextStyle(
+                                  fontSize: 12, color: Colors.grey),
+                            ),
+                            const Icon(Icons.arrow_drop_down,
+                                color: Colors.grey),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              // 두 번째 탭: 통계 화면 (올바른 위치)
-              const NoteStatisticsPage(), // 새로운 통계 위젯 추가
-            ],
+                  ],
+                ),
+                // 두 번째 탭: 통계 화면 (올바른 위치)
+                const NoteStatisticsPage(), // 새로운 통계 위젯 추가
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

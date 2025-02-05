@@ -4,13 +4,18 @@ import 'package:shelfy_team_project/_core/constants/theme.dart';
 import 'package:shelfy_team_project/ui/pages/auth/join_page/join_page.dart';
 import 'package:shelfy_team_project/ui/pages/auth/login_page/login_page.dart';
 import 'package:shelfy_team_project/ui/pages/note/note_page/note_add_book.dart';
+import 'package:shelfy_team_project/ui/pages/note/note_page/note_page.dart';
 import 'package:shelfy_team_project/ui/pages/note/note_page/note_view_page.dart';
 import 'package:shelfy_team_project/ui/pages/note/note_page/note_write_page.dart';
+import 'package:intl/date_symbol_data_local.dart'; // 로케일 초기화 패키지 추가
 
 import 'data/gvm/darkmode_model.dart';
 import 'ui/pages/main_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // 비동기 초기화
+  await initializeDateFormatting(); // 모든 로케일 데이터 초기화 (ko_KR 포함)
+
   runApp(ProviderScope(child: const ShelfUI()));
 }
 
@@ -35,7 +40,8 @@ class ShelfUI extends ConsumerWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const MainScreen(),
-        // 노트 라우트
+        // Note 페이지 목록
+        '/noteList': (context) => NotePage(),
         '/noteWrite': (context) => NoteWritePage(),
         '/noteView': (context) => const NoteViewPage(),
         '/noteAddBook': (context) => const NoteAddBookPage(),
