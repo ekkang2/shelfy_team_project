@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../../../data/gvm/note_gvm.dart'; // ViewModel
 import '../../../../../data/model/note_model.dart';
 import '../../../../../providers/book_provider.dart';
+import '../../../main_screen.dart';
 import 'note_book_Info.dart';
 import '../../../../../ui/widgets/common_snackbar.dart';
 import '../../../../../ui/widgets/common_dialog.dart'; // 다이얼로그 컴포넌트
@@ -55,18 +56,63 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
   void deleteBook() => ref.read(bookWriteProvider.notifier).state = null;
 
   // ✅ 다이얼로그로 글쓰기 완료 처리
+  // void _handleNoteCompletion(BuildContext context) {
+  //   showConfirmationDialog(
+  //     context: context,
+  //     title: '노트 작성을 완료하시겠습니까?',
+  //     confirmText: '확인',
+  //     onConfirm: _submitNoteViaViewModel, // 다이얼로그 확인 시 ViewModel 호출
+  //     snackBarMessage: '',
+  //   );
+  // }
   void _handleNoteCompletion(BuildContext context) {
     showConfirmationDialog(
       context: context,
       title: '노트 작성을 완료하시겠습니까?',
       confirmText: '확인',
-      onConfirm: _submitNoteViaViewModel, // 다이얼로그 확인 시 ViewModel 호출
+      onConfirm: () async {
+        // ✅ 다이얼로그 닫기
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+
+        // ✅ 키보드 닫기
+        FocusScope.of(context).unfocus();
+        await Future.delayed(const Duration(milliseconds: 100)); // 애니메이션 안정화
+
+        try {
+          await _submitNoteViaViewModel();
+          print('✅ 노트 저장 성공!');
+
+          // ✅ 스낵바 표시
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('노트가 성공적으로 등록되었습니다!')),
+          );
+
+          // ✅ UI 프레임 이후 실행하여 네비게이션 충돌 방지
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => MainScreen(initialIndex: 3)),
+                (route) => false, // 🔥 이전 스택 삭제 (뒤로가기 시 작성 페이지로 안 돌아오게)
+              );
+            }
+          });
+        } catch (e) {
+          print('❌ 노트 저장 실패: $e');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('노트 저장 실패: $e')),
+          );
+        }
+      },
       snackBarMessage: '',
     );
   }
 
   // ✅ ViewModel을 통한 API 요청
-  void _submitNoteViaViewModel() {
+  Future<void> _submitNoteViaViewModel() async {
     final noteViewModel = ref.read(noteViewModelProvider.notifier);
     final note = Note(
       title: widget.titleController.text.trim(),
@@ -92,13 +138,7 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
           CommonSnackbar.success(context, '노트가 성공적으로 등록되었습니다!');
 
           // TODO - initState로 새로고침 (뒤로 갈 때마다 새로고침)
-          // Future.delayed(const Duration(seconds: 1), () {
-          //   Navigator.pushAndRemoveUntil(
-          //     context,
-          //     MaterialPageRoute(builder: (context) => const MainScreen(initialIndex: 3)),
-          //         (route) => false,
-          //   );
-          // });
+          // ✅ 뒤로가기는 NoteWritePage에서 처리
         },
         loading: () {
           showDialog(
@@ -192,7 +232,9 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: ElevatedButton(
-        onPressed: isFormValid ? () => _handleNoteCompletion(context) : null,
+        onPressed: isFormValid
+            ? () => _handleNoteCompletion(context)
+            : null, // ✅ 수정 완료        style: ElevatedButton.styleFrom(
         style: ElevatedButton.styleFrom(
           backgroundColor:
               isFormValid ? Theme.of(context).colorScheme.primary : Colors.grey,

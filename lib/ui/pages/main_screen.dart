@@ -10,7 +10,8 @@ import 'note/note_page/note_page.dart';
 import 'search/search_page/search_page.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final int initialIndex; // ✅ 초기 인덱스 추가 (기본값 0)
+  const MainScreen({super.key, this.initialIndex = 0}); // ✅ 초기 인덱스 값 설정
 
   @override
   State<MainScreen> createState() => _MainPageState();
@@ -18,6 +19,12 @@ class MainScreen extends StatefulWidget {
 
 class _MainPageState extends State<MainScreen> {
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex; // ✅ 초기 인덱스 적용
+  }
 
   @override
   Widget build(BuildContext context) {
