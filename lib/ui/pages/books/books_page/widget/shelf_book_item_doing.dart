@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:shelfy_team_project/ui/pages/books/book_detail_page/book_detail_page.dart';
+import 'package:shelfy_team_project/ui/pages/books/book_detail_page/doing_detail_page.dart';
 
 import '../../../../../data/model/book_record_doing.dart';
+/*
+ TODO
+ 프로그래스 바 애니메이션 효과
+ */
 
 class ShelfBookItemDoing extends StatelessWidget {
-  final Widget widget;
   final BookRecordDoing doing;
 
-  const ShelfBookItemDoing(
-      {required this.doing, required this.widget, super.key});
+  const ShelfBookItemDoing({required this.doing, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +18,7 @@ class ShelfBookItemDoing extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => BookDetailPage(book: doing)),
+          MaterialPageRoute(builder: (context) => DoingDetailPage(book: doing)),
         );
       },
       child: Container(
@@ -59,7 +61,47 @@ class ShelfBookItemDoing extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   SizedBox(height: 4),
-                  widget,
+                  Row(
+                    children: [
+                      Text(
+                          '${doing.formatSingleDateByKor(doing.startDate)}에 읽기 시작했어요',
+                          style: Theme.of(context).textTheme.labelMedium),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        height: 5,
+                        width: 270,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Color(0xFF6A9BE0),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        height: 5,
+                        width: doing.progressPages() * 2.7,
+                      ),
+                    ],
+                  ),
+                  Container(
+                    width: 270,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('${doing.ceilProgressPages()}%',
+                            style: Theme.of(context).textTheme.labelSmall),
+                        Text(
+                            '${doing.currentPage}/${doing.book.book_page} page',
+                            style: Theme.of(context).textTheme.labelSmall),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ],

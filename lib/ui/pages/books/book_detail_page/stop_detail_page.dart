@@ -8,24 +8,24 @@ import 'package:shelfy_team_project/data/model/book_record_done.dart';
 
 import '../../../widgets/custom_record_label.dart';
 
-class StopBookDetailPage extends StatefulWidget {
-  final BookRecordStop book;
+class StopDetailPage extends StatefulWidget {
+  final BookRecordStop stop;
 
-  const StopBookDetailPage({required this.book, super.key});
+  const StopDetailPage({required this.stop, super.key});
 
   @override
-  _StopBookDetailPageState createState() => _StopBookDetailPageState();
+  _StopDetailPageState createState() => _StopDetailPageState();
 }
 
-class _StopBookDetailPageState extends State<StopBookDetailPage> {
+class _StopDetailPageState extends State<StopDetailPage> {
   late DateTime startDate;
   late DateTime endDate;
 
   @override
   void initState() {
     super.initState();
-    startDate = widget.book.startDate; // 초기 시작일 설정
-    endDate = widget.book.endDate ?? DateTime.now(); // 초기 종료일 설정 (null이면 오늘 날짜)
+    startDate = widget.stop.startDate; // 초기 시작일 설정
+    endDate = widget.stop.endDate ?? DateTime.now(); // 초기 종료일 설정 (null이면 오늘 날짜)
   }
 
   @override
@@ -46,7 +46,7 @@ class _StopBookDetailPageState extends State<StopBookDetailPage> {
                   bottomRight: Radius.circular(10),
                 ),
                 child: Image.network(
-                  '${widget.book.book.book_image}',
+                  '${widget.stop.book.book_image}',
                   fit: BoxFit.fill,
                   width: 150,
                 ),
@@ -55,15 +55,15 @@ class _StopBookDetailPageState extends State<StopBookDetailPage> {
             const SizedBox(height: 5),
             Container(
                 width: double.infinity,
-                child: customStarRating(widget.book.rating, 1, 25)),
+                child: customStarRating(widget.stop.rating, 1, 25)),
             const SizedBox(height: 10),
             Text(
-              '${widget.book.book.book_title}',
+              '${widget.stop.book.book_title}',
               style: Theme.of(context).textTheme.headlineLarge,
             ),
             const SizedBox(height: 10),
             Text(
-              '${widget.book.book.book_author} · ${widget.book.book.book_publisher}',
+              '${widget.stop.book.book_author} · ${widget.stop.book.book_publisher}',
               style: Theme.of(context).textTheme.labelLarge,
             ),
             const SizedBox(height: 10),
@@ -79,7 +79,7 @@ class _StopBookDetailPageState extends State<StopBookDetailPage> {
                     readPeriod(),
                     const SizedBox(height: 20),
                     Visibility(
-                      visible: widget.book.comment != null,
+                      visible: widget.stop.comment != null,
                       child: Column(
                         children: [
                           Row(
@@ -99,7 +99,7 @@ class _StopBookDetailPageState extends State<StopBookDetailPage> {
                               borderRadius: BorderRadius.circular(3),
                             ),
                             child: Text(
-                              '\"${widget.book.comment}\"',
+                              '\"${widget.stop.comment}\"',
                               style: Theme.of(context).textTheme.bodyLarge,
                             ),
                           ),
@@ -140,7 +140,7 @@ class _StopBookDetailPageState extends State<StopBookDetailPage> {
                 size: 20,
               ),
               const SizedBox(width: 4),
-              Text('${widget.book.book.book_page} 페이지에서 쉬고 있어요'),
+              Text('${widget.stop.book.book_page} 페이지에서 쉬고 있어요'),
             ],
           ),
           const SizedBox(height: 25),

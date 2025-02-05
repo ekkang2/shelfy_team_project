@@ -6,16 +6,16 @@ import 'package:shelfy_team_project/data/model/book_record_done.dart';
 
 import '../../../widgets/custom_record_label.dart';
 
-class DoneBookDetailPage extends StatefulWidget {
+class DoneDetailPage extends StatefulWidget {
   final BookRecordDone book;
 
-  const DoneBookDetailPage({required this.book, super.key});
+  const DoneDetailPage({required this.book, super.key});
 
   @override
-  _DoneBookDetailPageState createState() => _DoneBookDetailPageState();
+  _DoneDetailPageState createState() => _DoneDetailPageState();
 }
 
-class _DoneBookDetailPageState extends State<DoneBookDetailPage> {
+class _DoneDetailPageState extends State<DoneDetailPage> {
   late DateTime startDate;
   late DateTime endDate;
 
@@ -89,7 +89,7 @@ class _DoneBookDetailPageState extends State<DoneBookDetailPage> {
                           Row(
                             children: [
                               Icon(FontAwesomeIcons.penClip,
-                                  size: 15, color: Color(0xFF4D77B2)),
+                                  size: 15, color: const Color(0xFF4D77B2)),
                               const SizedBox(width: 5),
                               Text('나의 한 줄'),
                             ],

@@ -3,7 +3,7 @@ import 'package:shelfy_team_project/data/gvm/stop_view_model.dart';
 import 'package:shelfy_team_project/data/model/book_record_stop.dart';
 
 import '../../../../widgets/custom_star_rating.dart';
-import '../stop_book_detail_page.dart';
+import '../../book_detail_page/stop_detail_page.dart';
 
 class ShelfBookItemStop extends StatelessWidget {
   final BookRecordStop book;
@@ -17,8 +17,7 @@ class ShelfBookItemStop extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (context) => StopBookDetailPage(book: book)),
+          MaterialPageRoute(builder: (context) => StopDetailPage(stop: book)),
         );
       },
       child: Container(

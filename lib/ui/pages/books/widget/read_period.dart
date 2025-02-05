@@ -3,12 +3,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 class ReadPeriod extends StatefulWidget {
-  final DateTime startDate;
+  final DateTime? startDate;
   final DateTime? endDate;
   final bool isDarkMode;
 
   ReadPeriod({
-    required this.startDate,
+    this.startDate,
     this.endDate,
     required this.isDarkMode,
     super.key,
@@ -25,7 +25,7 @@ class _ReadPeriodState extends State<ReadPeriod> {
   @override
   void initState() {
     super.initState();
-    startDate = widget.startDate;
+    startDate = widget.startDate ?? DateTime.now();
     endDate = widget.endDate; // 초기 종료일 설정
   }
 

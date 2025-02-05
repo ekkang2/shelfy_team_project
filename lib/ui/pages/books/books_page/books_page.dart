@@ -11,7 +11,6 @@ import '../../../../data/gvm/wish_view_model.dart';
 import 'widget/shelf_book_item_doing.dart';
 import 'widget/shelf_book_item_done.dart';
 import 'widget/shelf_book_item_wish.dart';
-import 'widget/shelf_status_widget.dart';
 
 class BooksPage extends ConsumerWidget {
   const BooksPage({super.key});
@@ -83,8 +82,7 @@ class BooksPage extends ConsumerWidget {
         ListView.builder(
           itemBuilder: (context, index) {
             final done = doneList[index];
-            return ShelfBookItemDone(
-                done: done, widget: DoneWidget(done, doneNoti, context));
+            return ShelfBookItemDone(done: done);
           },
           itemCount: doneList.length,
         ),
@@ -94,8 +92,6 @@ class BooksPage extends ConsumerWidget {
             final doing = doingList[index];
             return ShelfBookItemDoing(
               doing: doing,
-              widget: doingWidget(
-                  doing, doingNotifier, context), // 여기에 창고에서 프로그래스 함수 호출
             );
           },
           itemCount: doingList.length,

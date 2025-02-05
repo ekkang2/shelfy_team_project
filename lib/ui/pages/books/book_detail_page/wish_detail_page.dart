@@ -7,16 +7,16 @@ import '../../../../data/model/book_record_wish.dart';
 import '../../../widgets/custom_record_label.dart';
 import '../../../widgets/custom_star_rating.dart';
 
-class WishBookDetailPage extends StatefulWidget {
-  final BookRecordWish book;
+class WishDetailPage extends StatefulWidget {
+  final BookRecordWish wish;
 
-  const WishBookDetailPage({required this.book, super.key});
+  const WishDetailPage({required this.wish, super.key});
 
   @override
-  _WishBookDetailPageState createState() => _WishBookDetailPageState();
+  _WishDetailPageState createState() => _WishDetailPageState();
 }
 
-class _WishBookDetailPageState extends State<WishBookDetailPage> {
+class _WishDetailPageState extends State<WishDetailPage> {
   @override
   void initState() {
     super.initState();
@@ -45,7 +45,7 @@ class _WishBookDetailPageState extends State<WishBookDetailPage> {
                   bottomRight: Radius.circular(10),
                 ),
                 child: Image.network(
-                  '${widget.book.book.book_image}',
+                  '${widget.wish.book.book_image}',
                   fit: BoxFit.fill,
                   width: 150,
                 ),
@@ -54,15 +54,15 @@ class _WishBookDetailPageState extends State<WishBookDetailPage> {
             const SizedBox(height: 5),
             Container(
                 width: double.infinity,
-                child: customStarRating(widget.book.rating, 0, 25)),
+                child: customStarRating(widget.wish.rating, 0, 25)),
             const SizedBox(height: 10),
             Text(
-              '${widget.book.book.book_title}',
+              '${widget.wish.book.book_title}',
               style: Theme.of(context).textTheme.headlineLarge,
             ),
             const SizedBox(height: 10),
             Text(
-              '${widget.book.book.book_author} · ${widget.book.book.book_publisher}',
+              '${widget.wish.book.book_author} · ${widget.wish.book.book_publisher}',
               style: Theme.of(context).textTheme.labelLarge,
             ),
             const SizedBox(height: 10),
@@ -77,7 +77,7 @@ class _WishBookDetailPageState extends State<WishBookDetailPage> {
                   children: [
                     const SizedBox(height: 20),
                     Visibility(
-                      visible: widget.book.comment != null,
+                      visible: widget.wish.comment != null,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
@@ -98,12 +98,12 @@ class _WishBookDetailPageState extends State<WishBookDetailPage> {
                               borderRadius: BorderRadius.circular(3),
                             ),
                             child: Text(
-                              '\"${widget.book.comment}\"',
+                              '\"${widget.wish.comment}\"',
                               style: Theme.of(context).textTheme.bodyLarge,
                             ),
                           ),
                           Text(
-                            '${formatDate(widget.book.startDate)}', // 날짜 포맷 적용
+                            '${formatDate(widget.wish.startDate)}', // 날짜 포맷 적용
                             style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ],
@@ -124,22 +124,22 @@ class _WishBookDetailPageState extends State<WishBookDetailPage> {
                           ),
                           SizedBox(height: 13),
                           Text(
-                            '${widget.book.book.book_page.toString()}쪽',
+                            '${widget.wish.book.book_page.toString()}쪽',
                             style: Theme.of(context).textTheme.labelMedium,
                           ),
                           SizedBox(height: 14),
                           Text(
-                            widget.book.book.book_desc,
+                            widget.wish.book.book_desc,
                             style: Theme.of(context).textTheme.labelMedium,
                           ),
                           SizedBox(height: 14),
                           Text(
-                            '${widget.book.book.book_author} · ${widget.book.book.book_publisher}',
+                            '${widget.wish.book.book_author} · ${widget.wish.book.book_publisher}',
                             style: Theme.of(context).textTheme.labelMedium,
                           ),
                           SizedBox(height: 14),
                           Text(
-                            'ISBN : ${widget.book.book.book_isbn}',
+                            'ISBN : ${widget.wish.book.book_isbn}',
                             style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ],

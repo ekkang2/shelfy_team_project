@@ -3,23 +3,23 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shelfy_team_project/ui/widgets/custom_appbar.dart';
 import 'package:shelfy_team_project/ui/widgets/custom_interactive_star_rating.dart';
 import 'package:shelfy_team_project/data/model/book_record_doing.dart';
-import 'package:shelfy_team_project/ui/pages/books/book_detail_page/widget/book_detail_progress_bar.dart';
+import 'package:shelfy_team_project/ui/pages/books/widget/book_detail_progress_bar.dart';
 
 import '../../../widgets/book_record_state.dart';
 import '../../../widgets/custom_record_label.dart';
 import '../../../widgets/custom_star_rating.dart';
 import '../widget/read_period.dart';
 
-class BookDetailPage extends StatefulWidget {
+class DoingDetailPage extends StatefulWidget {
   final BookRecordDoing book;
 
-  const BookDetailPage({required this.book, super.key});
+  const DoingDetailPage({required this.book, super.key});
 
   @override
-  _BookDetailPageState createState() => _BookDetailPageState();
+  _DoingDetailPageState createState() => _DoingDetailPageState();
 }
 
-class _BookDetailPageState extends State<BookDetailPage> {
+class _DoingDetailPageState extends State<DoingDetailPage> {
   late DateTime startDate;
 
   @override
@@ -73,7 +73,9 @@ class _BookDetailPageState extends State<BookDetailPage> {
             Expanded(
               child: ListView(
                 children: [
-                  AdjustableProgressBar(bookRecord: widget.book),
+                  AdjustableProgressBar(
+                      totalPage: widget.book.book.book_page,
+                      currentPage: widget.book.currentPage),
                   const SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -126,7 +128,10 @@ class _BookDetailPageState extends State<BookDetailPage> {
                             return Container(
                               height: MediaQuery.of(context).size.height *
                                   0.51, // 50% 크기로 설정
-                              child: BookRecordState(book: widget.book),
+                              child: BookRecordState(
+                                book: widget.book.book,
+                                index: 0,
+                              ),
                             );
                           },
                         );
@@ -137,9 +142,9 @@ class _BookDetailPageState extends State<BookDetailPage> {
                       ),
                       style: ButtonStyle(
                         backgroundColor:
-                            MaterialStatePropertyAll(Color(0xFF4D77B2)),
-                        fixedSize: MaterialStatePropertyAll(Size(300, 50)),
-                        shape: MaterialStatePropertyAll(
+                            WidgetStatePropertyAll(const Color(0xFF4D77B2)),
+                        fixedSize: WidgetStatePropertyAll(Size(300, 50)),
+                        shape: WidgetStatePropertyAll(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
                           ),

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:shelfy_team_project/data/model/book_record_done.dart';
-import 'package:shelfy_team_project/ui/pages/books/book_detail_page/done_book_detail_page.dart';
+import 'package:shelfy_team_project/ui/pages/books/book_detail_page/done_detail_page.dart';
+
+import '../../../../widgets/custom_star_rating.dart';
 
 class ShelfBookItemDone extends StatelessWidget {
-  final Widget widget;
   final BookRecordDone done;
 
-  const ShelfBookItemDone(
-      {required this.done, required this.widget, super.key});
+  const ShelfBookItemDone({required this.done, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +15,7 @@ class ShelfBookItemDone extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (context) => DoneBookDetailPage(book: done)),
+          MaterialPageRoute(builder: (context) => DoneDetailPage(book: done)),
         );
       },
       child: Container(
@@ -59,7 +58,41 @@ class ShelfBookItemDone extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   SizedBox(height: 4),
-                  widget,
+                  Row(
+                    children: [
+                      Text('${done.book.book_author} · ',
+                          style: Theme.of(context).textTheme.labelMedium),
+                      Text('${done.book.book_publisher}',
+                          style: Theme.of(context).textTheme.labelMedium),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    width: 270,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        customStarRating(done.rating, 1, 18),
+                        Visibility(
+                          visible: done.comment != null,
+                          child: Icon(
+                            Icons.comment,
+                            size: 18,
+                            color: Colors.grey[350],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 270,
+                    alignment: Alignment.bottomRight,
+                    child: Text(
+                      '${done.formatSingleDate(done.startDate)} ~'
+                      ' ${done.formatSingleDate(done.endDate)}',
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                  ),
                 ],
               ),
             ],

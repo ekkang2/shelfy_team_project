@@ -3,7 +3,7 @@ import 'package:shelfy_team_project/data/gvm/wish_view_model.dart';
 import 'package:shelfy_team_project/data/model/book_record_wish.dart';
 
 import '../../../../widgets/custom_star_rating.dart';
-import '../../book_detail_page/wish_book_detail_page.dart';
+import '../../book_detail_page/wish_detail_page.dart';
 
 class ShelfBookItemWish extends StatelessWidget {
   final BookRecordWish book;
@@ -17,8 +17,7 @@ class ShelfBookItemWish extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (context) => WishBookDetailPage(book: book)),
+          MaterialPageRoute(builder: (context) => WishDetailPage(wish: book)),
         );
       },
       child: Container(

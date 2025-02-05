@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:shelfy_team_project/data/model/book_record_doing.dart';
-import 'package:shelfy_team_project/ui/pages/books/book_detail_page/widget/book_detail_progress_bar.dart';
-import 'package:shelfy_team_project/ui/pages/books/widget/read_period.dart';
 
+import '../../data/model/book.dart';
+import '../pages/books/widget/book_detail_progress_bar.dart';
+import '../pages/books/widget/read_period.dart';
 import 'custom_interactive_star_rating.dart';
 
 class BookRecordState extends StatefulWidget {
-  BookRecordDoing book;
+  int index;
+  Book book;
+  Record? record;
 
-  BookRecordState({required this.book});
+  BookRecordState({required this.book, required this.index, this.record});
 
   @override
   _BookRecordStateState createState() => _BookRecordStateState();
@@ -21,7 +23,8 @@ class _BookRecordStateState extends State<BookRecordState>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController =
+        TabController(length: 4, vsync: this, initialIndex: widget.index);
   }
 
   @override
@@ -70,54 +73,23 @@ class _BookRecordStateState extends State<BookRecordState>
             controller: _tabController,
             children: [
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: _buildDoneState(isDarkMode),
               ),
               Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Stack(children: [
-                  ListView(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        alignment: Alignment.center,
-                        child: Column(
-                          children: [
-                            Text(
-                              '${widget.book.book.book_title}을 읽고 있어요',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontFamily: 'JUA',
-                                  color: !isDarkMode
-                                      ? const Color(0xFF4D77B2)
-                                      : Colors.grey[350]),
-                            ),
-                            Text(
-                              '현재 페이지를 기록해 볼까요?',
-                              style: Theme.of(context).textTheme.labelMedium,
-                            )
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      AdjustableProgressBar(bookRecord: widget.book),
-                      const SizedBox(height: 20),
-                      Text(
-                          '${dateCalculation(widget.book.startDate)}일째 읽고있어요.'),
-                      ReadPeriod(
-                          startDate: widget.book.startDate,
-                          isDarkMode: isDarkMode),
-                    ],
-                  ),
-                  _buildSaveButton(isDarkMode, '여정이 끝났어요'),
-                ]),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: _buildDoingState(isDarkMode),
               ),
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: _buildWishState(isDarkMode),
               ),
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: _buildStopState(isDarkMode),
               ),
             ],
@@ -130,91 +102,16 @@ class _BookRecordStateState extends State<BookRecordState>
   Widget _buildDoneState(bool isDarkMode) {
     final ScrollController _scrollController =
         ScrollController(); // 스크롤 컨트롤러 추가
-    return Stack(
-      children: [
-        ListView(
-          children: [
-            Container(
-              width: double.infinity,
-              alignment: Alignment.center,
-              child: Column(
-                children: [
-                  Text(
-                    '여정을 완료하셨네요!',
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontFamily: 'JUA',
-                        color: !isDarkMode
-                            ? const Color(0xFF4D77B2)
-                            : Colors.grey[350]),
-                  ),
-                  Text(
-                    '남은 여운을 별점으로 기록해 볼까요?',
-                    style: Theme.of(context).textTheme.labelMedium,
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(height: 15),
-            InteractiveStarRating(
-                type: 1, size: 25, onRatingChanged: (newRating) {}),
-            const SizedBox(height: 20),
-            Text(
-              '독서기간',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            ReadPeriod(
-              startDate: DateTime.now(),
-              isDarkMode: isDarkMode,
-            ),
-            const SizedBox(height: 15),
-            Text(
-              '한줄평',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            SizedBox(
-              height: 50, // 높이 조정
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: !isDarkMode ? Colors.grey[100] : Colors.grey[900],
-                ),
-                child: Scrollbar(
-                  controller: _scrollController,
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: '이번 여정은 어떠셨나요?',
-                        hintStyle: Theme.of(context).textTheme.labelMedium,
-                        border: InputBorder.none,
-                      ),
-                      maxLines: null, // 여러 줄 입력 가능
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 60),
-          ],
-        ),
-        _buildSaveButton(isDarkMode, '저장')
-      ],
-    );
-  }
-
-  Widget _buildWishState(bool isDarkMode) {
-    final ScrollController _scrollController =
-        ScrollController(); // 스크롤 컨트롤러 추가
-    return Stack(
+    return ListView(
       children: [
         Container(
           width: double.infinity,
+          alignment: Alignment.center,
           child: Column(
             children: [
+              const SizedBox(height: 10),
               Text(
-                '이 책이 궁금하군요!',
+                '여정을 완료하셨네요!',
                 style: TextStyle(
                     fontSize: 20,
                     fontFamily: 'JUA',
@@ -223,48 +120,161 @@ class _BookRecordStateState extends State<BookRecordState>
                         : Colors.grey[350]),
               ),
               Text(
-                '기대지수와 기대평을 남겨볼까요?',
+                '남은 여운을 별점으로 기록해 볼까요?',
                 style: Theme.of(context).textTheme.labelMedium,
-              ),
-              const SizedBox(height: 20),
-              InteractiveStarRating(
-                type: 2,
-                size: 25,
-                onRatingChanged: (newRating) {},
-              ),
-              const SizedBox(height: 20),
-              Text(
-                '기대평',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              SizedBox(
-                height: 50, // 높이 조정
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: !isDarkMode ? Colors.grey[100] : Colors.grey[900],
+              )
+            ],
+          ),
+        ),
+        const SizedBox(height: 15),
+        InteractiveStarRating(
+            type: 1, size: 25, onRatingChanged: (newRating) {}),
+        const SizedBox(height: 20),
+        Text(
+          '독서기간',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        ReadPeriod(
+          startDate: DateTime.now(),
+          isDarkMode: isDarkMode,
+        ),
+        const SizedBox(height: 15),
+        Text(
+          '한줄평',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        SizedBox(
+          height: 50, // 높이 조정
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: !isDarkMode ? Colors.grey[100] : Colors.grey[900],
+            ),
+            child: Scrollbar(
+              controller: _scrollController,
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: '이번 여정은 어떠셨나요?',
+                    hintStyle: Theme.of(context).textTheme.labelMedium,
+                    border: InputBorder.none,
                   ),
-                  child: Scrollbar(
-                    controller: _scrollController,
-                    child: SingleChildScrollView(
-                      controller: _scrollController,
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: '이번 여정은 어떠셨나요?',
-                          hintStyle: Theme.of(context).textTheme.labelMedium,
-                          border: InputBorder.none,
-                        ),
-                        maxLines: null, // 여러 줄 입력 가능
-                      ),
+                  maxLines: null, // 여러 줄 입력 가능
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        _buildSaveButton(isDarkMode, '저장')
+      ],
+    );
+  }
+
+  Widget _buildDoingState(bool isDarkMode) {
+    return ListView(
+      children: [
+        Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          child: Column(
+            children: [
+              const SizedBox(height: 15),
+              Text(
+                '${widget.book.book_title}을 읽고 있어요',
+                style: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'JUA',
+                    color: !isDarkMode
+                        ? const Color(0xFF4D77B2)
+                        : Colors.grey[350]),
+              ),
+              Text(
+                '현재 페이지를 기록해 볼까요?',
+                style: Theme.of(context).textTheme.labelMedium,
+              )
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        AdjustableProgressBar(totalPage: widget.book.book_page, currentPage: 0),
+        const SizedBox(height: 20),
+        Text(
+            // '${dateCalculation(widget.book.startDate)}'
+            '일째 읽고있어요.'),
+        ReadPeriod(
+          startDate: DateTime.now(),
+          isDarkMode: isDarkMode,
+        ),
+        const SizedBox(height: 20),
+        _buildSaveButton(isDarkMode, '저장'),
+      ],
+    );
+  }
+
+  Widget _buildWishState(bool isDarkMode) {
+    final ScrollController _scrollController =
+        ScrollController(); // 스크롤 컨트롤러 추가
+    return Container(
+      width: double.infinity,
+      child: ListView(
+        children: [
+          const SizedBox(height: 15),
+          Text(
+            '이 책이 궁금하군요!',
+            style: TextStyle(
+                fontSize: 20,
+                fontFamily: 'JUA',
+                color:
+                    !isDarkMode ? const Color(0xFF4D77B2) : Colors.grey[350]),
+            textAlign: TextAlign.center,
+          ),
+          Text(
+            '기대지수와 기대평을 남겨볼까요?',
+            style: Theme.of(context).textTheme.labelMedium,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
+          InteractiveStarRating(
+            type: 2,
+            size: 25,
+            onRatingChanged: (newRating) {},
+          ),
+          const SizedBox(height: 20),
+          Text(
+            '기대평',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          SizedBox(
+            height: 50, // 높이 조정
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: !isDarkMode ? Colors.grey[100] : Colors.grey[900],
+              ),
+              child: Scrollbar(
+                controller: _scrollController,
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: '이번 여정은 어떠셨나요?',
+                      hintStyle: Theme.of(context).textTheme.labelMedium,
+                      border: InputBorder.none,
                     ),
+                    maxLines: null, // 여러 줄 입력 가능
                   ),
                 ),
               ),
-            ],
+            ),
           ),
-        )
-      ],
+          const SizedBox(height: 10),
+          _buildSaveButton(isDarkMode, '저장')
+        ],
+      ),
     );
   }
 
@@ -272,93 +282,89 @@ class _BookRecordStateState extends State<BookRecordState>
     final TextEditingController _pageController = TextEditingController();
     final ScrollController _scrollController = ScrollController();
 
-    return Stack(
+    return ListView(
       children: [
-        ListView(
+        Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
+              Text(
+                '멈춘 페이지도 하나의 기록',
+                style: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'JUA',
+                    color: !isDarkMode
+                        ? const Color(0xFF4D77B2)
+                        : Colors.grey[350]),
+              ),
+              Text(
+                '이유를 남겨두면 돌아올 때 도움이 될 거예요',
+                style: Theme.of(context).textTheme.labelMedium,
+              )
+            ],
+          ),
+        ),
+        const SizedBox(height: 15),
+        InteractiveStarRating(
+            type: 1, size: 25, onRatingChanged: (newRating) {}),
+
+        const SizedBox(height: 20),
+
+        /// 📌 페이지 입력 필드
+        Row(
           children: [
-            Container(
-              width: double.infinity,
-              alignment: Alignment.center,
-              child: Column(
-                children: [
-                  Text(
-                    '멈춘 페이지도 하나의 기록',
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontFamily: 'JUA',
-                        color: !isDarkMode
-                            ? const Color(0xFF4D77B2)
-                            : Colors.grey[350]),
-                  ),
-                  Text(
-                    '이유를 남겨두면 돌아올 때 도움이 될 거예요',
-                    style: Theme.of(context).textTheme.labelMedium,
-                  )
-                ],
+            Flexible(
+              flex: 1,
+              child: TextField(
+                controller: _pageController,
+                keyboardType: TextInputType.number, // ✅ 숫자 입력 전용
+                decoration: InputDecoration(
+                    hintText: '00',
+                    hintStyle: Theme.of(context).textTheme.labelMedium),
               ),
             ),
-            const SizedBox(height: 15),
-            InteractiveStarRating(
-                type: 1, size: 25, onRatingChanged: (newRating) {}),
-
-            const SizedBox(height: 20),
-
-            /// 📌 페이지 입력 필드
-            Row(
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: TextField(
-                    controller: _pageController,
-                    keyboardType: TextInputType.number, // ✅ 숫자 입력 전용
-                    decoration: InputDecoration(
-                        hintText: '00',
-                        hintStyle: Theme.of(context).textTheme.labelMedium),
-                  ),
-                ),
-                const SizedBox(width: 8), // ✅ 간격 추가
-                Flexible(flex: 9, child: Text('페이지에서 쉬고 있어요')),
-              ],
-            ),
-
-            const SizedBox(height: 20),
-
-            /// 📌 독서 기간 표시
-            Text('독서기간', style: Theme.of(context).textTheme.titleMedium),
-            ReadPeriod(startDate: DateTime.now(), isDarkMode: isDarkMode),
-
-            const SizedBox(height: 15),
-
-            /// 📌 한줄평 입력
-            Text('한줄평', style: Theme.of(context).textTheme.titleMedium),
-            SizedBox(
-              height: 50, // 높이 조정
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: !isDarkMode ? Colors.grey[100] : Colors.grey[900],
-                ),
-                child: Scrollbar(
-                  controller: _scrollController,
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: '이번 여정은 어떠셨나요?',
-                        hintStyle: Theme.of(context).textTheme.labelMedium,
-                        border: InputBorder.none,
-                      ),
-                      maxLines: null, // 여러 줄 입력 가능
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 60),
+            const SizedBox(width: 8), // ✅ 간격 추가
+            Flexible(flex: 9, child: Text('페이지에서 쉬고 있어요')),
           ],
         ),
+
+        const SizedBox(height: 20),
+
+        /// 📌 독서 기간 표시
+        Text('독서기간', style: Theme.of(context).textTheme.titleMedium),
+        // ReadPeriod(startDate: DateTime.now(), isDarkMode: isDarkMode),
+
+        const SizedBox(height: 15),
+
+        /// 📌 한줄평 입력
+        Text('한줄평', style: Theme.of(context).textTheme.titleMedium),
+        SizedBox(
+          height: 50, // 높이 조정
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: !isDarkMode ? Colors.grey[100] : Colors.grey[900],
+            ),
+            child: Scrollbar(
+              controller: _scrollController,
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: '이번 여정은 어떠셨나요?',
+                    hintStyle: Theme.of(context).textTheme.labelMedium,
+                    border: InputBorder.none,
+                  ),
+                  maxLines: null, // 여러 줄 입력 가능
+                ),
+              ),
+            ),
+          ),
+        ),
+
         _buildSaveButton(isDarkMode, '저장'),
       ],
     );

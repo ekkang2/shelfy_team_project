@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 import 'book.dart';
 
 class BookRecordDone {
@@ -19,6 +21,11 @@ class BookRecordDone {
     required this.book,
     this.comment,
   });
+
+  String formatSingleDate(DateTime time) {
+    final dateFormatter = DateFormat('yyyy.MM.dd');
+    return dateFormatter.format(time);
+  }
 }
 
 List<BookRecordDone> doneBookList = [

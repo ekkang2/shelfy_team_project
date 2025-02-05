@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shelfy_team_project/ui/pages/search/search_page/widget/book_detail.dart';
 
 import '../../../../../data/model/book.dart';
+import 'book_detail.dart';
 
 class BookItem extends StatefulWidget {
   final Book book;
