@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:shelfy_team_project/data/model/book.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shelfy_team_project/data/gvm/book_view_model/book_view_model.dart';
+import 'package:shelfy_team_project/data/model/book_model/book.dart';
+import 'package:shelfy_team_project/ui/pages/search/search_page/widget/book_item.dart';
 
-import 'widget/book_item.dart';
+class SearchPage extends ConsumerWidget {
+  SearchPage({super.key});
 
-class SearchPage extends StatelessWidget {
-  const SearchPage({super.key});
-
+  final TextEditingController _searchController =
+      TextEditingController(); // 검색어 컨트롤러 추가
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bookvm = ref.read(bookProvider.notifier);
+    final List<Book> bookList = ref.watch(bookProvider); // 상태 감시 추가
     return Column(
       children: [
         Padding(
@@ -15,6 +20,7 @@ class SearchPage extends StatelessWidget {
           child: Container(
             height: 45.0,
             child: SearchBar(
+              controller: _searchController,
               elevation: WidgetStatePropertyAll(0),
               leading: Icon(
                 Icons.search,
@@ -33,17 +39,25 @@ class SearchPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(0),
                 ),
               ),
+              onSubmitted: (query) async {
+                // Enter 키 이벤트 추가
+                if (query.isNotEmpty) {
+                  await bookvm.searchBooks(query); // 검색 요청 실행
+                }
+              },
             ),
           ),
         ),
         // Expanded 위젯으로 ListView 감싸기
         Expanded(
-          child: ListView.builder(
-            itemBuilder: (context, index) {
-              return BookItem(book: bookList[index]);
-            },
-            itemCount: bookList.length,
-          ),
+          child: bookList.isNotEmpty
+              ? ListView.builder(
+                  itemBuilder: (context, index) {
+                    return BookItem(book: bookList[index]);
+                  },
+                  itemCount: bookList.length,
+                )
+              : Center(child: Text("검색 결과가 없습니다.")),
         ),
       ],
     );

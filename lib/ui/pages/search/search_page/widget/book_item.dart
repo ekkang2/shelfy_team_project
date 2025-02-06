@@ -1,29 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:shelfy_team_project/data/model/book_model/book.dart';
+import 'package:shelfy_team_project/ui/pages/search/search_page/widget/book_detail.dart';
 
-import '../../../../../data/model/book.dart';
-import 'book_detail.dart';
-
-class BookItem extends StatefulWidget {
+class BookItem extends StatelessWidget {
   final Book book;
+  const BookItem({super.key, required this.book}); // book 매개변수 추가
 
-  const BookItem({required this.book, super.key});
-
-  @override
-  State<BookItem> createState() => _BookItemState();
-}
-
-class _BookItemState extends State<BookItem> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
         // 컨테이너 클릭 시 상세 페이지로 이동
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => BookDetail(book: widget.book),
-          ),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => BookDetail(book: book),
+        //   ),
+        // );
       },
       child: Container(
         child: Padding(
@@ -51,40 +44,50 @@ class _BookItemState extends State<BookItem> {
                       heightFactor: 0.97,
                       child: Image.network(
                         height: 105,
-                        widget.book.book_image,
+                        book.bookImage!, // null 체크 필요
                       ),
                     ),
                   ),
                 ),
               ),
               Flexible(
-                flex: 7,
+                flex: 9,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 3),
                     Text(
-                      widget.book.book_title,
+                      book.bookTitle!,
                       style: Theme.of(context).textTheme.titleLarge,
+                      maxLines: 1, // 한 줄로 제한
+                      overflow: TextOverflow.ellipsis, // 넘칠 경우 "..." 표시
                     ),
                     SizedBox(height: 5),
                     Row(
                       children: [
-                        Text(
-                          '${widget.book.book_author}',
-                          style: Theme.of(context).textTheme.labelMedium,
+                        Flexible(
+                          child: Text(
+                            '${book.bookAuthor!}',
+                            style: Theme.of(context).textTheme.labelMedium,
+                            overflow: TextOverflow.ellipsis, // 말줄임표(...) 적용
+                            softWrap: false,
+                          ),
                         ),
-                        const SizedBox(width: 5),
-                        Text(
-                          ' ${widget.book.book_published_at}',
-                          style: Theme.of(context).textTheme.labelMedium,
+                        const SizedBox(width: 10),
+                        Flexible(
+                          child: Text(
+                            '${book.bookPublishedAt!}',
+                            style: Theme.of(context).textTheme.labelMedium,
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: false,
+                          ),
                         ),
                       ],
                     ),
                     SizedBox(height: 3),
                     Text(
                       softWrap: true,
-                      '${widget.book.book_desc}',
+                      '${book.bookDesc!}',
                       style: Theme.of(context).textTheme.labelSmall,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -92,16 +95,16 @@ class _BookItemState extends State<BookItem> {
                   ],
                 ),
               ),
-              Flexible(
-                flex: 1,
-                child: IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.bookmark_add_outlined,
-                    color: Colors.grey,
-                  ),
-                ),
-              ),
+              // Flexible(
+              //   flex: 1,
+              //   child: IconButton(
+              //     onPressed: () {},
+              //     icon: Icon(
+              //       Icons.bookmark_add_outlined,
+              //       color: Colors.grey,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
