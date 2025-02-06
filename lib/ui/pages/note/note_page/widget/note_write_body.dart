@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../../data/gvm/note_gvm.dart'; // ViewModel
+import '../../../../../data/gvm/note_view_model.dart'; // ViewModel
 import '../../../../../data/model/note_model.dart';
 import '../../../../../providers/book_provider.dart';
 import '../../../main_screen.dart';
@@ -118,7 +118,8 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
       title: widget.titleController.text.trim(),
       content: widget.contentController.text.trim(),
       userId: 1,
-      bookId: null, // ㅠㅠ 언제다하지? 아자
+      bookId: null,
+      createdAt: '', // TODO: 작성 날짜 수정
     );
 
     noteViewModel.submitNote(note);
@@ -137,7 +138,6 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
           // ✅ 성공 시 스낵바 1회 표시 후 페이지 이동 (딜레이 추가)
           CommonSnackbar.success(context, '노트가 성공적으로 등록되었습니다!');
 
-          // TODO - initState로 새로고침 (뒤로 갈 때마다 새로고침)
           // ✅ 뒤로가기는 NoteWritePage에서 처리
         },
         loading: () {

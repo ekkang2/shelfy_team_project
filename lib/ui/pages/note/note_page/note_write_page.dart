@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shelfy_team_project/ui/pages/note/note_page/widget/note_write_body.dart';
-import '../../../../data/gvm/note_gvm.dart';
+import '../../../../data/gvm/note_view_model.dart';
 import '../../../../data/model/note_model.dart';
 import '../../../../providers/book_provider.dart';
 import '../../../widgets/custom_appbar.dart';
@@ -41,6 +41,7 @@ class _NoteWritePageState extends ConsumerState<NoteWritePage> {
       title: title,
       content: content,
       bookId: selectedBook?['book_id'], // 선택한 책 ID (없으면 null)
+      createdAt: '', // TODO: 작성 날짜 수정
     );
 // TODO - initState로 새로고침 (뒤로 갈 때마다 새로고침)
     try {

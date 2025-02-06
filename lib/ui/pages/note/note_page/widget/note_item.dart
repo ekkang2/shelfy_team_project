@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../note_view_page.dart';
 
-class Note {
+class NoteSample {
   final String title;
   final String preview;
   final String date;
 
-  Note({
+  NoteSample({
     required this.title,
     required this.preview,
     required this.date,
@@ -15,7 +15,7 @@ class Note {
 }
 
 class NoteItem extends StatelessWidget {
-  final Note note;
+  final NoteSample note;
 
   const NoteItem({super.key, required this.note});
 
