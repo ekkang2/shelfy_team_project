@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shelfy_team_project/ui/widgets/common_snackbar.dart';
 
 import '../../main.dart';
 import 'logger.dart';
@@ -15,12 +16,6 @@ class ExceptionHandler {
     // 시스템 키보드가 있다면 내려주자
     FocusScope.of(mContext).unfocus();
 
-    ScaffoldMessenger.of(mContext).showSnackBar(
-      SnackBar(
-        content: Text(
-          exception.toString(),
-        ),
-      ),
-    );
+    CommonSnackbar.error(mContext, exception);
   }
 }

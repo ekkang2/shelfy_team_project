@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shelfy_team_project/data/gvm/user_view_model/session_view_model.dart';
 import 'package:shelfy_team_project/data/model/user_model/session_user.dart';
+import 'package:shelfy_team_project/ui/pages/auth/join_page/widgets/validate_join_form.dart';
 import 'package:shelfy_team_project/ui/pages/auth/widgets/custom_textFormField.dart';
 import 'package:shelfy_team_project/ui/widgets/custom_appbar.dart';
 
@@ -10,6 +11,8 @@ import '../join_page/widgets/custom_modal_bottom_sheet.dart';
 class LoginPage extends ConsumerWidget {
   // GlobalKey 를 통해 Form 의 상태에 접근
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String? _userUid;
+  String? _userPwd;
 
   LoginPage({super.key});
 
@@ -18,8 +21,6 @@ class LoginPage extends ConsumerWidget {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     SessionVM sessionVM = ref.read(sessionProvider.notifier);
     SessionUser sessionUser = ref.watch(sessionProvider);
-    TextEditingController userUidController = TextEditingController();
-    TextEditingController userPwdController = TextEditingController();
 
     return SafeArea(
       child: Scaffold(
@@ -53,18 +54,28 @@ class LoginPage extends ConsumerWidget {
                             title: '아이디',
                             iconData: Icons.person,
                             obscureText: false,
-                            controller: userUidController,
                             isDarkMode: isDarkMode,
                             buildContext: context,
+                            validator: (value) {
+                              return validateUid(value);
+                            },
+                            onSaved: (newValue) {
+                              _userUid = newValue;
+                            },
                           ),
                           const SizedBox(height: 10),
                           CustomTextformfield(
                             title: '비밀번호',
                             iconData: Icons.lock,
                             obscureText: true,
-                            controller: userPwdController,
                             isDarkMode: isDarkMode,
                             buildContext: context,
+                            validator: (value) {
+                              return validatePassword(value);
+                            },
+                            onSaved: (newValue) {
+                              _userPwd = newValue;
+                            },
                           ),
                           const SizedBox(height: 20),
                           ElevatedButton(
@@ -82,15 +93,14 @@ class LoginPage extends ConsumerWidget {
                               ),
                             ),
                             onPressed: () {
-                              // 아이디 controller 로 추출
-                              String userUid = userUidController.text.trim();
-                              // 비밀번호 controller 로 추출
-                              String userPwd = userPwdController.text.trim();
-                              // view-model 의 로그인 기능 호출
-                              sessionVM.login(
-                                userUid: userUid,
-                                userPwd: userPwd,
-                              );
+                              if (_formKey.currentState!.validate()) {
+                                _formKey.currentState!.save();
+                                // view-model 의 로그인 기능 호출
+                                sessionVM.login(
+                                  userUid: _userUid!,
+                                  userPwd: _userPwd!,
+                                );
+                              }
                             },
                             child: Text(
                               '로그인',
