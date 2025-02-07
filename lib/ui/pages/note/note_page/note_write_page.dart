@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shelfy_team_project/ui/pages/note/note_page/widget/note_write_body.dart';
-import '../../../../data/gvm/note_view_model.dart';
+import '../../../../data/gvm/note_view_model/note_view_model.dart';
 import '../../../../data/model/note_model.dart';
 import '../../../../providers/book_provider.dart';
+import '../../../widgets/common_snackbar.dart';
 import '../../../widgets/custom_appbar.dart';
 import '../../main_screen.dart';
+import '../../../../providers/session_user_provider.dart'; // ✅ 세션 유저 불러오기
 
 // 리버팟의 ConsumerWidget을 사용하면 위젯이 상태를 구독할 수 있음
 class NoteWritePage extends ConsumerStatefulWidget {
@@ -27,21 +29,22 @@ class _NoteWritePageState extends ConsumerState<NoteWritePage> {
     final title = _titleController.text;
     final content = _contentController.text;
     final selectedBook = ref.read(bookWriteProvider); // 선택한 책 정보 가져오기
+    final userId = ref.read(sessionUserProvider)?.id ?? 1;
 
     // 제목 & 내용 필수 체크
     if (title.isEmpty || content.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('제목과 내용을 모두 입력해주세요')),
-      );
+      CommonSnackbar.warning(
+          context, '제목과 내용을 모두 입력해주세요'); // ✅ CommonSnackbar 사용
       return;
     }
 
     final note = Note(
-      userId: 1, // 유저 ID (임시)
+      noteId: null, // ✅ 새 노트 작성 시에는 ID 없음
+      userId: userId, // ✅ 로그인한 유저 ID 사용 (없으면 1)
       title: title,
       content: content,
       bookId: selectedBook?['book_id'], // 선택한 책 ID (없으면 null)
-      createdAt: '', // TODO: 작성 날짜 수정
+      createdAt: '',
     );
 // TODO - initState로 새로고침 (뒤로 갈 때마다 새로고침)
     try {

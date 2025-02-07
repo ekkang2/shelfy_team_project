@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-
-import '../../../../../data/gvm/note_view_model.dart'; // ViewModel
+import '../../../../../data/gvm/note_view_model/note_view_model.dart';
 import '../../../../../data/model/note_model.dart';
 import '../../../../../providers/book_provider.dart';
 import '../../../main_screen.dart';
 import 'note_book_Info.dart';
 import '../../../../../ui/widgets/common_snackbar.dart';
-import '../../../../../ui/widgets/common_dialog.dart'; // 다이얼로그 컴포넌트
-import 'note_input_field.dart'; // 입력 필드 컴포넌트
+import '../../../../../ui/widgets/common_dialog.dart';
+import 'note_input_field.dart';
 
 class NoteWriteBody extends ConsumerStatefulWidget {
   final TextEditingController titleController;
@@ -34,7 +33,6 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
     super.initState();
     currentDate =
         DateFormat('yyyy년 MM월 dd일 EEEE', 'ko_KR').format(DateTime.now());
-
     widget.titleController.addListener(_validateForm);
     widget.contentController.addListener(_validateForm);
   }
@@ -46,83 +44,46 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
     });
   }
 
-  Future<void> selectBook(BuildContext context) async {
-    final selectedBook = await Navigator.pushNamed(context, '/noteAddBook');
-    if (selectedBook is Map<String, String>) {
-      ref.read(bookWriteProvider.notifier).state = selectedBook;
-    }
-  }
-
-  void deleteBook() => ref.read(bookWriteProvider.notifier).state = null;
-
-  // ✅ 다이얼로그로 글쓰기 완료 처리
-  // void _handleNoteCompletion(BuildContext context) {
-  //   showConfirmationDialog(
-  //     context: context,
-  //     title: '노트 작성을 완료하시겠습니까?',
-  //     confirmText: '확인',
-  //     onConfirm: _submitNoteViaViewModel, // 다이얼로그 확인 시 ViewModel 호출
-  //     snackBarMessage: '',
-  //   );
-  // }
-  void _handleNoteCompletion(BuildContext context) {
+  Future<void> _handleNoteCompletion(BuildContext context) async {
     showConfirmationDialog(
       context: context,
       title: '노트 작성을 완료하시겠습니까?',
       confirmText: '확인',
       onConfirm: () async {
-        // ✅ 다이얼로그 닫기
-        if (Navigator.canPop(context)) {
-          Navigator.pop(context);
-        }
+        if (Navigator.canPop(context)) Navigator.pop(context);
 
-        // ✅ 키보드 닫기
         FocusScope.of(context).unfocus();
-        await Future.delayed(const Duration(milliseconds: 100)); // 애니메이션 안정화
+        await Future.delayed(const Duration(milliseconds: 100));
 
         try {
-          await _submitNoteViaViewModel();
-          print('✅ 노트 저장 성공!');
-
-          // ✅ 스낵바 표시
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('노트가 성공적으로 등록되었습니다!')),
-          );
-
-          // ✅ UI 프레임 이후 실행하여 네비게이션 충돌 방지
+          await _submitNote();
+          CommonSnackbar.success(context, '노트가 성공적으로 등록되었습니다!');
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (context.mounted) {
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
                     builder: (context) => MainScreen(initialIndex: 3)),
-                (route) => false, // 🔥 이전 스택 삭제 (뒤로가기 시 작성 페이지로 안 돌아오게)
+                (route) => false,
               );
             }
           });
         } catch (e) {
-          print('❌ 노트 저장 실패: $e');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('노트 저장 실패: $e')),
-          );
+          CommonSnackbar.error(context, '노트 저장 실패: $e');
         }
       },
       snackBarMessage: '',
     );
   }
 
-  // ✅ ViewModel을 통한 API 요청
-  Future<void> _submitNoteViaViewModel() async {
-    final noteViewModel = ref.read(noteViewModelProvider.notifier);
-    final note = Note(
-      title: widget.titleController.text.trim(),
-      content: widget.contentController.text.trim(),
-      userId: 1,
-      bookId: null,
-      createdAt: '', // TODO: 작성 날짜 수정
-    );
-
-    noteViewModel.submitNote(note);
+  Future<void> _submitNote() async {
+    await ref.read(noteViewModelProvider.notifier).submitNote(Note(
+          title: widget.titleController.text.trim(),
+          content: widget.contentController.text.trim(),
+          userId: 1,
+          bookId: ref.read(bookWriteProvider)?['book_id'],
+          createdAt: '',
+        ));
   }
 
   @override
@@ -130,27 +91,15 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
     final book = ref.watch(bookWriteProvider);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    // ✅ ViewModel 상태 구독 및 UI 처리
-    // ✅ ViewModel 상태 구독 및 UI 처리
-    ref.listen<AsyncValue<void>>(noteViewModelProvider, (prevState, state) {
+    ref.listen<AsyncValue<void>>(noteViewModelProvider, (_, state) {
       state.when(
-        data: (_) {
-          // ✅ 성공 시 스낵바 1회 표시 후 페이지 이동 (딜레이 추가)
-          CommonSnackbar.success(context, '노트가 성공적으로 등록되었습니다!');
-
-          // ✅ 뒤로가기는 NoteWritePage에서 처리
-        },
-        loading: () {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (_) => const Center(child: CircularProgressIndicator()),
-          );
-        },
-        error: (error, _) {
-          Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
-          CommonSnackbar.error(context, '노트 저장 실패: $error');
-        },
+        data: (_) => CommonSnackbar.success(context, '노트가 성공적으로 등록되었습니다!'),
+        error: (error, _) => CommonSnackbar.error(context, '노트 저장 실패: $error'),
+        loading: () => showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => const Center(child: CircularProgressIndicator()),
+        ),
       );
     });
 
@@ -159,19 +108,19 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildUserInfoSection(context),
+          _buildUserInfoSection(),
           const SizedBox(height: 16),
-          _buildNoteInputSection(context, isDarkMode),
+          _buildNoteInputSection(isDarkMode),
           const SizedBox(height: 24),
-          _buildBookInfoSection(context, book),
+          _buildBookInfoSection(book),
           const SizedBox(height: 16),
-          _buildSubmitButton(context),
+          _buildSubmitButton(),
         ],
       ),
     );
   }
 
-  Widget _buildUserInfoSection(BuildContext context) {
+  Widget _buildUserInfoSection() {
     return Row(
       children: [
         const CircleAvatar(
@@ -197,7 +146,7 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
     );
   }
 
-  Widget _buildNoteInputSection(BuildContext context, bool isDarkMode) {
+  Widget _buildNoteInputSection(bool isDarkMode) {
     return Container(
       height: 300,
       padding: const EdgeInsets.all(12.0),
@@ -215,26 +164,32 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
     );
   }
 
-  Widget _buildBookInfoSection(
-      BuildContext context, Map<String, String>? book) {
+  Widget _buildBookInfoSection(Map<String, String>? book) {
     return NoteBookInfo(
       bookImage: book?['book_image'],
       bookTitle: book?['book_title'],
       bookAuthor: book?['book_author'],
       isEditMode: true,
-      onAddPressed: () => selectBook(context),
-      onChangePressed: () => selectBook(context),
-      onDeletePressed: deleteBook,
+      onAddPressed: () => _selectBook(),
+      onChangePressed: () => _selectBook(),
+      onDeletePressed: _deleteBook,
     );
   }
 
-  Widget _buildSubmitButton(BuildContext context) {
+  Future<void> _selectBook() async {
+    final selectedBook = await Navigator.pushNamed(context, '/noteAddBook');
+    if (selectedBook is Map<String, String>) {
+      ref.read(bookWriteProvider.notifier).state = selectedBook;
+    }
+  }
+
+  void _deleteBook() => ref.read(bookWriteProvider.notifier).state = null;
+
+  Widget _buildSubmitButton() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: ElevatedButton(
-        onPressed: isFormValid
-            ? () => _handleNoteCompletion(context)
-            : null, // ✅ 수정 완료        style: ElevatedButton.styleFrom(
+        onPressed: isFormValid ? () => _handleNoteCompletion(context) : null,
         style: ElevatedButton.styleFrom(
           backgroundColor:
               isFormValid ? Theme.of(context).colorScheme.primary : Colors.grey,

@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../model/note_model.dart';
-import '../repository/note_repository.dart';
+import '../../model/note_model.dart';
+import '../../repository/note_repository.dart';
 
 /*
      날짜 : 2025/02/05
@@ -27,15 +27,21 @@ class NoteViewModel extends StateNotifier<AsyncValue<void>> {
   Future<void> submitNote(Note note) async {
     state = const AsyncLoading(); // 로딩 상태
     try {
-      // 리포지터리의 save 메서드 호출 및 응답 처리
-      final result = await _repository.save(note.toJson());
-      print('노트 저장 성공: $result'); // 서버 응답 출력
+      final noteData = note.toJson();
 
-      state = const AsyncData(null); // 성공 시 상태 초기화
+      // ✅ noteId가 null이면 서버에 보내지 않도록 제거
+      if (note.noteId == null) {
+        noteData.remove("noteId");
+      }
+
+      final result = await _repository.save(noteData); // ✅ 수정된 JSON 전송
+      print('✅ 노트 저장 성공: $result');
+
+      state = const AsyncData(null); // ✅ 성공 상태 초기화
     } catch (e, stack) {
-      print('노트 저장 실패: $e'); // 에러 로그 추가
-      state = AsyncError(e, stack); // 에러 상태 저장
-      rethrow; // 에러를 상위로 다시 던짐
+      print('🚨 노트 저장 실패: $e');
+      state = AsyncError(e, stack); // ✅ 에러 상태 저장
+      rethrow; // ✅ 에러를 상위로 다시 던짐
     }
   }
 }

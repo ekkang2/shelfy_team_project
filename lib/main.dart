@@ -43,7 +43,7 @@ class ShelfUI extends ConsumerWidget {
         // Note 페이지 목록
         '/noteList': (context) => NotePage(),
         '/noteWrite': (context) => NoteWritePage(),
-        '/noteView': (context) => const NoteViewPage(),
+        // '/noteView': (context) => const NoteViewPage(),
         '/noteAddBook': (context) => const NoteAddBookPage(),
         // My 페이지 목록
         '/login': (context) => LoginPage(),
