@@ -1,4 +1,4 @@
-class RecordState {
+class Record {
   int? stateId;
   String? bookId;
   int? userId;
@@ -9,8 +9,9 @@ class RecordState {
   String? comment;
   int? progress;
   double? rating;
+  bool isWriteCompleted;
 
-  RecordState(
+  Record(
       {required this.stateId,
       required this.bookId,
       required this.userId,
@@ -19,5 +20,6 @@ class RecordState {
       required this.endDate,
       required this.comment,
       required this.progress,
-      required this.rating});
+      required this.rating,
+      required this.isWriteCompleted});
 }

@@ -5,7 +5,7 @@ import 'package:shelfy_team_project/ui/widgets/custom_interactive_star_rating.da
 import 'package:shelfy_team_project/data/model/book_record_doing.dart';
 import 'package:shelfy_team_project/ui/pages/books/widget/book_detail_progress_bar.dart';
 
-import '../../../widgets/book_record_state.dart';
+import '../../../widgets/modal_bottom_sheet/book_record_state.dart';
 import '../../../widgets/custom_record_label.dart';
 import '../../../widgets/custom_star_rating.dart';
 import '../widget/read_period.dart';

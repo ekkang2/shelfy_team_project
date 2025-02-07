@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class AdjustableProgressBar extends StatefulWidget {
   final int totalPage;
   final int? currentPage;
+  final Function(int) onProgressChanged; // ✅ 변경된 progress 값 전달할 콜백
 
   const AdjustableProgressBar({
     Key? key,
     required this.totalPage,
     this.currentPage,
+    required this.onProgressChanged, // ✅ 필수 매개변수로 추가
   }) : super(key: key);
 
   @override
@@ -17,7 +19,7 @@ class AdjustableProgressBar extends StatefulWidget {
 class _AdjustableProgressBarState extends State<AdjustableProgressBar> {
   late double _currentValue;
   late TextEditingController _currentPageController;
-  bool _isEditing = false; // 입력 모드 여부
+  bool _isEditing = false;
 
   @override
   void initState() {
@@ -36,7 +38,7 @@ class _AdjustableProgressBarState extends State<AdjustableProgressBar> {
   void _enableEditing() {
     setState(() {
       _isEditing = true;
-      _currentPageController.text = _currentValue.toInt().toString(); // 현재 값 반영
+      _currentPageController.text = _currentValue.toInt().toString();
     });
   }
 
@@ -46,6 +48,7 @@ class _AdjustableProgressBarState extends State<AdjustableProgressBar> {
       setState(() {
         _currentValue = newValue.toDouble();
       });
+      widget.onProgressChanged(newValue); // ✅ 부모 위젯으로 progress 값 전달
     }
     setState(() {
       _isEditing = false;
@@ -64,7 +67,8 @@ class _AdjustableProgressBarState extends State<AdjustableProgressBar> {
             style: Theme.of(context).textTheme.displayMedium,
           ),
         ),
-        // 슬라이더
+
+        // 📌 슬라이더
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             trackHeight: 8.0,
@@ -83,10 +87,12 @@ class _AdjustableProgressBarState extends State<AdjustableProgressBar> {
                 _currentValue = value;
                 _currentPageController.text = _currentValue.toInt().toString();
               });
+              widget.onProgressChanged(_currentValue.toInt()); // ✅ 변경된 값 전달
             },
           ),
         ),
-        // 페이지 정보 (오른쪽 정렬)
+
+        // 📌 현재 페이지 표시
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 23.0),
           child: Align(
@@ -99,7 +105,7 @@ class _AdjustableProgressBarState extends State<AdjustableProgressBar> {
                       keyboardType: TextInputType.number,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.labelMedium,
-                      autofocus: true, // 입력창이 뜨면 자동으로 포커스 이동
+                      autofocus: true,
                       onSubmitted: _submitPage,
                       onEditingComplete: () {
                         _submitPage(_currentPageController.text);

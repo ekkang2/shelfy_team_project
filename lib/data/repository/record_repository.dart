@@ -8,6 +8,7 @@ import '../../_core/utils/m_http.dart';
 class RecordRepository {
   const RecordRepository();
 
+  // 250205 박연화 독서기록 생성 api 요청
   Future<Map<String, dynamic>> save(Map<String, dynamic> reqData) async {
     Response response = await dio.post('/api/record', data: reqData);
     Map<String, dynamic> responseBody = response.data;

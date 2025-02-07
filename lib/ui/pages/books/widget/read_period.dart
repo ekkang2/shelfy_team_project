@@ -6,11 +6,13 @@ class ReadPeriod extends StatefulWidget {
   final DateTime? startDate;
   final DateTime? endDate;
   final bool isDarkMode;
+  final Function(DateTime, DateTime?) onDateChanged; // 🔥 콜백 추가
 
   ReadPeriod({
     this.startDate,
     this.endDate,
     required this.isDarkMode,
+    required this.onDateChanged, // 🔥 필수 매개변수로 추가
     super.key,
   });
 
@@ -20,13 +22,13 @@ class ReadPeriod extends StatefulWidget {
 
 class _ReadPeriodState extends State<ReadPeriod> {
   late DateTime startDate;
-  DateTime? endDate; // 종료일을 nullable 변수로 선언
+  DateTime? endDate;
 
   @override
   void initState() {
     super.initState();
     startDate = widget.startDate ?? DateTime.now();
-    endDate = widget.endDate; // 초기 종료일 설정
+    endDate = widget.endDate;
   }
 
   @override
@@ -61,12 +63,13 @@ class _ReadPeriodState extends State<ReadPeriod> {
                         if (pickedDate != null) {
                           setState(() {
                             startDate = pickedDate;
-                            // 시작일이 바뀌면 종료일도 초기화할 수 있음 (선택 사항)
                             if (endDate != null &&
                                 endDate!.isBefore(startDate)) {
                               endDate = null;
                             }
                           });
+                          widget.onDateChanged(
+                              startDate, endDate); // 🔥 변경된 날짜 전달
                         }
                       },
                       child: Text(
@@ -86,14 +89,16 @@ class _ReadPeriodState extends State<ReadPeriod> {
                       onPressed: () async {
                         DateTime? pickedDate = await showDatePicker(
                           context: context,
-                          firstDate: startDate, // 시작일 이후만 선택 가능
+                          firstDate: startDate,
                           lastDate: DateTime(2100),
-                          initialDate: endDate ?? startDate, // 기본값 처리
+                          initialDate: endDate ?? startDate,
                         );
                         if (pickedDate != null) {
                           setState(() {
                             endDate = pickedDate;
                           });
+                          widget.onDateChanged(
+                              startDate, endDate); // 🔥 변경된 날짜 전달
                         }
                       },
                       child: Text(
