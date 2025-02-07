@@ -2,24 +2,23 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shelfy_team_project/data/gvm/book_view_model/book_detail_view_model.dart';
+import 'package:shelfy_team_project/data/gvm/book_view_model/book_view_model.dart';
+import 'package:shelfy_team_project/data/model/book_model/book.dart';
 
-import '../../../../../data/model/book.dart';
 import '../../../../widgets/book_record_state.dart';
 
-class BookDetail extends StatefulWidget {
+class BookDetail extends ConsumerWidget {
   final Book book;
 
   const BookDetail({required this.book, super.key});
 
   @override
-  State<BookDetail> createState() => _BookDetailState();
-}
-
-class _BookDetailState extends State<BookDetail> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final book = ref.watch(bookDetailProvider);
 
     final List<Map<String, dynamic>> iconButtons = [
       {"title": "다 읽었어요", "icon": FontAwesomeIcons.book},
@@ -96,18 +95,21 @@ class _BookDetailState extends State<BookDetail> {
                       ),
                       child: Image.network(
                         height: 230,
-                        widget.book.book_image,
+                        book.bookImage!,
                         fit: BoxFit.fill,
                       ),
                     ),
                     SizedBox(height: 20),
-                    Text(
-                      widget.book.book_title,
-                      style: Theme.of(context).textTheme.headlineLarge,
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                      child: Text(
+                        book.bookTitle!,
+                        style: Theme.of(context).textTheme.headlineLarge,
+                      ),
                     ),
-                    SizedBox(height: 7),
+                    SizedBox(height: 10),
                     Text(
-                      '${widget.book.book_author} · ${widget.book.book_publisher}',
+                      '${book.bookAuthor!} · ${book.bookPublisher!}',
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                     SizedBox(height: 20.0),
@@ -141,14 +143,14 @@ class _BookDetailState extends State<BookDetail> {
                                             const Duration(milliseconds: 200),
                                         curve: Curves.easeOut,
                                         padding: EdgeInsets.only(
-                                            bottom:
-                                                keyboardHeight), // ✅ 키보드 크기만큼 모달을 위로 이동
+                                            bottom: keyboardHeight),
+                                        // ✅ 키보드 크기만큼 모달을 위로 이동
                                         child: FractionallySizedBox(
                                           heightFactor:
                                               0.51, // ✅ 기본 모달 높이 (화면의 90%)
                                           child: Container(
                                             child: BookRecordState(
-                                              book: widget.book,
+                                              book: book,
                                               index: index,
                                             ),
                                           ),
@@ -198,28 +200,33 @@ class _BookDetailState extends State<BookDetail> {
                     ),
                     SizedBox(height: 20.0),
                     Container(
+                      width: double.infinity, // 최대 너비를 사용
                       child: Padding(
                         padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              '책 소개',
-                              style: Theme.of(context).textTheme.titleLarge,
-                            ),
-                            SizedBox(height: 13),
-                            Text(
-                              widget.book.book_desc,
-                              style: Theme.of(context).textTheme.labelLarge,
-                            ),
-                            SizedBox(height: 14),
+                            // 책 소개가 비어있지 않은 경우에만 표시
+                            if (book.bookDesc != null &&
+                                book.bookDesc!.isNotEmpty) ...[
+                              Text(
+                                '책 소개',
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                              SizedBox(height: 13),
+                              Text(
+                                book.bookDesc!,
+                                style: Theme.of(context).textTheme.labelLarge,
+                              ),
+                              SizedBox(height: 14),
+                            ],
                             Text(
                               '지은이',
                               style: Theme.of(context).textTheme.titleLarge,
                             ),
                             SizedBox(height: 13),
                             Text(
-                              widget.book.book_publisher,
+                              book.bookAuthor!,
                               style: Theme.of(context).textTheme.labelLarge,
                             ),
                             SizedBox(height: 14),
@@ -229,7 +236,7 @@ class _BookDetailState extends State<BookDetail> {
                             ),
                             SizedBox(height: 13),
                             Text(
-                              widget.book.book_publisher,
+                              book.bookPublisher!,
                               style: Theme.of(context).textTheme.labelLarge,
                             ),
                             SizedBox(height: 14),
@@ -239,7 +246,7 @@ class _BookDetailState extends State<BookDetail> {
                             ),
                             SizedBox(height: 13),
                             Text(
-                              widget.book.book_isbn,
+                              book.bookIsbn!,
                               style: Theme.of(context).textTheme.labelLarge,
                             ),
                             SizedBox(height: 14),
@@ -249,9 +256,10 @@ class _BookDetailState extends State<BookDetail> {
                             ),
                             SizedBox(height: 13),
                             Text(
-                              widget.book.book_page.toString(),
+                              book.bookPage!.toString(),
                               style: Theme.of(context).textTheme.labelLarge,
                             ),
+                            SizedBox(height: 14),
                           ],
                         ),
                       ),

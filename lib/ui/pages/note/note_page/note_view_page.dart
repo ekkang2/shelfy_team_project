@@ -2,11 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shelfy_team_project/data/model/book_model/book.dart';
 import 'package:shelfy_team_project/ui/widgets/custom_appbar.dart';
 import 'package:shelfy_team_project/ui/pages/note/note_page/widget/note_book_Info.dart';
 import 'package:shelfy_team_project/providers/book_provider.dart';
 import 'package:shelfy_team_project/ui/widgets/common_dialog.dart';
-import 'package:shelfy_team_project/data/model/book.dart'; // ✅ Book 모델 import
 import 'package:shelfy_team_project/ui/pages/search/search_page/widget/book_detail.dart'; // ✅ BookDetail import
 
 class NoteViewPage extends ConsumerWidget {
@@ -67,25 +67,24 @@ class NoteViewPage extends ConsumerWidget {
 
     // ✅ book_id 필드 추가
     final book = Book(
-      book_id: int.tryParse(bookData['book_id'] ?? '0') ?? 0, // 문자열을 정수로 변환
-      book_image: bookData['book_image'] ?? '',
-      book_title: bookData['book_title'] ?? '제목 없음',
-      book_author: bookData['book_author'] ?? '저자 없음',
-      book_publisher: bookData['book_publisher'] ?? '출판사 없음',
-      book_desc: bookData['book_desc'] ?? '설명 없음',
-      book_isbn: bookData['book_isbn'] ?? 'ISBN 없음',
-      book_page: int.tryParse(bookData['book_page'] ?? '0') ?? 0,
-      book_published_at:
-          bookData['book_published_at'] ?? '출판일 정보 없음', // ✅ 필수 값 추가
+      bookId: bookData['bookId'] ?? '',
+      bookImage: bookData['bookImage'] ?? '',
+      bookTitle: bookData['bookTitle'] ?? '제목 없음',
+      bookAuthor: bookData['bookAuthor'] ?? '저자 없음',
+      bookPublisher: bookData['bookPublisher'] ?? '출판사 없음',
+      bookDesc: bookData['bookDesc'] ?? '설명 없음',
+      bookIsbn: bookData['bookIsbn'] ?? 'ISBN 없음',
+      bookPage: int.tryParse(bookData['bookPage'] ?? '0') ?? 0,
+      bookPublishedAt: bookData['bookPublishedAt'] ?? '출판일 정보 없음', // ✅ 필수 값 추가
     );
     return Column(
       children: [
         Center(child: Text('기록과 함께 하는 책', style: TextStyle(fontSize: 16))),
         const SizedBox(height: 8),
         NoteBookInfo(
-          bookImage: book.book_image,
-          bookTitle: book.book_title,
-          bookAuthor: book.book_author,
+          bookImage: book.bookImage,
+          bookTitle: book.bookTitle,
+          bookAuthor: book.bookAuthor,
           isEditMode: false,
           onDetailPressed: () {
             Navigator.push(

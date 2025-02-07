@@ -117,7 +117,7 @@ class _StackViewState extends State<StackView> {
                             ),
                             child: Container(
                               margin:
-                                  const EdgeInsets.only(bottom: 2), // 책 간 간격
+                                  const EdgeInsets.only(bottom: 1), // 책 간 간격
                               height: bookHeight,
                               width: MediaQuery.of(context).size.width *
                                   0.6, // 책 폭

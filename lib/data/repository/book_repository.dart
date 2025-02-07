@@ -14,4 +14,13 @@ class BookRepository {
     Map<String, dynamic> responseBody = response.data;
     return responseBody;
   }
+
+  // 책 상세보기 진입시 페이지 수 update
+  Future<Map<String, dynamic>> selectBookDetailAndBookPageUpdate(
+      {required String bookIsbn}) async {
+    Response response = await dio.get('/api/book/detail/$bookIsbn');
+
+    Map<String, dynamic> responseBody = response.data;
+    return responseBody;
+  }
 }

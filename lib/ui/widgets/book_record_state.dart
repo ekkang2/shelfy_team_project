@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shelfy_team_project/data/model/book_model/book.dart';
 
-import '../../data/model/book.dart';
 import '../pages/books/widget/book_detail_progress_bar.dart';
 import '../pages/books/widget/read_period.dart';
 import 'custom_interactive_star_rating.dart';
@@ -183,7 +183,7 @@ class _BookRecordStateState extends State<BookRecordState>
             children: [
               const SizedBox(height: 15),
               Text(
-                '${widget.book.book_title}을 읽고 있어요',
+                '${widget.book.bookTitle!}을 읽고 있어요',
                 style: TextStyle(
                     fontSize: 20,
                     fontFamily: 'JUA',
@@ -199,7 +199,7 @@ class _BookRecordStateState extends State<BookRecordState>
           ),
         ),
         const SizedBox(height: 20),
-        AdjustableProgressBar(totalPage: widget.book.book_page, currentPage: 0),
+        AdjustableProgressBar(totalPage: widget.book.bookPage!, currentPage: 0),
         const SizedBox(height: 20),
         Text(
             // '${dateCalculation(widget.book.startDate)}'
