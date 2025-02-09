@@ -146,6 +146,8 @@ class SessionVM extends Notifier<SessionUser> {
       (route) => false,
     );
   }
+
+// 회원가입 시 중복 검사
 }
 
 // 창고 관리자 선언

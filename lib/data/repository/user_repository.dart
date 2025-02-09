@@ -27,6 +27,25 @@ class UserRepository {
     return response.data;
   }
 
+  // 회원가입 시 중복검사 기능 3가지
+  Future<bool> validateUserUid(String userUid) async {
+    Response response = await dio
+        .post('/validate/userUid', queryParameters: {'userUid': userUid});
+    return response.data['success'];
+  }
+
+  Future<bool> validateUserEmail(String userEmail) async {
+    Response response = await dio
+        .post('/validate/userEmail', queryParameters: {'userEmail': userEmail});
+    return response.data['success'];
+  }
+
+  Future<bool> validateUserNick(String userNick) async {
+    Response response = await dio
+        .post('/validate/userNick', queryParameters: {'userNick': userNick});
+    return response.data['success'];
+  }
+
 // 로그아웃 기능
 
 // 자동 로그인 기능
