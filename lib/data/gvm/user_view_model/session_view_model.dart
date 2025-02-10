@@ -63,8 +63,9 @@ class SessionVM extends Notifier<SessionUser> {
 
       // SessionUser 상태 업데이트 ( 깊은 복사를 통해 플러터에게 상태의 변화를 인지하게끔 만듬 )
       Map<String, dynamic> data = resBody['response'];
+
       state = SessionUser(
-        id: data['id'],
+        id: data['userId'], // ✅ 기존 'id' 대신 'userId' 사용
         userUid: data['userUid'],
         userNick: data['userNick'],
         userProfile: data['userProfile'],
@@ -72,7 +73,8 @@ class SessionVM extends Notifier<SessionUser> {
         isLogined: true,
       );
 
-      logger.d(state);
+      // ✅ 로그 추가해서 상태 확인
+      logger.d("🔥 로그인 성공 - 현재 상태: ${state.id}, ${state.userNick}");
 
       // 추후 dio를 통한 api 요청에 토큰을 포함시키기 위한 dio Option 수정
       dio.options.headers['Authorization'] = accessToken;

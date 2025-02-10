@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shelfy_team_project/providers/session_user_provider.dart';
 import 'package:shelfy_team_project/ui/pages/note/note_page/widget/note_section.dart';
 import 'package:shelfy_team_project/ui/pages/note/note_page/widget/note_tab.dart';
 import 'package:shelfy_team_project/data/gvm/note_view_model/note_list_view_model.dart';
+import '../../../../data/gvm/user_view_model/session_view_model.dart';
 import '../../../../data/model/note_model.dart';
+import '../../../../data/model/user_model/session_user.dart';
 import 'note_statistcs_page.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger(); // Logger 인스턴스 추가
 
 class NotePage extends StatelessWidget {
   const NotePage({super.key});
@@ -31,8 +37,14 @@ class _NoteStatsTabState extends ConsumerState<NoteStatsTab>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    Future.microtask(
-        () => ref.read(noteListViewModelProvider.notifier).fetchNotes(1));
+
+    // ✅ 초기 노트 목록 가져오기
+    Future.microtask(() {
+      final userId = ref.read(sessionProvider).id ?? 0;
+      if (userId != 0) {
+        ref.read(noteListViewModelProvider.notifier).fetchNotes(userId);
+      }
+    });
   }
 
   // ✅ 노트 리스트 정렬 함수 (최신순/오래된순)
@@ -47,6 +59,7 @@ class _NoteStatsTabState extends ConsumerState<NoteStatsTab>
   Widget build(BuildContext context) {
     final noteList = ref.watch(noteListViewModelProvider);
     final noteListViewModel = ref.watch(noteListViewModelProvider.notifier);
+    final noteItem = ref.watch(noteListViewModelProvider);
 
     // ✅ 기록 서랍 (북마크된 노트만) -> 정렬 없이 그대로
     final bookmarkedNotes = noteList.where((note) => note.notePin).toList();
@@ -54,6 +67,12 @@ class _NoteStatsTabState extends ConsumerState<NoteStatsTab>
     // ✅ 기록 조각 (전체 노트) -> 정렬 적용
     final sortedNotes = _sortByDate(noteList, isLatestFirst); // ✅ 기록 조각만 정렬!
 
+    // ✅ sessionProvider 값 변경 감지 (로그인 상태 변경 시 `fetchNotes()` 실행)
+    ref.listen<SessionUser>(sessionProvider, (previous, next) {
+      if (previous?.id != next.id && next.id != null && mounted) {
+        noteListViewModel.fetchNotes(next.id!);
+      }
+    });
     return Material(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,6 +91,7 @@ class _NoteStatsTabState extends ConsumerState<NoteStatsTab>
                       title: '기록 서랍',
                       notes: bookmarkedNotes, // ✅ 원본 리스트 사용 (정렬 X)
                       icon: Icons.bookmarks,
+                      userId: getUserId(ref),
                     ),
                     const SizedBox(height: 16),
                     // ✅ 기록 조각 (정렬 적용)
@@ -79,6 +99,7 @@ class _NoteStatsTabState extends ConsumerState<NoteStatsTab>
                       title: '기록 조각',
                       notes: sortedNotes, // ✅ 최신순 / 오래된 순 정렬 적용
                       icon: Icons.menu_book,
+                      userId: getUserId(ref),
                       trailing: _buildSortButton(), // ✅ 기록 조각만 정렬
                     ),
                   ],

@@ -9,6 +9,8 @@ final logger = Logger(); // Logger 인스턴스 생성
 class NoteSection extends StatelessWidget {
   final String title;
   final List<Note> notes;
+  final int userId; // ✅ 유저 ID 추가
+
   final IconData icon; // ✅ 아이콘 스타일 유지
   final Widget? trailing;
 
@@ -16,6 +18,7 @@ class NoteSection extends StatelessWidget {
     super.key,
     required this.title,
     required this.notes,
+    required this.userId,
     required this.icon,
     this.trailing,
   });
@@ -53,7 +56,10 @@ class NoteSection extends StatelessWidget {
             .map(
               (note) => Padding(
                 padding: const EdgeInsets.only(bottom: 12.0), // ✅ 리스트 간 간격 유지
-                child: NoteItem(note: note), // ✅ 노트 데이터 전달
+                child: NoteItem(
+                  note: note,
+                  userId: userId, // ✅ 유저 ID 추가
+                ), // ✅ 올바르게 NoteItem으로 변경
               ),
             )
             .toList(),

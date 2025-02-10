@@ -1,29 +1,72 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../../../../../_core/utils/logger.dart';
 import '../../../../../data/gvm/note_view_model/note_list_view_model.dart';
 import '../../../../../data/model/note_model.dart';
 import '../note_view_page.dart';
 
-class NoteItem extends ConsumerWidget {
-  final Note note;
+class NoteListView extends ConsumerWidget {
+  final int? userId;
 
-  const NoteItem({super.key, required this.note});
+  const NoteListView({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final noteViewModel = ref.watch(noteListViewModelProvider);
+
+    // ✅ 유저 ID가 없거나 0이면 전체 리스트에서 메시지 표시
+    if (userId == null || userId == 0) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text(
+            "유저 정보가 없습니다",
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+        ),
+      );
+    }
+
+    // ✅ 노트가 없으면 전체 리스트에서 한 번만 메시지 표시
+    if (noteViewModel.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text(
+            "저장된 노트가 없습니다",
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+        ),
+      );
+    }
+
+    // ✅ 노트 리스트 표시
+    return ListView.builder(
+      itemCount: noteViewModel.length,
+      itemBuilder: (context, index) {
+        final note = noteViewModel[index];
+        return NoteItem(userId: userId, note: note);
+      },
+    );
+  }
+}
+
+// ✅ 개별 노트 아이템 UI
+class NoteItem extends StatelessWidget {
+  final int? userId;
+  final Note note;
+
+  const NoteItem({super.key, required this.userId, required this.note});
+
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // ✅ noteId가 null인지 체크
         if (note.noteId != null) {
-          ref.read(selectedNoteProvider.notifier).state = note; // ✅ 선택된 노트 저장
-
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  NoteViewPage(noteId: note.noteId!), // ✅ noteId 전달
+              builder: (context) => NoteViewPage(noteId: note.noteId!),
             ),
           );
         } else {
@@ -31,11 +74,11 @@ class NoteItem extends ConsumerWidget {
         }
       },
       child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
         padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
-          border:
-              Border.all(color: Colors.grey.shade300, width: 1), // ✅ 기존 스타일 유지
-          borderRadius: BorderRadius.circular(8.0), // ✅ 기존 스타일 유지
+          border: Border.all(color: Colors.grey.shade300, width: 1),
+          borderRadius: BorderRadius.circular(8.0),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,7 +88,7 @@ class NoteItem extends ConsumerWidget {
               children: [
                 Expanded(
                   child: Text(
-                    note.title, // ✅ 기존 스타일 유지
+                    note.title,
                     style: Theme.of(context).textTheme.bodyLarge,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -53,14 +96,14 @@ class NoteItem extends ConsumerWidget {
                 ),
                 Text(
                   DateFormat("yyyy.MM.dd")
-                      .format(DateTime.parse(note.createdAt)), // ✅ 변환 후 표시
+                      .format(DateTime.parse(note.createdAt)),
                   style: const TextStyle(fontSize: 12, color: Colors.grey),
                 ),
               ],
             ),
-            const SizedBox(height: 8.0), // ✅ 기존 간격 유지
+            const SizedBox(height: 8.0),
             Text(
-              note.content, // ✅ 기존 스타일 유지
+              note.content,
               style: Theme.of(context).textTheme.labelMedium,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
