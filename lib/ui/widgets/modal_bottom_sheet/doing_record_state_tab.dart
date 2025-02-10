@@ -5,6 +5,7 @@ import 'package:shelfy_team_project/ui/widgets/custom_elevated_button.dart';
 
 import '../../../data/model/book_model/book.dart';
 import '../../pages/books/widget/book_detail_progress_bar.dart';
+import '../../pages/books/widget/read_period.dart';
 
 class DoingRecordStateTab extends ConsumerStatefulWidget {
   final Book book;
@@ -17,6 +18,9 @@ class DoingRecordStateTab extends ConsumerStatefulWidget {
 class _DoingRecordStateTabState extends ConsumerState<DoingRecordStateTab> {
   int _progress = 0; // ✅ 읽은 페이지 수 저장
   final ScrollController _scrollController = ScrollController(); // 스크롤 컨트롤러
+
+  DateTime _startDate = DateTime.now(); // 📆 시작 날짜
+  DateTime? _endDate;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +60,19 @@ class _DoingRecordStateTabState extends ConsumerState<DoingRecordStateTab> {
           onProgressChanged: (newProgress) {
             setState(() {
               _progress = newProgress;
+            });
+          },
+        ),
+
+        Text('독서기간', style: Theme.of(context).textTheme.titleMedium),
+        ReadPeriod(
+          startDate: _startDate,
+          endDate: _endDate,
+          isDarkMode: isDarkMode,
+          onDateChanged: (start, end) {
+            setState(() {
+              _startDate = start;
+              _endDate = end;
             });
           },
         ),

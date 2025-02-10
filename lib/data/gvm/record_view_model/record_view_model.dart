@@ -39,7 +39,7 @@ class RecordViewModel extends Notifier<Record> {
   Future<void> createRecord({
     required String bookId,
     required int stateType,
-    required DateTime startDate,
+    DateTime? startDate,
     DateTime? endDate,
     String? comment,
     double? rating,
@@ -49,7 +49,7 @@ class RecordViewModel extends Notifier<Record> {
       final body = {
         "bookId": bookId,
         "stateType": stateType,
-        "startDate": startDate.toIso8601String(), // ✅ 문자열 변환
+        "startDate": startDate?.toIso8601String(), // ✅ 문자열 변환
         "endDate": endDate?.toIso8601String(), // ✅ null 체크 후 변환
         "comment": comment,
         "rating": rating,

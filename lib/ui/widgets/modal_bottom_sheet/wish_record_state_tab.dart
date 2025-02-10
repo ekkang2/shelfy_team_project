@@ -97,7 +97,7 @@ class _WishRecordStateTabState extends ConsumerState<WishRecordStateTab> {
             onPressed: () {
               vm.createRecord(
                 bookId: widget.book.bookId!,
-                stateType: 3, // ✅ "읽고 싶은 책" 상태
+                stateType: 3,
                 startDate: DateTime.now(), // 현재 날짜로 설정
                 comment: _commentController.text,
                 rating: _rating,
