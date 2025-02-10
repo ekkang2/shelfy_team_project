@@ -45,7 +45,7 @@ class _DoingRecordStateTabState extends ConsumerState<DoingRecordStateTab> {
                 ),
               ),
               Text(
-                '현재 페이지를 기록해 볼까요?',
+                '현재 페이지를 기록해 볼까요?${widget.book.bookId}',
                 style: Theme.of(context).textTheme.labelMedium,
               ),
             ],
@@ -86,7 +86,7 @@ class _DoingRecordStateTabState extends ConsumerState<DoingRecordStateTab> {
           onPressed: () {
             vm.createRecord(
               bookId: widget.book.bookId!,
-              stateType: 2, // ✅ "읽고 있는 책" 상태
+              stateType: 2,
               startDate: DateTime.now(),
               progress: _progress, // ✅ 읽은 페이지 수 전송
             );
