@@ -12,6 +12,7 @@ class CustomTextformfield extends StatelessWidget {
   final bool? enabled;
   final TextEditingController? controller;
   final ValueChanged? onChanged;
+  final VoidCallback? onPressed;
 
   const CustomTextformfield({
     required this.title,
@@ -25,6 +26,7 @@ class CustomTextformfield extends StatelessWidget {
     this.enabled,
     this.controller,
     this.onChanged,
+    this.onPressed,
     super.key,
   });
 
@@ -71,7 +73,7 @@ class CustomTextformfield extends StatelessWidget {
                           !isDarkMode ? Colors.grey[100] : Colors.grey[700],
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: onPressed,
                       child: Text('인증하기'),
                     )
                   : null,

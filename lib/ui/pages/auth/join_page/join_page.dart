@@ -17,8 +17,82 @@ class _JoinPageState extends ConsumerState<JoinPage> {
   // Form 의 상태에 접근할 수 있는 _formKey 생성
   final _formKey = GlobalKey<FormState>();
 
-  // 비밀번호 입력 확인 후 비밀번호 확인 입력란을 활성화하기 위해 따로 controller 하나 적용시킴
+  // 각각의 TextFormField 의 입력값을 개별적으로 접근할 필요가 있기 때문에 controller 설정
+  // FocusNode 를 통해 해당 TextFormField 의 validation 이 끝난 후 중복 검사를 실행
+  // --> Validator 를 통해서는 dio.post 요청의 반환값인 Future 타입을 반환받을 수 없기 때문에 따로 FocusNode 를 통해 동작하도록 만듬
+
+  // 각 입력 필드의 Controller
+  TextEditingController _userUidController = TextEditingController();
+  TextEditingController _userNickController = TextEditingController();
+  TextEditingController _userEmailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+
+  // 각 입력 필드에 대한 FocusNode
+  FocusNode _userUidFocusNode = FocusNode();
+  FocusNode _userNickFocusNode = FocusNode();
+  FocusNode _userEmailFocusNode = FocusNode();
+
+  // 비동기로 수행된 중복 검사 결과의 에러 메시지를 보관할 변수
+  String? _uidDuplicateError;
+  String? _nickDuplicateError;
+  String? _emailDuplicateError;
+
+  // 이메일 인증 완료 여부
+  bool _isEmailVerified = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 아이디 입력란 : unfocus 시 중복 검사 실행
+    _userUidFocusNode.addListener(
+      () {
+        if (!_userUidFocusNode.hasFocus) {
+          final userUid = _userUidController.text.trim();
+          if (validateUid(userUid) == null) {
+            // 중복 검사 api 호출
+            final bool isDuplicate =
+                SessionVM().checkDuplicateUserUid(userUid) as bool;
+            setState(() {
+              _uidDuplicateError = isDuplicate ? '이미 존재하는 아이디입니다' : null;
+            });
+          }
+        }
+      },
+    );
+    // 아이디 입력란 : unfocus 시 중복 검사 실행
+    _userNickFocusNode.addListener(
+      () {
+        if (!_userNickFocusNode.hasFocus) {
+          final userNick = _userNickController.text.trim();
+          if (validateUid(userNick) == null) {
+            // 중복 검사 api 호출
+            final bool isDuplicate =
+                SessionVM().checkDuplicateUserNick(userNick) as bool;
+            setState(() {
+              _nickDuplicateError = isDuplicate ? '이미 존재하는 닉네임입니다' : null;
+            });
+          }
+        }
+      },
+    );
+    // 아이디 입력란 : unfocus 시 중복 검사 실행
+    _userEmailFocusNode.addListener(
+      () {
+        if (!_userEmailFocusNode.hasFocus) {
+          final userEmail = _userEmailController.text.trim();
+          if (validateUid(userEmail) == null) {
+            // 중복 검사 api 호출
+            final bool isDuplicate =
+                SessionVM().checkDuplicateUserEmail(userEmail) as bool;
+            setState(() {
+              _emailDuplicateError = isDuplicate ? '이미 존재하는 이메일입니다' : null;
+            });
+          }
+        }
+      },
+    );
+  }
 
   // 각 입력값을 저장해놓을 변수 선언
   String? _userUid;
@@ -29,7 +103,13 @@ class _JoinPageState extends ConsumerState<JoinPage> {
   @override
   void dispose() {
     // 컨트롤러 해제
+    _userUidController.dispose();
+    _userNickController.dispose();
+    _userEmailController.dispose();
     _passwordController.dispose();
+    _userUidFocusNode.dispose();
+    _userNickFocusNode.dispose();
+    _userEmailFocusNode.dispose();
     super.dispose();
   }
 
@@ -98,6 +178,26 @@ class _JoinPageState extends ConsumerState<JoinPage> {
                     },
                     onSaved: (newValue) {
                       _userEmail = newValue;
+                    },
+                    onPressed: () {
+                      final email = _userEmailController.text.trim();
+                      if (validateEmail(email) == null) {
+                        final bool isDuplicate =
+                            sessionVM.checkDuplicateUserEmail(email) as bool;
+                        if (isDuplicate) {
+                          setState(() {
+                            _emailDuplicateError = '이미 사용 중인 이메일입니다';
+                          });
+                          return;
+                        } else {
+                          final bool isSent =
+                              sessionVM.sendVerificationEmail(email) as bool;
+                          setState(() {
+                            _isEmailVerified = true;
+                            _emailDuplicateError = null;
+                          });
+                        }
+                      }
                     },
                   ),
                   const SizedBox(height: 10),

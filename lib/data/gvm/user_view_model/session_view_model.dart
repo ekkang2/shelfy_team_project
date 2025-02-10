@@ -149,7 +149,31 @@ class SessionVM extends Notifier<SessionUser> {
     );
   }
 
-// 회원가입 시 중복 검사
+  // 회원가입 시 중복 검사
+  // 아이디 중복 검사
+  Future<void> checkDuplicateUserUid(String userUid) async {
+    final bool isDuplicate = await userRepository.validateUserUid(userUid);
+  }
+
+  // 닉네임 중복 검사
+  Future<void> checkDuplicateUserNick(String userNick) async {
+    final bool isDuplicate = await userRepository.validateUserUid(userNick);
+  }
+
+  // 이메일 중복 검사
+  Future<void> checkDuplicateUserEmail(String userEmail) async {
+    final bool isDuplicate = await userRepository.validateUserUid(userEmail);
+  }
+
+  // 이메일 인증 처리
+  Future<void> sendVerificationEmail(String userEmail) async {
+    final bool isEmailSent = await userRepository.verifyEmail(userEmail);
+    if (isEmailSent) {
+      CommonSnackbar.success(mContext, '인증 코드가 전송되었습니다');
+    } else {
+      CommonSnackbar.error(mContext, '인증 코드 전송에 실패하였습니다');
+    }
+  }
 }
 
 // 창고 관리자 선언

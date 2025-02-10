@@ -46,6 +46,13 @@ class UserRepository {
     return response.data['success'];
   }
 
+  // 이메일 인증 기능
+  Future<bool> verifyEmail(String userEmail) async {
+    Response response =
+        await dio.post('/verifyEmail', data: {'userEmail': userEmail});
+    return response.data['success'];
+  }
+
 // 로그아웃 기능
 
 // 자동 로그인 기능
