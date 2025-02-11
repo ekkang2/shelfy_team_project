@@ -23,4 +23,13 @@ class BookRepository {
     Map<String, dynamic> responseBody = response.data;
     return responseBody;
   }
+
+  // 책 검색 더보기
+  Future<Map<String, dynamic>> searchBooksMore({required String query}) async {
+    Response response = await dio
+        .get('/api/book/search/more', queryParameters: {'query': query});
+
+    Map<String, dynamic> responseBody = response.data;
+    return responseBody;
+  }
 }

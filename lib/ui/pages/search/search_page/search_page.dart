@@ -111,9 +111,18 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                             padding: const EdgeInsets.symmetric(
                                 vertical: 10.0, horizontal: 18),
                             child: OutlinedButton(
-                              onPressed: () {
-                                // 더보기 버튼 클릭 시의 동작을 여기에 추가
-                                print("더보기 버튼 클릭됨");
+                              onPressed: () async {
+                                // 더보기 버튼 클릭 시 검색 실행 로직 추가
+                                if (_searchController.text.isNotEmpty) {
+                                  setState(() {
+                                    _isLoading = true; // 로딩 시작
+                                  });
+                                  await bookvm
+                                      .searchBooksMore(_searchController.text);
+                                  setState(() {
+                                    _isLoading = false; // 로딩 종료
+                                  });
+                                }
                               },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
