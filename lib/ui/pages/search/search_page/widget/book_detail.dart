@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shelfy_team_project/data/gvm/book_view_model/book_detail_view_model.dart';
-import 'package:shelfy_team_project/data/gvm/book_view_model/book_view_model.dart';
 import 'package:shelfy_team_project/data/model/book_model/book.dart';
 
 import '../../../../widgets/modal_bottom_sheet/book_record_state.dart';
