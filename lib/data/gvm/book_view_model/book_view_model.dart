@@ -62,7 +62,7 @@ class BookVM extends Notifier<List<Book>> {
   Future<void> searchBooksMore(
     String query,
   ) async {
-    try {ㄷ
+    try {
       logger.d("더보기 검색어 :" + query);
       Map<String, dynamic> resBody =
           await bookRepository.searchBooksMore(query: query);
