@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shelfy_team_project/ui/pages/note/note_page/widget/note_write_body.dart';
+import 'package:shelfy_team_project/_core/utils/logger.dart' as log;
 import '../../../../data/gvm/note_view_model/note_view_model.dart';
+import '../../../../data/gvm/user_view_model/session_view_model.dart';
 import '../../../../data/model/note_model.dart';
 import '../../../../providers/book_provider.dart';
 import '../../../widgets/common_snackbar.dart';
@@ -29,7 +31,11 @@ class _NoteWritePageState extends ConsumerState<NoteWritePage> {
     final title = _titleController.text;
     final content = _contentController.text;
     final selectedBook = ref.read(bookWriteProvider); // 선택한 책 정보 가져오기
-    final userId = ref.read(sessionUserProvider)?.id ?? 1;
+
+    // 👉 sessionProvider를 사용해 로그인한 유저 ID를 가져옵니다.
+    // (만약 sessionProvider가 아닌 sessionUserProvider가 맞다면, 해당 provider 내부에서 올바른 ID가 들어가도록 수정해야 합니다.)
+    final userId = ref.read(sessionProvider).id ?? 0;
+    log.logger.d("NoteWritePage - userId: $userId"); // ✅ 충돌 방지
 
     // 제목 & 내용 필수 체크
     if (title.isEmpty || content.isEmpty) {
@@ -46,7 +52,7 @@ class _NoteWritePageState extends ConsumerState<NoteWritePage> {
       bookId: selectedBook?['book_id'], // 선택한 책 ID (없으면 null)
       createdAt: '',
     );
-// TODO - initState로 새로고침 (뒤로 갈 때마다 새로고침)
+
     try {
       await ref.read(noteViewModelProvider.notifier).submitNote(note);
       print('✅ 노트 저장 성공! 메인으로 이동');

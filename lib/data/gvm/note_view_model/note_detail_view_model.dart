@@ -40,3 +40,39 @@ class NoteDetailViewModel extends StateNotifier<Note?> {
     }
   }
 }
+
+// ✅ 노트 수정 함수
+Future<void> updateNote(WidgetRef ref, Note updatedNote) async {
+  final repository = ref.read(noteRepositoryProvider);
+  final noteData = updatedNote.toJson(); // JSON 변환
+
+  logger.d("📌 PATCH 요청 보낼 데이터: $noteData"); // ✅ 전송 데이터 로그 추가
+
+  try {
+    final result = await repository.update(updatedNote.noteId!, noteData);
+    logger.d("✅ 노트 수정 서버 응답: $result"); // ✅ 서버 응답 로그
+
+    if (result['success'] == true) {
+      ref.invalidate(noteDetailViewModelProvider(updatedNote.noteId!));
+    } else {
+      logger.e("🚨 노트 수정 실패 (서버 응답 오류): ${result['errorMessage']}");
+    }
+  } catch (e) {
+    logger.e("🚨 노트 수정 실패 (예외 발생): $e");
+  }
+}
+
+// ✅ 노트 삭제 함수
+Future<void> deleteNote(WidgetRef ref, int noteId) async {
+  final repository = ref.read(noteRepositoryProvider);
+  try {
+    await repository.delete(id: noteId); // ✅ API 호출
+    logger.d("✅ 노트 삭제 성공");
+
+    // ✅ 삭제 후 FutureProvider 상태 무효화
+    ref.invalidate(noteDetailViewModelProvider(noteId));
+  } catch (e) {
+    logger.e("🚨 노트 삭제 실패: $e");
+    rethrow;
+  }
+}

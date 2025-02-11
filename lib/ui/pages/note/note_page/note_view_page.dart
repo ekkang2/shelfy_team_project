@@ -125,10 +125,33 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
     );
   }
 
-  void _saveChanges() {
+  void _saveChanges() async {
     setState(() => isEditMode = false);
-    CommonSnackbar.success(context, '수정이 완료되었습니다!');
-    print('✅ 변경된 내용 저장!');
+
+    // ✅ 기존 노트 데이터를 가져와서 유지
+    final currentNote =
+        ref.read(noteDetailViewModelProvider(widget.noteId)).value;
+    if (currentNote == null) {
+      CommonSnackbar.error(context, '노트 정보를 불러올 수 없습니다.');
+      return;
+    }
+
+    final updatedNote = Note(
+      noteId: currentNote.noteId,
+      userId: currentNote.userId, // 기존 유저 ID 유지
+      title: currentNote.title, // ✅ 제목을 유지
+      content: contentController.text, // ✅ 내용만 업데이트 가능
+      bookId: currentNote.bookId,
+      notePin: currentNote.notePin,
+      createdAt: currentNote.createdAt, // ✅ 기존 createdAt 유지
+    );
+
+    try {
+      await updateNote(ref, updatedNote);
+      CommonSnackbar.success(context, '수정이 완료되었습니다!');
+    } catch (e) {
+      CommonSnackbar.error(context, '수정 실패: $e');
+    }
   }
 
   Widget _buildUserInfoSection(BuildContext context, Note note) {
@@ -164,71 +187,81 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
     );
   }
 
-  Widget _buildBookInfoSection(
-      BuildContext context, Map<String, String>? bookData) {
-    if (bookData == null) return const SizedBox.shrink();
+  void _deleteNote() async {
+    try {
+      await deleteNote(ref, widget.noteId);
+      CommonSnackbar.success(context, '노트가 삭제되었습니다!');
+      Navigator.pop(context); // ✅ 삭제 후 뒤로 가기
+    } catch (e) {
+      CommonSnackbar.error(context, '삭제 실패: $e');
+    }
+  }
+}
 
-    final book = Book(
-      book_id: int.tryParse(bookData['book_id'] ?? '0') ?? 0,
-      book_image: bookData['book_image'] ?? '',
-      book_title: bookData['book_title'] ?? '제목 없음',
-      book_author: bookData['book_author'] ?? '저자 없음',
-      book_publisher: bookData['book_publisher'] ?? '출판사 없음',
-      book_desc: bookData['book_desc'] ?? '설명 없음',
-      book_isbn: bookData['book_isbn'] ?? 'ISBN 없음',
-      book_page: int.tryParse(bookData['book_page'] ?? '0') ?? 0,
-      book_published_at: bookData['book_published_at'] ?? '출판일 정보 없음',
-    );
+Widget _buildBookInfoSection(
+    BuildContext context, Map<String, String>? bookData) {
+  if (bookData == null) return const SizedBox.shrink();
 
-    return Column(
+  final book = Book(
+    book_id: int.tryParse(bookData['book_id'] ?? '0') ?? 0,
+    book_image: bookData['book_image'] ?? '',
+    book_title: bookData['book_title'] ?? '제목 없음',
+    book_author: bookData['book_author'] ?? '저자 없음',
+    book_publisher: bookData['book_publisher'] ?? '출판사 없음',
+    book_desc: bookData['book_desc'] ?? '설명 없음',
+    book_isbn: bookData['book_isbn'] ?? 'ISBN 없음',
+    book_page: int.tryParse(bookData['book_page'] ?? '0') ?? 0,
+    book_published_at: bookData['book_published_at'] ?? '출판일 정보 없음',
+  );
+
+  return Column(
+    children: [
+      Center(child: Text('기록과 함께 하는 책', style: TextStyle(fontSize: 16))),
+      const SizedBox(height: 8),
+      NoteBookInfo(
+        bookImage: book.book_image,
+        bookTitle: book.book_title,
+        bookAuthor: book.book_author,
+        isEditMode: false,
+        onDetailPressed: () {},
+      ),
+    ],
+  );
+}
+
+Widget _buildBottomBar(BuildContext context) {
+  return Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Center(child: Text('기록과 함께 하는 책', style: TextStyle(fontSize: 16))),
-        const SizedBox(height: 8),
-        NoteBookInfo(
-          bookImage: book.book_image,
-          bookTitle: book.book_title,
-          bookAuthor: book.book_author,
-          isEditMode: false,
-          onDetailPressed: () {},
+        IconButton(
+          icon: const Icon(Icons.delete, color: Colors.grey),
+          onPressed: () {
+            showConfirmationDialog(
+              context: context,
+              title: '노트를 삭제하시겠습니까?',
+              subtitle: '삭제한 기록은 복구할 수 없어요!',
+              confirmText: '삭제',
+              snackBarMessage: '삭제 완료!',
+              snackBarIcon: Icons.delete_forever,
+              snackBarType: 'error',
+              onConfirm: () {
+                print('노트 삭제됨');
+              },
+            );
+          },
         ),
       ],
-    );
-  }
+    ),
+  );
+}
 
-  Widget _buildBottomBar(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.delete, color: Colors.grey),
-            onPressed: () {
-              showConfirmationDialog(
-                context: context,
-                title: '노트를 삭제하시겠습니까?',
-                subtitle: '삭제한 기록은 복구할 수 없어요!',
-                confirmText: '삭제',
-                snackBarMessage: '삭제 완료!',
-                snackBarIcon: Icons.delete_forever,
-                snackBarType: 'error',
-                onConfirm: () {
-                  print('노트 삭제됨');
-                },
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _formatDate(String dateString) {
-    try {
-      DateTime date = DateTime.parse(dateString);
-      return DateFormat('yyyy년 MM월 dd일 EEEE', 'ko_KR').format(date);
-    } catch (e) {
-      return '날짜 정보 없음';
-    }
+String _formatDate(String dateString) {
+  try {
+    DateTime date = DateTime.parse(dateString);
+    return DateFormat('yyyy년 MM월 dd일 EEEE', 'ko_KR').format(date);
+  } catch (e) {
+    return '날짜 정보 없음';
   }
 }
