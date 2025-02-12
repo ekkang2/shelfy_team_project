@@ -7,17 +7,17 @@ import 'package:shelfy_team_project/main.dart';
 import 'package:shelfy_team_project/ui/widgets/common_snackbar.dart';
 
 import '../../../ui/pages/main_screen.dart';
-import '../../model/record_model/record_.dart';
+import '../../model/record_model/record_model.dart';
 
-class RecordViewModel extends Notifier<Record> {
+class RecordViewModel extends Notifier<RecordModel> {
   //  사용 선언
   final mContext = navigatorkey.currentContext!;
   RecordRepository recordRepository = const RecordRepository();
 
   //  상태값 초기화
   @override
-  Record build() {
-    return Record(
+  RecordModel build() {
+    return RecordModel(
         stateId: null,
         bookId: null,
         userId: null,
@@ -71,7 +71,7 @@ class RecordViewModel extends Notifier<Record> {
 
       FocusScope.of(mContext).unfocus();
       CommonSnackbar.show(mContext, "기록이 추가되었어요!");
-      state = Record(
+      state = RecordModel(
         stateId: null,
         bookId: null,
         userId: null,
@@ -98,6 +98,6 @@ class RecordViewModel extends Notifier<Record> {
 }
 
 // 창고관리자
-final recordViewModelProvider = NotifierProvider<RecordViewModel, Record>(
+final recordViewModelProvider = NotifierProvider<RecordViewModel, RecordModel>(
   () => RecordViewModel(),
 );

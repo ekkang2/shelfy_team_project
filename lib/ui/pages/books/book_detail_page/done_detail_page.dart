@@ -7,7 +7,8 @@ import 'package:shelfy_team_project/data/model/book_record_done.dart';
 import '../../../widgets/custom_record_label.dart';
 
 class DoneDetailPage extends StatefulWidget {
-  final BookRecordDone book;
+  // final BookRecordDone book;
+  final String book;
 
   const DoneDetailPage({required this.book, super.key});
 
@@ -18,13 +19,13 @@ class DoneDetailPage extends StatefulWidget {
 class _DoneDetailPageState extends State<DoneDetailPage> {
   late DateTime startDate;
   late DateTime endDate;
-
-  @override
-  void initState() {
-    super.initState();
-    startDate = widget.book.startDate; // 초기 시작일 설정
-    endDate = widget.book.endDate ?? DateTime.now(); // 초기 종료일 설정 (null이면 오늘 날짜)
-  }
+  //
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   startDate = widget.book.startDate; // 초기 시작일 설정
+  //   endDate = widget.book.endDate ?? DateTime.now(); // 초기 종료일 설정 (null이면 오늘 날짜)
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -32,90 +33,90 @@ class _DoneDetailPageState extends State<DoneDetailPage> {
       child: Scaffold(
         appBar: BooksAppBar(context),
         body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(3),
-                  topRight: Radius.circular(10),
-                  bottomLeft: Radius.circular(3),
-                  bottomRight: Radius.circular(10),
-                ),
-                child: Image.network(
-                  '${widget.book.book.book_image}',
-                  fit: BoxFit.fill,
-                  width: 150,
-                ),
-              ),
+            // crossAxisAlignment: CrossAxisAlignment.center,
+            // children: [
+            //   Padding(
+            //     padding: const EdgeInsets.symmetric(vertical: 20.0),
+            //     child: ClipRRect(
+            //       borderRadius: BorderRadius.only(
+            //         topLeft: Radius.circular(3),
+            //         topRight: Radius.circular(10),
+            //         bottomLeft: Radius.circular(3),
+            //         bottomRight: Radius.circular(10),
+            //       ),
+            //       child: Image.network(
+            //         '${widget.book.book.book_image}',
+            //         fit: BoxFit.fill,
+            //         width: 150,
+            //       ),
+            //     ),
+            //   ),
+            //   const SizedBox(height: 5),
+            //   Text(
+            //     '${widget.book.book.book_title}',
+            //     style: Theme.of(context).textTheme.headlineLarge,
+            //   ),
+            //   const SizedBox(height: 10),
+            //   Text(
+            //     '${widget.book.book.book_author} · ${widget.book.book.book_publisher}',
+            //     style: Theme.of(context).textTheme.labelLarge,
+            //   ),
+            //   const SizedBox(height: 10),
+            //   customRecordLabel(1),
+            //   const SizedBox(height: 20),
+            //   Divider(
+            //     color: Colors.grey[300],
+            //     thickness: 1,
+            //     indent: 20,
+            //     endIndent: 20,
+            //   ),
+            //   // ListView를 스크롤 가능하도록 수정
+            //   Expanded(
+            //     child: Padding(
+            //       padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            //       child: ListView(
+            //         children: [
+            //           const SizedBox(height: 20),
+            //           Container(
+            //               width: double.infinity,
+            //               child: customStarRating(widget.book.rating, 1, 25)),
+            //           const SizedBox(height: 30),
+            //           readPeriod(),
+            //           const SizedBox(height: 20),
+            //           Visibility(
+            //             visible: widget.book.comment != null,
+            //             child: Column(
+            //               children: [
+            //                 Row(
+            //                   children: [
+            //                     Icon(FontAwesomeIcons.penClip,
+            //                         size: 15, color: const Color(0xFF4D77B2)),
+            //                     const SizedBox(width: 5),
+            //                     Text('나의 한 줄'),
+            //                   ],
+            //                 ),
+            //                 const SizedBox(height: 6),
+            //                 Container(
+            //                   alignment: Alignment.center,
+            //                   padding: EdgeInsets.symmetric(vertical: 15),
+            //                   decoration: BoxDecoration(
+            //                     color: Colors.grey[100],
+            //                     borderRadius: BorderRadius.circular(3),
+            //                   ),
+            //                   child: Text(
+            //                     '\"${widget.book.comment}\"',
+            //                     style: Theme.of(context).textTheme.bodyLarge,
+            //                   ),
+            //                 ),
+            //               ],
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ],
             ),
-            const SizedBox(height: 5),
-            Text(
-              '${widget.book.book.book_title}',
-              style: Theme.of(context).textTheme.headlineLarge,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              '${widget.book.book.book_author} · ${widget.book.book.book_publisher}',
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
-            const SizedBox(height: 10),
-            customRecordLabel(1),
-            const SizedBox(height: 20),
-            Divider(
-              color: Colors.grey[300],
-              thickness: 1,
-              indent: 20,
-              endIndent: 20,
-            ),
-            // ListView를 스크롤 가능하도록 수정
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: ListView(
-                  children: [
-                    const SizedBox(height: 20),
-                    Container(
-                        width: double.infinity,
-                        child: customStarRating(widget.book.rating, 1, 25)),
-                    const SizedBox(height: 30),
-                    readPeriod(),
-                    const SizedBox(height: 20),
-                    Visibility(
-                      visible: widget.book.comment != null,
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Icon(FontAwesomeIcons.penClip,
-                                  size: 15, color: const Color(0xFF4D77B2)),
-                              const SizedBox(width: 5),
-                              Text('나의 한 줄'),
-                            ],
-                          ),
-                          const SizedBox(height: 6),
-                          Container(
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.symmetric(vertical: 15),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[100],
-                              borderRadius: BorderRadius.circular(3),
-                            ),
-                            child: Text(
-                              '\"${widget.book.comment}\"',
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

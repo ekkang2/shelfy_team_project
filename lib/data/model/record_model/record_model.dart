@@ -1,4 +1,4 @@
-class Record {
+class RecordModel {
   int? stateId;
   String? bookId;
   int? userId;
@@ -11,7 +11,7 @@ class Record {
   double? rating;
   bool isWriteCompleted;
 
-  Record(
+  RecordModel(
       {required this.stateId,
       required this.bookId,
       required this.userId,

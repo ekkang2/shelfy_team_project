@@ -1,42 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shelfy_team_project/data/gvm/doing_view_model.dart';
-import 'package:shelfy_team_project/data/gvm/done_view_model.dart';
-import 'package:shelfy_team_project/data/model/book_record_doing.dart';
-import 'package:shelfy_team_project/data/model/book_record_done.dart';
-import 'package:shelfy_team_project/ui/pages/books/books_page/widget/shelf_book_item_stop.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shelfy_team_project/ui/pages/books/books_page/widget/shelf_book_item_done.dart';
 
-import '../../../../data/gvm/stop_view_model.dart';
-import '../../../../data/gvm/wish_view_model.dart';
-import 'widget/shelf_book_item_doing.dart';
-import 'widget/shelf_book_item_done.dart';
-import 'widget/shelf_book_item_wish.dart';
+import '../../../../data/gvm/record_view_model/record_list_view_model.dart';
+import '../../../../data/model/record_model/record_list.dart';
 
-class BooksPage extends ConsumerWidget {
-  const BooksPage({super.key});
+class BooksPage extends ConsumerStatefulWidget {
+  final int initialIndex; // 초기 탭 인덱스 추가
+
+  const BooksPage({super.key, this.initialIndex = 0}); // 기본값 설정
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final doingList = ref.watch(DoingViewModelProvider);
-    final doingNotifier = ref.read(DoingViewModelProvider.notifier);
+  ConsumerState<BooksPage> createState() => _BooksPageState();
+}
 
-    final doneList = ref.watch(DoneViewModelProvider);
-    final doneNotifier = ref.read(DoneViewModelProvider.notifier);
+class _BooksPageState extends ConsumerState<BooksPage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  final RefreshController _refreshController = RefreshController();
 
-    final wishList = ref.watch(wishViewModelProvider);
-    final wishNotifier = ref.read(wishViewModelProvider.notifier);
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(
+        length: 4, vsync: this, initialIndex: widget.initialIndex);
+  }
 
-    final stopList = ref.watch(stopViewModelProvider);
-    final stopNotifier = ref.read(stopViewModelProvider.notifier);
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    RecordListViewModel vm = ref.read(recordListProvider.notifier);
+    RecordList? model = ref.watch(recordListProvider);
 
     return DefaultTabController(
-      length: 4, // 탭 개수
+      length: 4,
       child: Column(
         children: [
           _buildTabBar(context),
           Expanded(
-            child: _buildTabBarView(doingList, doingNotifier, doneList,
-                doneNotifier, wishList, wishNotifier, stopList, stopNotifier),
+            child: _buildTabBarView(model, vm),
           ),
         ],
       ),
@@ -47,10 +55,11 @@ class BooksPage extends ConsumerWidget {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return TabBar(
+      controller: _tabController, // ✅ TabController 추가
       indicatorSize: TabBarIndicatorSize.tab,
       indicator: UnderlineTabIndicator(
         borderSide: BorderSide(
-          color: !isDarkMode ? Color(0xFF4D77B2) : Colors.grey,
+          color: !isDarkMode ? const Color(0xFF4D77B2) : Colors.grey,
           width: 3.0,
         ),
       ),
@@ -67,58 +76,41 @@ class BooksPage extends ConsumerWidget {
     );
   }
 
-  TabBarView _buildTabBarView(
-      List<BookRecordDoing> doingList,
-      DoingViewModel doingNotifier,
-      List<BookRecordDone> doneList,
-      DoneViewModel doneNoti,
-      List wishList,
-      WishViewModel wishNoti,
-      List stopList,
-      StopViewModel stopNoti) {
-    return TabBarView(
-      children: [
-        // 끝맺은 책
-        ListView.builder(
-          itemBuilder: (context, index) {
-            final done = doneList[index];
-            return ShelfBookItemDone(done: done);
-          },
-          itemCount: doneList.length,
-        ),
-        // 여정 중인 책
-        ListView.builder(
-          itemBuilder: (context, index) {
-            final doing = doingList[index];
-            return ShelfBookItemDoing(
-              doing: doing,
-            );
-          },
-          itemCount: doingList.length,
-        ),
-        // 기다리는 책
-        ListView.builder(
-          itemBuilder: (context, index) {
-            final wish = wishList[index];
-            return ShelfBookItemWish(
-              book: wish,
-              noti: wishNoti,
-            );
-          },
-          itemCount: wishList.length,
-        ),
-        // 잠든 책
-        ListView.builder(
-          itemBuilder: (context, index) {
-            final stop = stopList[index];
-            return ShelfBookItemStop(
-              book: stop,
-              noti: stopNoti,
-            );
-          },
-          itemCount: stopList.length,
-        ),
-      ],
-    );
+  TabBarView _buildTabBarView(RecordList? model, RecordListViewModel vm) {
+    if (model == null) {
+      return TabBarView(
+        children: [
+          CircularProgressIndicator(),
+        ],
+      ); //Center(child: CircularProgressIndicator());
+    } else {
+      return TabBarView(
+        controller: _tabController, // ✅ TabController 추가
+        children: [
+          SmartRefresher(
+            controller: _refreshController, // RefreshController를 View에서 관리
+            enablePullUp: true,
+            enablePullDown: true,
+            onRefresh: () async {
+              await vm.init();
+              _refreshController.refreshCompleted();
+            },
+            onLoading: () async {
+              await vm.nextList();
+              _refreshController.loadComplete();
+            },
+            child: ListView.builder(
+              itemBuilder: (context, index) {
+                return ShelfBookItemDone(done: model.records[index]);
+              },
+              itemCount: model.records.length,
+            ),
+          ),
+          Center(child: Text('여정 중인 책')),
+          Center(child: Text('기다리는 책')),
+          Center(child: Text('잠든 책')),
+        ],
+      );
+    }
   }
 }
