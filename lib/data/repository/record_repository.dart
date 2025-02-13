@@ -17,9 +17,16 @@ class RecordRepository {
 
   // 250212 박연화 독서기록 리스트 조회 요청
   // @param 타입, 페이지번호
-  Future<Map<String, dynamic>> findAll(
+  Future<Map<String, dynamic>> findAllByType(
       {required int type, int page = 0}) async {
     Response response = await dio.get('/api/records/${type}/${page}');
+    Map<String, dynamic> responseBody = response.data;
+    return responseBody;
+  }
+
+  // 250213 박연화 독서기록 리스트 전부 다 가져오기
+  Future<Map<String, dynamic>> findAll() async {
+    Response response = await dio.get('/api/records');
     Map<String, dynamic> responseBody = response.data;
     return responseBody;
   }

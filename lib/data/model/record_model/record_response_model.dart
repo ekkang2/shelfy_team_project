@@ -19,6 +19,7 @@ class RecordResponseModel {
   String? bookTitle;
   String? bookAuthor;
   String? bookPublisher;
+  int? bookPage;
 
   RecordResponseModel.fromMap(Map<String, dynamic> map)
       : stateId = map["stateId"],
@@ -28,10 +29,15 @@ class RecordResponseModel {
         bookImage = map["bookImage"],
         bookTitle = map["bookTitle"],
         bookAuthor = map["bookAuthor"],
+        bookPage = map["bookPage"],
         bookPublisher = map["bookPublisher"],
         stateType = map["stateType"],
-        startDate = DateFormat("yyyy-mm-dd").parse(map["startDate"]),
-        endDate = DateFormat("yyyy-mm-dd").parse(map["endDate"]),
+        startDate = map["startDate"] != null
+            ? DateFormat("yyyy-MM-dd").parse(map["startDate"])
+            : null,
+        endDate = map["endDate"] != null
+            ? DateFormat("yyyy-MM-dd").parse(map["endDate"])
+            : null,
         comment = map["comment"],
         progress = map["progress"],
         rating = map["rating"];
