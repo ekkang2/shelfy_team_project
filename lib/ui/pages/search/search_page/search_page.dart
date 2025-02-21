@@ -150,7 +150,6 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text("검색 결과가 없습니다."),
-                        Text("더 구체적인 키워드를 입력해 주세요."),
                       ],
                     )),
         ),

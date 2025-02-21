@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // inputFormatters 사용을 위해 필요
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shelfy_team_project/data/gvm/book_view_model/book_write_view_model.dart'; // inputFormatters 사용을 위해 필요
 
-class AddBook extends StatefulWidget {
-  const AddBook({super.key});
+class AddBook extends ConsumerWidget {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _authorController = TextEditingController();
+  final TextEditingController _publisherController = TextEditingController();
+  final TextEditingController _isbnController = TextEditingController();
+  final TextEditingController _pagesController = TextEditingController();
 
-  @override
-  State<AddBook> createState() => _AddBookState();
-}
-
-class _AddBookState extends State<AddBook> {
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController authorController = TextEditingController();
-  final TextEditingController publisherController = TextEditingController();
-  final TextEditingController isbnController = TextEditingController();
-  final TextEditingController pagesController = TextEditingController();
+  AddBook({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // 뷰 모델 상태를 구독
+    final data = ref.watch(bookWriteViewModelProvider);
+    // 뷰 모델 행위 사용(뷰 모델 자체를 들고오기)
+    final vm = ref.read(bookWriteViewModelProvider.notifier);
+
     return SafeArea(
+      key: _formKey,
       child: Scaffold(
         appBar: AppBar(
           // 타이틀 위치
@@ -34,7 +38,22 @@ class _AddBookState extends State<AddBook> {
             TextButton(
               onPressed: () {
                 // 저장 버튼 클릭 이벤트
-                print('저장 버튼 클릭');
+                vm.createBook(
+                  myBookTitle: _titleController.text.trim(),
+                  myBookAuthor: _authorController.text.trim(),
+                  myBookPublisher: _publisherController.text.trim(),
+                  myBookIsbn: _isbnController.text.trim(),
+                  myBookPage: _pagesController.text.trim(),
+                );
+                // 레코드 문법 활용 가능
+                if (data.$3 == true) {
+                  // 페이지 이동 처리
+                  _titleController.clear();
+                  _authorController.clear();
+                  _publisherController.clear();
+                  _isbnController.clear();
+                  _pagesController.clear();
+                }
               },
               child: Text(
                 '저장',
@@ -73,12 +92,12 @@ class _AddBookState extends State<AddBook> {
               ),
             ),
             SizedBox(height: 20),
-            buildSection('제목', titleController),
-            buildSection('지은이', authorController),
-            buildSection('출판사', publisherController),
+            buildSection('제목', _titleController),
+            buildSection('지은이', _authorController),
+            buildSection('출판사', _publisherController),
             buildSection(
               'ISBN',
-              isbnController,
+              _isbnController,
               keyboardType: TextInputType.text,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(
@@ -87,7 +106,7 @@ class _AddBookState extends State<AddBook> {
             ),
             buildSection(
               '페이지',
-              pagesController,
+              _pagesController,
               keyboardType: TextInputType.number,
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly, // 숫자만 허용

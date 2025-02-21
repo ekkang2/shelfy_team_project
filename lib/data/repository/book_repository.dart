@@ -32,4 +32,12 @@ class BookRepository {
     Map<String, dynamic> responseBody = response.data;
     return responseBody;
   }
+
+  // 책 등록
+  Future<Map<String, dynamic>> save(Map<String, dynamic> reqData) async {
+    Response response = await dio.post('/api/my/book/save', data: reqData);
+
+    Map<String, dynamic> responseBody = response.data;
+    return responseBody;
+  }
 }
