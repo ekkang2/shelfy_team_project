@@ -1,15 +1,26 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/model/user_model/session_user.dart';
 
-// ✅ 현재 로그인한 유저 정보를 저장하는 Provider
-final sessionUserProvider = StateProvider<SessionUser?>((ref) => null);
+// ✅ 유저 정보 관리 (StateNotifier)
+class SessionUserNotifier extends StateNotifier<SessionUser?> {
+  SessionUserNotifier() : super(null);
 
-// ✅ 로그인한 유저의 ID 가져오기 (watch 사용)
-int getUserId(WidgetRef ref) {
-  final sessionUser = ref.watch(sessionUserProvider); // ✅ watch() 사용
-  final userId = sessionUser?.id ?? 0; // 기본값: 0 (로그인 안 한 경우)
-  print("🐛 현재 로그인한 유저 ID: $userId");
-  // ✅ 로그 추가
+  // ✅ 로그인 정보 저장 (앱 내 상태 유지)
+  void login(SessionUser user) {
+    state = user;
+  }
 
-  return userId;
+  // ✅ 로그아웃 (상태 초기화)
+  void logout() {
+    state = null;
+  }
 }
+
+// ✅ 유저 정보 Provider
+final sessionUserProvider =
+    StateNotifierProvider<SessionUserNotifier, SessionUser?>(
+  (ref) => SessionUserNotifier(),
+);
+
+// ✅ 현재 로그인한 유저 ID 가져오기 (불필요한 rebuild 방지)
+int getUserId(WidgetRef ref) => ref.read(sessionUserProvider)?.id ?? 0;

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+import '../../_core/utils/logger.dart';
 import '../../_core/utils/m_http.dart';
 
 /*
@@ -59,11 +60,26 @@ class NoteRepository {
   Future<Map<String, dynamic>> update(
       int id, Map<String, dynamic> reqData) async {
     try {
-      Response response = await dio.put('/api/note/$id', data: reqData);
+      logger.d("📌 PATCH 요청: /api/note/$id, 데이터: $reqData"); // ✅ 요청 확인
+      Response response =
+          await dio.patch('/api/note/$id', data: reqData); // ✅ PATCH 요청으로 변경
+      logger.d("✅ 응답 데이터: ${response.data}"); // ✅ 응답 로그
       return response.data;
     } catch (e) {
-      print("🚨 update 실패: $e");
-      return {};
+      logger.e("🚨 update API 호출 실패: $e");
+      return {"success": false, "errorMessage": e.toString()};
+    }
+  }
+
+  // ✅ 특정 노트의 북마크 상태 업데이트
+  Future<void> updateNotePin(int noteId, bool notePin) async {
+    try {
+      await dio.patch('/api/note/$noteId/pin',
+          queryParameters: {"notePin": notePin});
+      print("✅ 북마크 업데이트 성공: noteId=$noteId, notePin=$notePin");
+    } catch (e) {
+      print("🚨 updateNotePin 실패: $e");
+      throw Exception("북마크 업데이트 실패");
     }
   }
 }

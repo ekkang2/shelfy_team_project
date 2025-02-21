@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:shelfy_team_project/data/gvm/wish_view_model.dart';
-import 'package:shelfy_team_project/data/model/book_record_wish.dart';
-
-import '../../../../widgets/custom_star_rating.dart';
+import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
 import '../../book_detail_page/wish_detail_page.dart';
+import '../../../../widgets/custom_star_rating.dart';
 
 class ShelfBookItemWish extends StatelessWidget {
-  final BookRecordWish book;
-  final WishViewModel noti;
+  final RecordResponseModel wish;
 
-  const ShelfBookItemWish({required this.book, required this.noti, super.key});
+  const ShelfBookItemWish({required this.wish, super.key});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => WishDetailPage(wish: book)),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //       builder: (context) => WishDetailPage(wish: wish)),
+        // );
       },
       child: Container(
         child: Padding(
@@ -31,21 +29,17 @@ class ShelfBookItemWish extends StatelessWidget {
                 decoration: BoxDecoration(
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2), // 그림자 색상 및 투명도
-                      blurRadius: 6, // 그림자의 흐림 정도
-                      offset: Offset(2, 4), // 그림자의 위치 (x, y 축 이동)
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 6,
+                      offset: Offset(2, 4),
                     ),
                   ],
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(3),
-                  child: Align(
-                    widthFactor: 0.97,
-                    heightFactor: 0.97,
-                    child: Image.network(
-                      height: 105,
-                      book.book.book_image,
-                    ),
+                  child: Image.network(
+                    height: 105,
+                    wish.bookImage!,
                   ),
                 ),
               ),
@@ -56,26 +50,26 @@ class ShelfBookItemWish extends StatelessWidget {
                 children: [
                   const SizedBox(height: 6),
                   Text(
-                    book.book.book_title,
+                    wish.bookTitle!,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
-                      Text('${book.book.book_author} · ',
+                      Text('${wish.bookAuthor} · ',
                           style: Theme.of(context).textTheme.labelMedium),
-                      Text('${book.book.book_publisher}',
+                      Text('${wish.bookPublisher}',
                           style: Theme.of(context).textTheme.labelMedium),
                     ],
                   ),
                   const SizedBox(height: 10),
-                  customStarRating(book.rating, 2, 18),
+                  customStarRating(wish.rating!, 2, 18),
                   Container(
                     width: 270,
                     alignment: Alignment.bottomRight,
-                    child: Text('${noti.formatSingleDate(book.startDate)}',
+                    child: Text('${wish.startDate}',
                         style: Theme.of(context).textTheme.labelMedium),
-                  )
+                  ),
                 ],
               ),
             ],

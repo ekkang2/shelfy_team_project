@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:shelfy_team_project/ui/pages/note/note_page/widget/note_input_field.dart';
 import 'package:shelfy_team_project/ui/widgets/custom_appbar.dart';
 import 'package:shelfy_team_project/providers/book_provider.dart';
@@ -9,9 +10,15 @@ import 'package:shelfy_team_project/ui/widgets/common_snackbar.dart';
 import 'package:shelfy_team_project/data/gvm/note_view_model/note_detail_view_model.dart';
 import 'package:shelfy_team_project/ui/pages/note/note_page/widget/note_book_Info.dart';
 
+import '../../../../data/gvm/note_view_model/note_list_view_model.dart';
+import '../../../../data/gvm/note_view_model/note_view_model.dart';
 import '../../../../data/model/book.dart';
 import '../../../../data/model/note_model.dart';
-import '../../search/search_page/widget/book_detail.dart';
+import '../../../../providers/session_user_provider.dart';
+import '../../main_screen.dart';
+
+final logger = Logger();
+
 
 class NoteViewPage extends ConsumerStatefulWidget {
   final int noteId;
@@ -24,6 +31,7 @@ class NoteViewPage extends ConsumerStatefulWidget {
 
 class _NoteViewPageState extends ConsumerState<NoteViewPage> {
   bool isEditMode = false;
+  bool isUpdated = false; // ✅ 추가됨
   late TextEditingController contentController;
 
   @override
@@ -36,6 +44,40 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
   void dispose() {
     contentController.dispose();
     super.dispose();
+  }
+
+  void _toggleBookmark() async {
+    final currentNote =
+        ref.read(noteDetailViewModelProvider(widget.noteId)).value;
+    if (currentNote == null) return;
+
+    final updatedPinStatus = !currentNote.notePin;
+
+    try {
+      await ref
+          .read(noteRepositoryProvider)
+          .updateNotePin(currentNote.noteId!, updatedPinStatus);
+
+      setState(() {
+        isUpdated = true; // ✅ UI 변경 감지
+      });
+
+      ref.invalidate(noteDetailViewModelProvider(widget.noteId));
+
+      // ✅ 유저 ID 가져오기
+      final userId = getUserId(ref);
+      if (userId != 0) {
+        logger.d("✅ 유저 ID 확인됨: $userId - 리스트 새로고침 실행");
+        ref.invalidate(noteListViewModelProvider);
+        Future.microtask(() {
+          ref.read(noteListViewModelProvider.notifier).fetchNotes(userId);
+        });
+      } else {
+        logger.e("🚨 유저 정보 없음! 리스트 새로고침 건너뜀");
+      }
+    } catch (e) {
+      CommonSnackbar.error(context, '북마크 변경 실패: $e');
+    }
   }
 
   @override
@@ -125,10 +167,36 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
     );
   }
 
-  void _saveChanges() {
+  void _saveChanges() async {
     setState(() => isEditMode = false);
-    CommonSnackbar.success(context, '수정이 완료되었습니다!');
-    print('✅ 변경된 내용 저장!');
+
+    // ✅ 기존 노트 데이터를 가져와서 유지
+    final currentNote =
+        ref.read(noteDetailViewModelProvider(widget.noteId)).value;
+    if (currentNote == null) {
+      CommonSnackbar.error(context, '노트 정보를 불러올 수 없습니다.');
+      return;
+    }
+
+    final updatedNote = Note(
+      noteId: currentNote.noteId,
+      userId: currentNote.userId,
+      // 기존 유저 ID 유지
+      title: currentNote.title,
+      // ✅ 제목을 유지
+      content: contentController.text,
+      // ✅ 내용만 업데이트 가능
+      bookId: currentNote.bookId,
+      notePin: currentNote.notePin,
+      createdAt: currentNote.createdAt, // ✅ 기존 createdAt 유지
+    );
+
+    try {
+      await updateNote(ref, updatedNote);
+      CommonSnackbar.success(context, '수정이 완료되었습니다!');
+    } catch (e) {
+      CommonSnackbar.error(context, '수정 실패: $e');
+    }
   }
 
   Widget _buildUserInfoSection(BuildContext context, Note note) {
@@ -156,9 +224,7 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
         IconButton(
           icon: Icon(note.notePin ? Icons.bookmark : Icons.bookmark_border),
           color: Colors.grey,
-          onPressed: () {
-            print("북마크 토글: ${note.notePin}");
-          },
+          onPressed: _toggleBookmark, // ✅ 북마크 버튼 동작 연결
         ),
       ],
     );
@@ -213,7 +279,7 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
                 snackBarIcon: Icons.delete_forever,
                 snackBarType: 'error',
                 onConfirm: () {
-                  print('노트 삭제됨');
+                  _deleteNote(); // ✅ 삭제 함수 연결
                 },
               );
             },
@@ -222,6 +288,22 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
       ),
     );
   }
+
+  void _deleteNote() async {
+    try {
+      await deleteNote(ref, widget.noteId); // ✅ API 요청 보내기
+      CommonSnackbar.success(context, '노트가 삭제되었습니다!');
+
+      // ✅ 현재 화면을 닫고, 메인 화면의 "노트 탭(3번 인덱스)"으로 이동
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MainScreen(initialIndex: 3)),
+      );
+    } catch (e) {
+      CommonSnackbar.error(context, '삭제 실패: $e');
+    }
+  }
+
 
   String _formatDate(String dateString) {
     try {

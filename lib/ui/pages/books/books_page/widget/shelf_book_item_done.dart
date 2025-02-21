@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shelfy_team_project/data/model/book_record_done.dart';
+import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
 import 'package:shelfy_team_project/ui/pages/books/book_detail_page/done_detail_page.dart';
 
 import '../../../../widgets/custom_star_rating.dart';
 
 class ShelfBookItemDone extends StatelessWidget {
-  final BookRecordDone done;
+  final RecordResponseModel done;
 
   const ShelfBookItemDone({required this.done, super.key});
 
@@ -13,10 +14,11 @@ class ShelfBookItemDone extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => DoneDetailPage(book: done)),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //       builder: (context) => DoneDetailPage(book: done.bookId)),
+        // );
       },
       child: Container(
         child: Padding(
@@ -42,7 +44,7 @@ class ShelfBookItemDone extends StatelessWidget {
                     heightFactor: 0.97,
                     child: Image.network(
                       height: 105,
-                      done.book.book_image,
+                      done.bookImage!,
                     ),
                   ),
                 ),
@@ -54,15 +56,15 @@ class ShelfBookItemDone extends StatelessWidget {
                 children: [
                   const SizedBox(height: 6),
                   Text(
-                    done.book.book_title,
+                    done.bookTitle!,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   SizedBox(height: 4),
                   Row(
                     children: [
-                      Text('${done.book.book_author} · ',
+                      Text('${done.bookAuthor} · ',
                           style: Theme.of(context).textTheme.labelMedium),
-                      Text('${done.book.book_publisher}',
+                      Text('${done.bookPublisher}',
                           style: Theme.of(context).textTheme.labelMedium),
                     ],
                   ),
@@ -72,7 +74,7 @@ class ShelfBookItemDone extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        customStarRating(done.rating, 1, 18),
+                        customStarRating(done.rating!, 1, 18),
                         Visibility(
                           visible: done.comment != null,
                           child: Icon(
@@ -88,8 +90,8 @@ class ShelfBookItemDone extends StatelessWidget {
                     width: 270,
                     alignment: Alignment.bottomRight,
                     child: Text(
-                      '${done.formatSingleDate(done.startDate)} ~'
-                      ' ${done.formatSingleDate(done.endDate)}',
+                      '${done.startDate} ~'
+                      ' ${done.endDate}',
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ),

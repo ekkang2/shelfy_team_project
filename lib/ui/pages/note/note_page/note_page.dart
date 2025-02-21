@@ -32,6 +32,7 @@ class _NoteStatsTabState extends ConsumerState<NoteStatsTab>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool isLatestFirst = true; // 정렬 순서 상태 변수
+  bool isBookmarkedExpanded = true; // 기록 서랍 펼침 상태 추가
 
   @override
   void initState() {
@@ -87,24 +88,46 @@ class _NoteStatsTabState extends ConsumerState<NoteStatsTab>
                       horizontal: 28.0, vertical: 24.0),
                   children: [
                     // ✅ 기록 서랍 (정렬 없음)
-                    NoteSection(
-                      title: '기록 서랍',
-                      notes: bookmarkedNotes, // ✅ 원본 리스트 사용 (정렬 X)
-                      icon: Icons.bookmarks,
-                      userId: getUserId(ref),
-                    ),
+                    // ✅ 기록 서랍 (접고 펼치는 기능)
+                    // ✅ 기록 서랍 (리스트만 접고 펼침)
+                    if (bookmarkedNotes.isNotEmpty)
+                      NoteSection(
+                        title: '기록 서랍',
+                        icon: Icons.bookmarks,
+                        userId: getUserId(ref),
+                        trailing: IconButton(
+                          icon: Icon(
+                            isBookmarkedExpanded
+                                ? Icons.expand_less
+                                : Icons.expand_more,
+                            color: Colors.grey,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              isBookmarkedExpanded = !isBookmarkedExpanded;
+                            });
+                          },
+                        ),
+                        notes: isBookmarkedExpanded
+                            ? bookmarkedNotes
+                            : [], // ✅ 리스트만 숨김
+                      ),
+
                     const SizedBox(height: 16),
                     // ✅ 기록 조각 (정렬 적용)
-                    NoteSection(
-                      title: '기록 조각',
-                      notes: sortedNotes, // ✅ 최신순 / 오래된 순 정렬 적용
-                      icon: Icons.menu_book,
-                      userId: getUserId(ref),
-                      trailing: _buildSortButton(), // ✅ 기록 조각만 정렬
-                    ),
+                    if (sortedNotes.isNotEmpty)
+                      NoteSection(
+                        title: '기록 조각',
+                        notes: sortedNotes,
+                        icon: Icons.menu_book,
+                        userId: getUserId(ref),
+                        trailing: _buildSortButton(),
+                      )
+                    else
+                      _buildEmptyNoteMessage(), // 🔥 노트가 없을 때 안내 메시지 표시
                   ],
                 ),
-                const NoteStatisticsPage(),
+                NoteStatisticsPage(),
               ],
             ),
           ),
@@ -133,6 +156,26 @@ class _NoteStatsTabState extends ConsumerState<NoteStatsTab>
           const SizedBox(width: 4),
           const Icon(Icons.arrow_drop_down, color: Colors.grey),
         ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyNoteMessage() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 50),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.edit_note,
+                size: 50, color: Colors.grey[400]), // 📝 아이콘 추가
+            const SizedBox(height: 10),
+            Text(
+              "노트가 비어있어요. 새로운 글을 남겨보세요!",
+              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -44,4 +44,25 @@ class Note {
       "noteCreatedAt": createdAt,
     };
   }
+
+  // ✅ copyWith 함수 추가 (새로운 값만 업데이트)
+  Note copyWith({
+    int? noteId,
+    int? userId,
+    String? title,
+    String? content,
+    String? bookId,
+    bool? notePin,
+    String? createdAt,
+  }) {
+    return Note(
+      noteId: noteId ?? this.noteId,
+      userId: userId ?? this.userId,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      bookId: bookId ?? this.bookId,
+      notePin: notePin ?? this.notePin,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 }
