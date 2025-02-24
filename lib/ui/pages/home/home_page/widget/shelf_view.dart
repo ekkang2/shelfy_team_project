@@ -1,14 +1,19 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:shelfy_team_project/data/model/book_record_done.dart';
+import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
 import 'shef_view_list.dart';
 
 class ShelfView extends StatefulWidget {
   final String selectedYear;
   final String selectedMonth;
+  final List<RecordResponseModel> done;
 
   const ShelfView(
-      {super.key, required this.selectedYear, required this.selectedMonth});
+      {required this.done,
+      super.key,
+      required this.selectedYear,
+      required this.selectedMonth});
 
   @override
   State<ShelfView> createState() => _ShelfViewState();
@@ -18,8 +23,10 @@ class _ShelfViewState extends State<ShelfView> {
   @override
   Widget build(BuildContext context) {
     // 종료일 기준으로 데이터 필터링
-    final filteredBooks = doneBookList.where((record) {
+    final filteredBooks = widget.done.where((record) {
       final endDate = record.endDate;
+      if (endDate == null) return false; // endDate가 null인 경우 제외
+
       final yearMatch = endDate.year.toString() == widget.selectedYear;
       final monthMatch = widget.selectedMonth == '전체보기' ||
           endDate.month.toString().padLeft(2, '0') == widget.selectedMonth;
@@ -42,7 +49,7 @@ class _ShelfViewState extends State<ShelfView> {
         BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 20.0),
           child: Container(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withOpacity(0.0),
           ),
         ),
 

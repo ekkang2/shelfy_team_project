@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shelfy_team_project/data/model/book_record_done.dart';
+import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
 
 import '../../../../../data/model/book.dart';
 import '../../../../widgets/custom_star_rating.dart';
 
 class ShefViewList extends StatefulWidget {
-  final BookRecordDone book;
+  final RecordResponseModel book;
 
   const ShefViewList({required this.book, super.key});
 
@@ -21,7 +22,7 @@ class _ShefViewListState extends State<ShefViewList> {
         Container(
           child: Column(
             children: [
-              customStarRating(widget.book.rating, 1, 15),
+              customStarRating(widget.book.rating!, 1, 15),
               SizedBox(height: 10),
               ClipRRect(
                 borderRadius: BorderRadius.circular(3.0),
@@ -30,7 +31,7 @@ class _ShefViewListState extends State<ShefViewList> {
                   heightFactor: 0.97,
                   child: Image.network(
                     width: 90,
-                    widget.book.book.book_image,
+                    widget.book.bookImage!,
                     fit: BoxFit.cover,
                   ),
                 ),

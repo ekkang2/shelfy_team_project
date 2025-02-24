@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart'; // Riverpod 패키지 import
+import 'package:shelfy_team_project/data/gvm/record_view_model/record_list_view_model.dart';
+import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
 import 'widget/shelf_view.dart';
 import 'widget/stack_view.dart';
 
@@ -12,17 +14,17 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class HomeTab extends StatefulWidget {
+class HomeTab extends ConsumerStatefulWidget {
   const HomeTab({super.key});
 
   @override
-  State<HomeTab> createState() => _HomeTabState();
+  ConsumerState<HomeTab> createState() => _HomeTabState();
 }
 
-class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
+class _HomeTabState extends ConsumerState<HomeTab>
+    with SingleTickerProviderStateMixin {
   TabController? _tabController;
 
-  // 현재 날짜 필터 상태
   late String selectedYear;
   late String selectedMonth;
 
@@ -30,16 +32,16 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   final List<String> months = ['전체보기'] +
       List.generate(12, (index) => (index + 1).toString().padLeft(2, '0'));
 
+  List<RecordResponseModel> doneBookList = []; // 필드로 추가
+
   @override
   void initState() {
     super.initState();
 
-    // 현재 날짜를 기본값으로 설정
     DateTime now = DateTime.now();
     selectedYear = now.year.toString();
     selectedMonth = '전체보기';
 
-    // 2010년부터 현재년도까지 리스트 생성
     years = List.generate(
         now.year - 2010 + 1, (index) => (2010 + index).toString());
 
@@ -48,6 +50,17 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    // ref.watch를 통해 상태를 감시
+    List<RecordResponseModel> model = ref.watch(recordListProvider);
+    print('모델 데이터: ${model.length}'); // 모델 데이터 길이 출력
+    RecordListViewModel vm = ref.read(recordListProvider.notifier);
+
+    if (model.isEmpty) {
+      return Center(child: CircularProgressIndicator()); // 로딩 인디케이터 표시
+    }
+    // doneBookList를 업데이트
+    doneBookList = model.where((element) => element.stateType == 1).toList();
+
     return Column(
       children: [
         _buildHeaderWithYearAndMonth(),
@@ -75,7 +88,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 int currentIndex = years.indexOf(selectedYear);
                 if (currentIndex > 0) {
                   selectedYear = years[currentIndex - 1];
-                  selectedMonth = '전체보기'; // 연도 변경 시 월을 전체보기로 초기화
+                  selectedMonth = '전체보기';
                 }
               });
             },
@@ -97,7 +110,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 int currentIndex = years.indexOf(selectedYear);
                 if (currentIndex < years.length - 1) {
                   selectedYear = years[currentIndex + 1];
-                  selectedMonth = '전체보기'; // 연도 변경 시 월을 전체보기로 초기화
+                  selectedMonth = '전체보기';
                 }
               });
             },
@@ -144,32 +157,22 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         StackView(
           selectedYear: selectedYear,
           selectedMonth: selectedMonth,
+          done: doneBookList.isNotEmpty ? doneBookList : [], // 빈 리스트를 전달
         ),
         // 책장보기
         ShelfView(
           selectedYear: selectedYear,
           selectedMonth: selectedMonth,
+          done: doneBookList.isNotEmpty ? doneBookList : [], // 빈 리스트를 전달
         ),
       ],
     );
   }
 
   TabBar _buildTabBar() {
-    return TabBar(
-        // indicator: UnderlineTabIndicator(
-        //     borderSide: BorderSide(
-        //       color: const Color(0xFF4D77B2),
-        //       width: 3.0,
-        //     ),
-        //     insets: EdgeInsets.symmetric(horizontal: 130.0)),
-        // labelColor: const Color(0xFF4D77B2),
-        // unselectedLabelColor: Colors.black38,
-        dividerHeight: 3,
-        // dividerColor: Colors.black26,
-        controller: _tabController,
-        tabs: [
-          Tab(text: '쌓아보기'),
-          Tab(text: '책장보기'),
-        ]);
+    return TabBar(controller: _tabController, tabs: [
+      Tab(text: '쌓아보기'),
+      Tab(text: '책장보기'),
+    ]);
   }
 }
