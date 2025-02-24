@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:shelfy_team_project/_core/utils/size.dart';
 import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
 import '../../book_detail_page/doing_detail_page.dart';
 
@@ -11,10 +13,10 @@ class ShelfBookItemDoing extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => DoingDetailPage(book: doing)),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DoingDetailPage(book: doing)),
+        );
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20),
@@ -22,15 +24,18 @@ class ShelfBookItemDoing extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 6,
-                    offset: Offset(2, 4),
-                  ),
-                ],
-              ),
+              width: 70,
+              height: 100,
+              alignment: Alignment.center,
+              // decoration: BoxDecoration(
+              //   boxShadow: [
+              //     BoxShadow(
+              //       color: Colors.black.withOpacity(0.2),
+              //       blurRadius: 6,
+              //       offset: Offset(2, 4),
+              //     ),
+              //   ],
+              // ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(3),
                 child: Image.network(
@@ -43,13 +48,18 @@ class ShelfBookItemDoing extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  doing.bookTitle!,
-                  style: Theme.of(context).textTheme.titleLarge,
+                SizedBox(
+                  width: getDrawerWidth(context),
+                  child: Text(
+                    doing.bookTitle!,
+                    style: Theme.of(context).textTheme.titleLarge,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${doing.startDate}에 읽기 시작했어요',
+                  '${DateFormat('yyyy년 MM월 dd일').format(doing.startDate!)}에 읽기 시작했어요',
                   style: Theme.of(context).textTheme.labelMedium,
                 ),
                 const SizedBox(height: 16),
@@ -61,7 +71,7 @@ class ShelfBookItemDoing extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       height: 5,
-                      width: 270,
+                      width: getDrawerWidth(context),
                     ),
                     Container(
                       decoration: BoxDecoration(
@@ -69,16 +79,19 @@ class ShelfBookItemDoing extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       height: 5,
-                      width: doing.progress! * 2.7,
+                      width: doing.progress! /
+                          doing.bookPage! *
+                          getDrawerWidth(context),
                     ),
                   ],
                 ),
                 Container(
-                  width: 270,
+                  width: getDrawerWidth(context),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('${doing.progress}%',
+                      Text(
+                          '${(doing.progress! / doing.bookPage! * 100).toStringAsFixed(1)}%',
                           style: Theme.of(context).textTheme.labelSmall),
                       Text('${doing.progress}/${doing.bookPage} page',
                           style: Theme.of(context).textTheme.labelSmall),

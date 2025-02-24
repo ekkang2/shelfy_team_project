@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
 import '../../book_detail_page/stop_detail_page.dart';
 import '../../../../widgets/custom_star_rating.dart';
@@ -10,6 +11,7 @@ class ShelfBookItemStop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: () {
         // Navigator.push(
@@ -60,7 +62,9 @@ class ShelfBookItemStop extends StatelessWidget {
                           padding:
                               EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                           decoration: BoxDecoration(
-                              color: Colors.grey[200],
+                              color: isDarkMode
+                                  ? Colors.grey[800]
+                                  : Colors.grey[200],
                               borderRadius: BorderRadius.circular(5)),
                           child: Text(
                             '${stop.comment}',
@@ -75,7 +79,7 @@ class ShelfBookItemStop extends StatelessWidget {
                     width: 270,
                     alignment: Alignment.bottomRight,
                     child: Text(
-                      '${stop.endDate}',
+                      '${DateFormat('yyyy년 MM월 dd일에 중단했어요.').format(stop.endDate!)}',
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ),

@@ -8,10 +8,21 @@ import 'wish_record_state_tab.dart';
 
 class BookRecordState extends StatefulWidget {
   int index;
-  Book book;
+  // Book book;
+  String bookId;
+  String bookTitle;
+  int bookPage;
+
   Record? record;
 
-  BookRecordState({required this.book, required this.index, this.record});
+  BookRecordState({
+    // required this.book,
+    required this.bookId,
+    required this.bookTitle,
+    required this.bookPage,
+    required this.index,
+    this.record,
+  });
 
   @override
   _BookRecordStateState createState() => _BookRecordStateState();
@@ -78,22 +89,27 @@ class _BookRecordStateState extends State<BookRecordState>
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: DoneRecordStateTab(book: widget.book),
+                child: DoneRecordStateTab(bookId: widget.bookId),
               ),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: DoingRecordStateTab(book: widget.book),
+                child: DoingRecordStateTab(
+                  bookId: widget.bookId,
+                  bookPage: widget.bookPage,
+                  bookTitle: widget.bookTitle,
+                ),
               ),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: WishRecordStateTab(book: widget.book),
+                child: WishRecordStateTab(bookId: widget.bookId),
               ),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: StopRecordStateTab(book: widget.book),
+                child: StopRecordStateTab(
+                    bookId: widget.bookId, bookPage: widget.bookPage),
               ),
             ],
           ),

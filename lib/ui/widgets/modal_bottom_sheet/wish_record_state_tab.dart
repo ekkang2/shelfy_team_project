@@ -7,8 +7,13 @@ import '../../../data/model/book_model/book.dart';
 import '../custom_interactive_star_rating.dart';
 
 class WishRecordStateTab extends ConsumerStatefulWidget {
-  final Book book;
-  const WishRecordStateTab({required this.book, super.key});
+  // final Book book;
+  String bookId;
+  WishRecordStateTab({
+    required this.bookId,
+    // required this.book,
+    super.key,
+  });
 
   @override
   _WishRecordStateTabState createState() => _WishRecordStateTabState();
@@ -96,7 +101,7 @@ class _WishRecordStateTabState extends ConsumerState<WishRecordStateTab> {
             text: '저장',
             onPressed: () {
               vm.createRecord(
-                bookId: widget.book.bookId!,
+                bookId: widget.bookId,
                 stateType: 3,
                 startDate: DateTime.now(), // 현재 날짜로 설정
                 comment: _commentController.text,

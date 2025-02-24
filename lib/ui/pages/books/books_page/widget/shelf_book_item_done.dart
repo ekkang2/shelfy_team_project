@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:shelfy_team_project/_core/utils/size.dart';
 import 'package:shelfy_team_project/data/model/book_record_done.dart';
 import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
 import 'package:shelfy_team_project/ui/pages/books/book_detail_page/done_detail_page.dart';
@@ -28,6 +30,7 @@ class ShelfBookItemDone extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
+                width: 70,
                 decoration: BoxDecoration(
                   boxShadow: [
                     BoxShadow(
@@ -55,9 +58,14 @@ class ShelfBookItemDone extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(height: 6),
-                  Text(
-                    done.bookTitle!,
-                    style: Theme.of(context).textTheme.titleLarge,
+                  SizedBox(
+                    width: getDrawerWidth(context),
+                    child: Text(
+                      done.bookTitle!,
+                      style: Theme.of(context).textTheme.titleLarge,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   SizedBox(height: 4),
                   Row(
@@ -90,8 +98,8 @@ class ShelfBookItemDone extends StatelessWidget {
                     width: 270,
                     alignment: Alignment.bottomRight,
                     child: Text(
-                      '${done.startDate} ~'
-                      ' ${done.endDate}',
+                      '${DateFormat('yyyy-MM-dd').format(done.startDate ?? DateTime.now())} ~'
+                      ' ${DateFormat('yyyy-MM-dd').format(done.endDate ?? DateTime.now())}',
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ),

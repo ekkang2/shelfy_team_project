@@ -8,8 +8,13 @@ import '../../pages/books/widget/read_period.dart';
 import '../custom_interactive_star_rating.dart';
 
 class DoneRecordStateTab extends ConsumerStatefulWidget {
-  final Book book;
-  const DoneRecordStateTab({required this.book, super.key});
+  // final Book book;
+  final String bookId;
+  const DoneRecordStateTab({
+    required this.bookId,
+    // required this.book,
+    super.key,
+  });
 
   @override
   _DoneRecordStateTabState createState() => _DoneRecordStateTabState();
@@ -117,7 +122,7 @@ class _DoneRecordStateTabState extends ConsumerState<DoneRecordStateTab> {
             text: '저장',
             onPressed: () {
               vm.createRecord(
-                bookId: widget.book.bookId!,
+                bookId: widget.bookId,
                 stateType: 1,
                 startDate: _startDate,
                 endDate: _endDate,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
 import '../../book_detail_page/wish_detail_page.dart';
 import '../../../../widgets/custom_star_rating.dart';
@@ -67,7 +68,8 @@ class ShelfBookItemWish extends StatelessWidget {
                   Container(
                     width: 270,
                     alignment: Alignment.bottomRight,
-                    child: Text('${wish.startDate}',
+                    child: Text(
+                        '${DateFormat('yyyy-MM-dd').format(wish.startDate!)}',
                         style: Theme.of(context).textTheme.labelMedium),
                   ),
                 ],

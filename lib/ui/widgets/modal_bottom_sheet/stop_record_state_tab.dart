@@ -8,8 +8,10 @@ import '../../pages/books/widget/read_period.dart';
 import '../custom_interactive_star_rating.dart';
 
 class StopRecordStateTab extends ConsumerStatefulWidget {
-  final Book book;
-  const StopRecordStateTab({required this.book, super.key});
+  // final Book book;
+  String bookId;
+  int bookPage;
+  StopRecordStateTab({required this.bookId, required this.bookPage, super.key});
 
   @override
   _StopRecordStateTabState createState() => _StopRecordStateTabState();
@@ -36,9 +38,7 @@ class _StopRecordStateTabState extends ConsumerState<StopRecordStateTab> {
 
   void _updateProgress(String value) {
     int? newValue = int.tryParse(value);
-    if (newValue != null &&
-        newValue >= 0 &&
-        newValue <= widget.book.bookPage!) {
+    if (newValue != null && newValue >= 0 && newValue <= widget.bookPage!) {
       setState(() {
         _progress = newValue;
       });
@@ -157,7 +157,7 @@ class _StopRecordStateTabState extends ConsumerState<StopRecordStateTab> {
           text: '저장',
           onPressed: () {
             vm.createRecord(
-              bookId: widget.book.bookId!,
+              bookId: widget.bookId!,
               stateType: 4, // ✅ "읽다가 멈춘 책" 상태
               startDate: _startDate,
               endDate: _endDate,

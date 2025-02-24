@@ -8,8 +8,15 @@ import '../../pages/books/widget/book_detail_progress_bar.dart';
 import '../../pages/books/widget/read_period.dart';
 
 class DoingRecordStateTab extends ConsumerStatefulWidget {
-  final Book book;
-  const DoingRecordStateTab({required this.book, super.key});
+  String bookId;
+  String bookTitle;
+  int bookPage;
+  DoingRecordStateTab({
+    required this.bookId,
+    required this.bookTitle,
+    required this.bookPage,
+    super.key,
+  });
 
   @override
   _DoingRecordStateTabState createState() => _DoingRecordStateTabState();
@@ -36,7 +43,7 @@ class _DoingRecordStateTabState extends ConsumerState<DoingRecordStateTab> {
             children: [
               const SizedBox(height: 15),
               Text(
-                '${widget.book.bookTitle!}을 읽고 있어요',
+                '${widget.bookTitle!}을 읽고 있어요',
                 style: TextStyle(
                   fontSize: 20,
                   fontFamily: 'JUA',
@@ -45,7 +52,7 @@ class _DoingRecordStateTabState extends ConsumerState<DoingRecordStateTab> {
                 ),
               ),
               Text(
-                '현재 페이지를 기록해 볼까요?${widget.book.bookId}',
+                '현재 페이지를 기록해 볼까요?${widget.bookId}',
                 style: Theme.of(context).textTheme.labelMedium,
               ),
             ],
@@ -55,7 +62,7 @@ class _DoingRecordStateTabState extends ConsumerState<DoingRecordStateTab> {
 
         // ✅ AdjustableProgressBar에서 _progress 값 가져오기
         AdjustableProgressBar(
-          totalPage: widget.book.bookPage!,
+          totalPage: widget.bookPage!,
           currentPage: _progress,
           onProgressChanged: (newProgress) {
             setState(() {
@@ -85,7 +92,7 @@ class _DoingRecordStateTabState extends ConsumerState<DoingRecordStateTab> {
           text: '저장',
           onPressed: () {
             vm.createRecord(
-              bookId: widget.book.bookId!,
+              bookId: widget.bookId!,
               stateType: 2,
               startDate: DateTime.now(),
               progress: _progress, // ✅ 읽은 페이지 수 전송

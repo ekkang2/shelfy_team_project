@@ -149,7 +149,10 @@ class BookDetail extends ConsumerWidget {
                                               0.51, // ✅ 기본 모달 높이 (화면의 90%)
                                           child: Container(
                                             child: BookRecordState(
-                                              book: book,
+                                              bookPage: book.bookPage!,
+                                              bookId: book.bookId!,
+                                              bookTitle: book.bookTitle!,
+                                              // book: book,
                                               index: index,
                                             ),
                                           ),
