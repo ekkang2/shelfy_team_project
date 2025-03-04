@@ -20,17 +20,24 @@ class RecordResponseModel {
   String? bookAuthor;
   String? bookPublisher;
   int? bookPage;
+  String? bookDesc;
+  String? bookIsbn;
+
+  bool? isMyBook;
 
   RecordResponseModel.fromMap(Map<String, dynamic> map)
       : stateId = map["stateId"],
         recordId = map["recordId"],
         userId = map["userId"],
         bookId = map["bookId"],
+        isMyBook = map["isMyBook"],
         bookImage = map["bookImage"],
         bookTitle = map["bookTitle"],
         bookAuthor = map["bookAuthor"],
         bookPage = map["bookPage"],
         bookPublisher = map["bookPublisher"],
+        bookDesc = map["bookDesc"],
+        bookIsbn = map["bookIsbn"],
         stateType = map["stateType"],
         startDate = map["startDate"] != null
             ? DateFormat("yyyy-MM-dd").parse(map["startDate"])

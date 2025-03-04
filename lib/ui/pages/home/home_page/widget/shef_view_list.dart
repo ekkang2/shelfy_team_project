@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shelfy_team_project/data/model/book_record_done.dart';
 import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
-
-import '../../../../../data/model/book.dart';
 import '../../../../widgets/custom_star_rating.dart';
 
 class ShefViewList extends StatefulWidget {
@@ -19,25 +16,38 @@ class _ShefViewListState extends State<ShefViewList> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          child: Column(
-            children: [
-              customStarRating(widget.book.rating!, 1, 15),
-              SizedBox(height: 10),
-              ClipRRect(
+        Column(
+          children: [
+            customStarRating(widget.book.rating!, 1, 15),
+            const SizedBox(height: 10),
+            Container(
+              decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(3.0),
-                child: Align(
-                  widthFactor: 0.97,
-                  heightFactor: 0.97,
-                  child: Image.network(
-                    width: 90,
-                    widget.book.bookImage!,
-                    fit: BoxFit.cover,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3), // 그림자 색상
+                    spreadRadius: 1, // 그림자 확산 범위
+                    blurRadius: 8, // 흐림 정도
+                    offset: const Offset(2, 4), // 그림자 위치 (x, y)
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(3.0),
+                child: !widget.book.isMyBook!
+                    ? Image.network(
+                        widget.book.bookImage!,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset(
+                        'assets/images/${widget.book.bookImage}',
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+              ),
+            ),
+          ],
         ),
       ],
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shelfy_team_project/_core/utils/size.dart';
 import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
 import '../../book_detail_page/wish_detail_page.dart';
 import '../../../../widgets/custom_star_rating.dart';
@@ -13,11 +14,10 @@ class ShelfBookItemWish extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //       builder: (context) => WishDetailPage(wish: wish)),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => WishDetailPage(book: wish)),
+        );
       },
       child: Container(
         child: Padding(
@@ -50,9 +50,14 @@ class ShelfBookItemWish extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(height: 6),
-                  Text(
-                    wish.bookTitle!,
-                    style: Theme.of(context).textTheme.titleLarge,
+                  SizedBox(
+                    width: getDrawerWidth(context),
+                    child: Text(
+                      wish.bookTitle!,
+                      style: Theme.of(context).textTheme.titleLarge,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Row(
@@ -64,7 +69,24 @@ class ShelfBookItemWish extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  customStarRating(wish.rating!, 2, 18),
+                  Container(
+                    width: 270,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        customStarRating(wish.rating!, 2, 18),
+                        Visibility(
+                          visible:
+                              wish.comment != null && !wish.comment!.isEmpty,
+                          child: Icon(
+                            Icons.comment,
+                            size: 18,
+                            color: Colors.grey[350],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   Container(
                     width: 270,
                     alignment: Alignment.bottomRight,

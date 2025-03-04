@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shelfy_team_project/_core/utils/exception_handler.dart';
 import 'package:shelfy_team_project/_core/utils/logger.dart';
+import 'package:shelfy_team_project/data/gvm/record_view_model/record_list_view_model.dart';
 import 'package:shelfy_team_project/data/repository/record_repository.dart';
 import 'package:shelfy_team_project/main.dart';
 import 'package:shelfy_team_project/ui/widgets/common_snackbar.dart';
@@ -68,6 +69,7 @@ class RecordViewModel extends Notifier<RecordModel> {
             responseBody['errorMessage'], StackTrace.current);
         return;
       }
+      ref.read(recordListProvider.notifier).init();
 
       FocusScope.of(mContext).unfocus();
       CommonSnackbar.show(mContext, "기록이 추가되었어요!");
@@ -91,6 +93,31 @@ class RecordViewModel extends Notifier<RecordModel> {
       );
 
       //
+    } catch (e, stackTrace) {
+      ExceptionHandler.handleException(e, stackTrace);
+    }
+  }
+
+  Future<void> deleteRecord({required int stateId}) async {
+    try {
+      Map<String, dynamic> responseBody =
+          await recordRepository.delete(stateId: stateId);
+
+      if (!responseBody['success']) {
+        ScaffoldMessenger.of(mContext)
+            .showSnackBar(SnackBar(content: Text("기록 추가 실패")));
+
+        ExceptionHandler.handleException(
+            responseBody['errorMessage'], StackTrace.current);
+        return;
+      }
+      ref.read(recordListProvider.notifier).init();
+
+      Navigator.pushAndRemoveUntil(
+        mContext,
+        MaterialPageRoute(builder: (context) => MainScreen(initialIndex: 2)),
+        (route) => false, // 기존 스택 제거
+      );
     } catch (e, stackTrace) {
       ExceptionHandler.handleException(e, stackTrace);
     }

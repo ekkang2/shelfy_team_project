@@ -30,4 +30,10 @@ class RecordRepository {
     Map<String, dynamic> responseBody = response.data;
     return responseBody;
   }
+
+  Future<Map<String, dynamic>> delete({required int stateId}) async {
+    Response response = await dio.delete('/api/record/${stateId}');
+    Map<String, dynamic> responseBody = response.data;
+    return responseBody;
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shelfy_team_project/data/gvm/record_view_model/record_view_model.dart';
 
 import '../../../_core/utils/exception_handler.dart';
 import '../../../_core/utils/logger.dart';
@@ -14,6 +15,11 @@ class RecordListViewModel extends Notifier<List<RecordResponseModel>> {
 
   @override
   List<RecordResponseModel> build() {
+    ref.listen(recordViewModelProvider, (previous, next) {
+      if (next.isWriteCompleted) {
+        init(); // 자동으로 리스트 불러오기
+      }
+    });
     init();
     return [];
   }

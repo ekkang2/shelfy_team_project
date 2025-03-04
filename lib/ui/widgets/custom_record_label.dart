@@ -8,7 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
   타입
   1 - 끝맺은 책 / 2 - 여정 중인 책 / 3 - 기다리는 책(읽고 싶은) / 4 - 잠든 책(중단한)
  */
-Widget customRecordLabel(int type) {
+Widget customRecordLabel(int type, bool isDarkMode) {
   String labelText = '';
   IconData labelIcon = FontAwesomeIcons.book;
   double width = 0;
@@ -32,7 +32,7 @@ Widget customRecordLabel(int type) {
   return Container(
     width: width,
     decoration: BoxDecoration(
-      color: Color(0xFF4D77B2),
+      color: !isDarkMode ? Color(0xFF4D77B2) : Colors.grey[700],
       borderRadius: BorderRadius.circular(20),
     ),
     child: Padding(

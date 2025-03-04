@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../pages/search/search_page/widget/add_book.dart';
 
@@ -108,6 +109,37 @@ AppBar BooksAppBar(BuildContext context) {
         Text('나의 책장', style: Theme.of(context).textTheme.displayLarge)
       ],
     ),
+  );
+}
+
+AppBar BooksDetailAppBar(BuildContext context) {
+  return AppBar(
+    // 타이틀 위치
+    titleSpacing: (ModalRoute.of(context)?.canPop ?? false) ? -10 : 8,
+    // backgroundColor: const Color(0xFF4D77B2),
+    scrolledUnderElevation: 0,
+    title: Row(
+      children: [
+        Visibility(
+          visible: !(ModalRoute.of(context)?.canPop ?? false),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 6.0, top: 6.0, bottom: 6.0),
+            child: Image.asset(
+              'assets/images/shelfy_kitty_logo.png',
+              width: 40,
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Text('나의 책장', style: Theme.of(context).textTheme.displayLarge)
+      ],
+    ),
+    actions: [
+      IconButton(
+        onPressed: () {},
+        icon: Icon(Icons.edit_note_outlined),
+      )
+    ],
   );
 }
 

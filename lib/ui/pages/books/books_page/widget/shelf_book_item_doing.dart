@@ -4,18 +4,55 @@ import 'package:shelfy_team_project/_core/utils/size.dart';
 import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
 import '../../book_detail_page/doing_detail_page.dart';
 
-class ShelfBookItemDoing extends StatelessWidget {
+class ShelfBookItemDoing extends StatefulWidget {
   final RecordResponseModel doing;
 
-  const ShelfBookItemDoing({required this.doing, super.key});
+  const ShelfBookItemDoing({required this.doing, Key? key}) : super(key: key);
+
+  @override
+  _ShelfBookItemDoingState createState() => _ShelfBookItemDoingState();
+}
+
+class _ShelfBookItemDoingState extends State<ShelfBookItemDoing>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _progressAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1), // 애니메이션 시간 설정
+    );
+
+    _progressAnimation = Tween<double>(
+      begin: 0.0,
+      end: widget.doing.progress! / widget.doing.bookPage!,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOut,
+    ));
+
+    _animationController.forward(); // 애니메이션 실행
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return InkWell(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => DoingDetailPage(book: doing)),
+          MaterialPageRoute(
+              builder: (context) => DoingDetailPage(book: widget.doing)),
         );
       },
       child: Container(
@@ -27,20 +64,11 @@ class ShelfBookItemDoing extends StatelessWidget {
               width: 70,
               height: 100,
               alignment: Alignment.center,
-              // decoration: BoxDecoration(
-              //   boxShadow: [
-              //     BoxShadow(
-              //       color: Colors.black.withOpacity(0.2),
-              //       blurRadius: 6,
-              //       offset: Offset(2, 4),
-              //     ),
-              //   ],
-              // ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(3),
                 child: Image.network(
                   height: 105,
-                  doing.bookImage!,
+                  widget.doing.bookImage!,
                 ),
               ),
             ),
@@ -51,7 +79,7 @@ class ShelfBookItemDoing extends StatelessWidget {
                 SizedBox(
                   width: getDrawerWidth(context),
                   child: Text(
-                    doing.bookTitle!,
+                    widget.doing.bookTitle!,
                     style: Theme.of(context).textTheme.titleLarge,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -59,31 +87,39 @@ class ShelfBookItemDoing extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${DateFormat('yyyy년 MM월 dd일').format(doing.startDate!)}에 읽기 시작했어요',
+                  '${DateFormat('yyyy년 MM월 dd일').format(widget.doing.startDate!)}에 읽기 시작했어요',
                   style: Theme.of(context).textTheme.labelMedium,
                 ),
                 const SizedBox(height: 16),
-                Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      height: 5,
-                      width: getDrawerWidth(context),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Color(0xFF6A9BE0),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      height: 5,
-                      width: doing.progress! /
-                          doing.bookPage! *
-                          getDrawerWidth(context),
-                    ),
-                  ],
+                AnimatedBuilder(
+                  animation: _progressAnimation,
+                  builder: (context, child) {
+                    return Stack(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: !isDarkMode
+                                ? Colors.grey[300]
+                                : Colors.grey[800],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          height: 5,
+                          width: getDrawerWidth(context),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: !isDarkMode
+                                ? const Color(0xFF6A9BE0)
+                                : Colors.grey[500],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          height: 5,
+                          width: _progressAnimation.value *
+                              getDrawerWidth(context),
+                        ),
+                      ],
+                    );
+                  },
                 ),
                 Container(
                   width: getDrawerWidth(context),
@@ -91,10 +127,13 @@ class ShelfBookItemDoing extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                          '${(doing.progress! / doing.bookPage! * 100).toStringAsFixed(1)}%',
-                          style: Theme.of(context).textTheme.labelSmall),
-                      Text('${doing.progress}/${doing.bookPage} page',
-                          style: Theme.of(context).textTheme.labelSmall),
+                        '${(widget.doing.progress! / widget.doing.bookPage! * 100).toStringAsFixed(1)}%',
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                      Text(
+                        '${widget.doing.progress}/${widget.doing.bookPage} page',
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
                     ],
                   ),
                 ),

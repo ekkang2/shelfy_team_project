@@ -14,6 +14,11 @@ TextTheme textTheme() {
         fontSize: 14.8,
         color: const Color(0xFF4D77B2),
         fontFamily: 'Pretendard-Bold'),
+    displaySmall: TextStyle(
+        fontSize: 15.0,
+        color: Colors.white,
+        fontFamily: 'JUA',
+        fontWeight: FontWeight.normal),
     headlineLarge: TextStyle(
       fontFamily: 'Pretendard-Bold',
       color: Colors.black,

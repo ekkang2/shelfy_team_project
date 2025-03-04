@@ -1,12 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shelfy_team_project/_core/utils/size.dart';
 import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
 import 'package:shelfy_team_project/ui/widgets/custom_appbar.dart';
-import 'package:shelfy_team_project/ui/widgets/custom_interactive_star_rating.dart';
-import 'package:shelfy_team_project/data/model/book_record_doing.dart';
 import 'package:shelfy_team_project/ui/pages/books/widget/book_detail_progress_bar.dart';
 
-import '../../../widgets/modal_bottom_sheet/book_record_state.dart';
 import '../../../widgets/custom_record_label.dart';
 import '../../../widgets/custom_star_rating.dart';
 import '../widget/read_period.dart';
@@ -47,19 +45,27 @@ class _DoingDetailPageState extends State<DoingDetailPage> {
                   bottomLeft: Radius.circular(3),
                   bottomRight: Radius.circular(10),
                 ),
-                child: Image.network(
-                  '${widget.book.bookImage}',
-                  fit: BoxFit.fill,
-                  width: 150,
-                ),
+                child: !widget.book.isMyBook!
+                    ? Image.network(
+                        height: 180,
+                        fit: BoxFit.fill,
+                        widget.book.bookImage!,
+                      )
+                    : Image.asset(
+                        'assets/images/${widget.book.bookImage}',
+                        fit: BoxFit.fill,
+                        height: 180,
+                      ),
               ),
             ),
-            InteractiveStarRating(
-                type: 1, size: 25, onRatingChanged: (newRating) {}),
             const SizedBox(height: 15),
-            Text(
-              '${widget.book.bookTitle}',
-              style: Theme.of(context).textTheme.headlineLarge,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Text(
+                '${widget.book.bookTitle}',
+                style: Theme.of(context).textTheme.headlineLarge,
+                textAlign: TextAlign.center,
+              ),
             ),
             const SizedBox(height: 10),
             Text(
@@ -67,14 +73,22 @@ class _DoingDetailPageState extends State<DoingDetailPage> {
               style: Theme.of(context).textTheme.labelLarge,
             ),
             const SizedBox(height: 10),
-            customRecordLabel(2),
+            customRecordLabel(2, isDarkMode),
             const SizedBox(height: 20),
-
+            Divider(
+              color: Colors.grey[300],
+              thickness: 1,
+              indent: 20,
+              endIndent: 20,
+            ),
             // ListView를 스크롤 가능하도록 수정
             Expanded(
               child: ListView(
                 children: [
+                  const SizedBox(height: 20),
+                  const SizedBox(height: 4),
                   AdjustableProgressBar(
+                    iconVisible: true,
                     totalPage: widget.book.bookPage!,
                     currentPage: widget.book.progress,
                     onProgressChanged: (int) {},
@@ -82,81 +96,70 @@ class _DoingDetailPageState extends State<DoingDetailPage> {
                   const SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              FontAwesomeIcons.thumbtack,
-                              color: Color(0xFF4D77B2),
-                              size: 20,
-                            ),
-                            const SizedBox(width: 4),
-                            Text('${dateCalculation(startDate)}일 동안 읽었어요.'),
-                          ],
-                        ),
-                        ReadPeriod(
-                          startDate: widget.book.startDate,
-                          isDarkMode: isDarkMode,
-                          onDateChanged: (startDate, endDate) {},
-                        ),
-                      ],
+                    child: ReadPeriod(
+                      startDate: widget.book.startDate,
+                      isDarkMode: isDarkMode,
+                      recordState: 2,
+                      onDateChanged: (startDate, endDate) {},
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text('예상 별점'),
-                        const SizedBox(width: 10),
-                        customStarRating(3.5, 2, 18),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true, // 모달 크기 조정 가능하게 설정
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.vertical(top: Radius.circular(16)),
-                          ),
-                          builder: (context) {
-                            return Container(
-                              height: MediaQuery.of(context).size.height *
-                                  0.51, // 50% 크기로 설정
-                              // child: BookRecordState(
-                              //   book: ,
-                              //   index: 0,
-                              // ),
-                            );
-                          },
-                        );
-                      },
-                      child: Text(
-                        '여정이 끝났어요!',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      style: ButtonStyle(
-                        backgroundColor:
-                            WidgetStatePropertyAll(const Color(0xFF4D77B2)),
-                        fixedSize: WidgetStatePropertyAll(Size(300, 50)),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
                 ],
+              ),
+            ),
+          ],
+        ),
+        bottomNavigationBar: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text('예상 별점'),
+                  const SizedBox(width: 10),
+                  customStarRating(3.5, 2, 18),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              child: ElevatedButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true, // 모달 크기 조정 가능하게 설정
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(16)),
+                    ),
+                    builder: (context) {
+                      return Container(
+                        height: MediaQuery.of(context).size.height *
+                            0.51, // 50% 크기로 설정
+                        // child: BookRecordState(
+                        //   book: ,
+                        //   index: 0,
+                        // ),
+                      );
+                    },
+                  );
+                },
+                child: Text(
+                  '여정이 끝났어요!',
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(
+                      !isDarkMode ? const Color(0xFF4D77B2) : Colors.grey[800]),
+                  fixedSize:
+                      WidgetStatePropertyAll(Size(getScreenWidth(context), 50)),
+                  shape: WidgetStatePropertyAll(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                ),
               ),
             ),
           ],

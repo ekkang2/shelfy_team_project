@@ -37,6 +37,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   Widget build(BuildContext context) {
     final bookvm = ref.read(bookProvider.notifier);
     final List<Book> bookList = ref.watch(bookProvider); // 상태 감시 추가
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       children: [
@@ -59,7 +60,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   fontSize: 14.0,
                 ),
               ),
-              backgroundColor: WidgetStatePropertyAll(Colors.grey[200]),
+              backgroundColor: WidgetStatePropertyAll(
+                  !isDarkMode ? Colors.grey[200] : Colors.grey[800]),
               shape: WidgetStatePropertyAll(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(0),

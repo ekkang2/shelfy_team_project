@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shelfy_team_project/_core/utils/size.dart';
 import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
 import '../../book_detail_page/stop_detail_page.dart';
 import '../../../../widgets/custom_star_rating.dart';
@@ -14,11 +15,10 @@ class ShelfBookItemStop extends StatelessWidget {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //       builder: (context) => StopDetailPage(stop: stop)),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => StopDetailPage(book: stop)),
+        );
       },
       child: Container(
         child: Padding(
@@ -49,9 +49,14 @@ class ShelfBookItemStop extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    stop.bookTitle!,
-                    style: Theme.of(context).textTheme.titleLarge,
+                  SizedBox(
+                    width: getDrawerWidth(context),
+                    child: Text(
+                      stop.bookTitle!,
+                      style: Theme.of(context).textTheme.titleLarge,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   customStarRating(stop.rating!, 1, 18),
@@ -75,6 +80,7 @@ class ShelfBookItemStop extends StatelessWidget {
                           ),
                         )
                       : Container(height: 25),
+                  const SizedBox(height: 3),
                   Container(
                     width: 270,
                     alignment: Alignment.bottomRight,

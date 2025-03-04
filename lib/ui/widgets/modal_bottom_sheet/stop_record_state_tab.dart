@@ -111,11 +111,11 @@ class _StopRecordStateTabState extends ConsumerState<StopRecordStateTab> {
 
         const SizedBox(height: 20),
 
-        // 📌 독서 기간 입력
         Text('독서기간', style: Theme.of(context).textTheme.titleMedium),
         ReadPeriod(
           startDate: _startDate,
           endDate: _endDate,
+          recordState: 0,
           isDarkMode: isDarkMode,
           onDateChanged: (start, end) {
             setState(() {

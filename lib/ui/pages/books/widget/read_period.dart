@@ -5,11 +5,13 @@ class ReadPeriod extends StatefulWidget {
   final DateTime? startDate;
   final DateTime? endDate;
   final bool isDarkMode;
+  final int recordState;
   final Function(DateTime, DateTime?) onDateChanged; // 🔥 콜백 추가
 
   ReadPeriod({
     this.startDate,
     this.endDate,
+    required this.recordState,
     required this.isDarkMode,
     required this.onDateChanged, // 🔥 필수 매개변수로 추가
     super.key,
@@ -21,22 +23,44 @@ class ReadPeriod extends StatefulWidget {
 
 class _ReadPeriodState extends State<ReadPeriod> {
   late DateTime startDate;
-  DateTime? endDate;
+  late DateTime? endDate;
 
   @override
   void initState() {
     super.initState();
     startDate = widget.startDate ?? DateTime.now();
-    endDate = widget.endDate;
+    endDate = widget.endDate ?? DateTime.now();
   }
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Visibility(
+            visible: widget.recordState != 0,
+            child: Row(
+              children: [
+                Icon(
+                  Icons.access_alarm,
+                  color: !isDarkMode ? Color(0xFF4D77B2) : Colors.grey[500],
+                  size: 20,
+                ),
+                const SizedBox(width: 4),
+                widget.recordState == 4
+                    ? Text('독서기간')
+                    : Text(
+                        '${dateCalculation(startDate!, endDate!)}일 동안 ${widget.recordState == 1 ? '읽었어요.' : '읽고 있어요.'} ',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+              ],
+            ),
+          ),
+          SizedBox(height: 10),
           Container(
             decoration: BoxDecoration(
               color: !widget.isDarkMode ? Colors.grey[100] : Colors.grey[850],
@@ -120,4 +144,9 @@ class _ReadPeriodState extends State<ReadPeriod> {
 String formatSingleDate(DateTime time) {
   final dateFormatter = DateFormat('yyyy.MM.dd');
   return dateFormatter.format(time);
+}
+
+int dateCalculation(DateTime startDate, DateTime endDate) {
+  int period = endDate.difference(startDate).inDays;
+  return period + 1;
 }

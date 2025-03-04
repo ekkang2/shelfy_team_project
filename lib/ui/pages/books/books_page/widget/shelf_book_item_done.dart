@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shelfy_team_project/_core/utils/size.dart';
-import 'package:shelfy_team_project/data/model/book_record_done.dart';
 import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
 import 'package:shelfy_team_project/ui/pages/books/book_detail_page/done_detail_page.dart';
 
@@ -16,11 +15,10 @@ class ShelfBookItemDone extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //       builder: (context) => DoneDetailPage(book: done.bookId)),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DoneDetailPage(book: done)),
+        );
       },
       child: Container(
         child: Padding(
@@ -45,10 +43,12 @@ class ShelfBookItemDone extends StatelessWidget {
                   child: Align(
                     widthFactor: 0.97,
                     heightFactor: 0.97,
-                    child: Image.network(
-                      height: 105,
-                      done.bookImage!,
-                    ),
+                    child: !done.isMyBook!
+                        ? Image.network(
+                            height: 105,
+                            done.bookImage!,
+                          )
+                        : Image.asset('assets/images/${done.bookImage}'),
                   ),
                 ),
               ),
@@ -84,7 +84,8 @@ class ShelfBookItemDone extends StatelessWidget {
                       children: [
                         customStarRating(done.rating!, 1, 18),
                         Visibility(
-                          visible: done.comment != null,
+                          visible:
+                              done.comment != null && !done.comment!.isEmpty,
                           child: Icon(
                             Icons.comment,
                             size: 18,

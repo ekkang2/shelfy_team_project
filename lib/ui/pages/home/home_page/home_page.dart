@@ -73,6 +73,7 @@ class _HomeTabState extends ConsumerState<HomeTab>
   }
 
   Widget _buildHeaderWithYearAndMonth() {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     String displayDate =
         selectedMonth == '전체보기' ? selectedYear : "$selectedYear-$selectedMonth";
 
@@ -82,7 +83,8 @@ class _HomeTabState extends ConsumerState<HomeTab>
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF4D77B2)),
+            icon: Icon(Icons.arrow_back_ios,
+                color: !isDarkMode ? Color(0xFF4D77B2) : Colors.grey[300]),
             onPressed: () {
               setState(() {
                 int currentIndex = years.indexOf(selectedYear);
@@ -97,14 +99,15 @@ class _HomeTabState extends ConsumerState<HomeTab>
             onTap: () => _showMonthSelectionDialog(),
             child: Text(
               displayDate,
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF4D77B2)),
+                  color: !isDarkMode ? Color(0xFF4D77B2) : Colors.grey[300]),
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.arrow_forward_ios, color: Color(0xFF4D77B2)),
+            icon: Icon(Icons.arrow_forward_ios,
+                color: !isDarkMode ? Color(0xFF4D77B2) : Colors.grey[300]),
             onPressed: () {
               setState(() {
                 int currentIndex = years.indexOf(selectedYear);

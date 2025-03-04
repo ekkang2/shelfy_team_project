@@ -70,15 +70,12 @@ class _DoneRecordStateTabState extends ConsumerState<DoneRecordStateTab> {
         ),
 
         const SizedBox(height: 20),
-        Text(
-          '독서기간',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
+        Text('독서기간', style: Theme.of(context).textTheme.titleMedium),
 
-        // 📆 독서 기간 선택
         ReadPeriod(
           startDate: _startDate,
           endDate: _endDate,
+          recordState: 0,
           isDarkMode: isDarkMode,
           onDateChanged: (start, end) {
             setState(() {

@@ -43,7 +43,7 @@ class _DoingRecordStateTabState extends ConsumerState<DoingRecordStateTab> {
             children: [
               const SizedBox(height: 15),
               Text(
-                '${widget.bookTitle!}을 읽고 있어요',
+                '${widget.bookTitle!} 를 읽고 있어요',
                 style: TextStyle(
                   fontSize: 20,
                   fontFamily: 'JUA',
@@ -52,7 +52,7 @@ class _DoingRecordStateTabState extends ConsumerState<DoingRecordStateTab> {
                 ),
               ),
               Text(
-                '현재 페이지를 기록해 볼까요?${widget.bookId}',
+                '현재 페이지를 기록해 볼까요?',
                 style: Theme.of(context).textTheme.labelMedium,
               ),
             ],
@@ -62,6 +62,7 @@ class _DoingRecordStateTabState extends ConsumerState<DoingRecordStateTab> {
 
         // ✅ AdjustableProgressBar에서 _progress 값 가져오기
         AdjustableProgressBar(
+          iconVisible: false,
           totalPage: widget.bookPage!,
           currentPage: _progress,
           onProgressChanged: (newProgress) {
@@ -75,6 +76,7 @@ class _DoingRecordStateTabState extends ConsumerState<DoingRecordStateTab> {
         ReadPeriod(
           startDate: _startDate,
           endDate: _endDate,
+          recordState: 0,
           isDarkMode: isDarkMode,
           onDateChanged: (start, end) {
             setState(() {

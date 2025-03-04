@@ -1,38 +1,43 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:shelfy_team_project/data/model/book_record_stop.dart';
+import 'package:shelfy_team_project/data/gvm/record_view_model/record_view_model.dart';
+import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
+import 'package:shelfy_team_project/ui/pages/books/widget/read_period.dart';
 import 'package:shelfy_team_project/ui/widgets/custom_appbar.dart';
 import 'package:shelfy_team_project/ui/widgets/custom_star_rating.dart';
-import 'package:shelfy_team_project/data/model/book_record_done.dart';
-
 import '../../../widgets/custom_record_label.dart';
+import '../../../widgets/delete_button.dart';
 
-class StopDetailPage extends StatefulWidget {
-  final BookRecordStop stop;
+class StopDetailPage extends ConsumerStatefulWidget {
+  final RecordResponseModel book;
 
-  const StopDetailPage({required this.stop, super.key});
+  const StopDetailPage({required this.book, super.key});
 
   @override
-  _StopDetailPageState createState() => _StopDetailPageState();
+  ConsumerState<StopDetailPage> createState() => _StopDetailPageState();
 }
 
-class _StopDetailPageState extends State<StopDetailPage> {
+class _StopDetailPageState extends ConsumerState<StopDetailPage> {
   late DateTime startDate;
   late DateTime endDate;
 
   @override
   void initState() {
     super.initState();
-    startDate = widget.stop.startDate; // 초기 시작일 설정
-    endDate = widget.stop.endDate ?? DateTime.now(); // 초기 종료일 설정 (null이면 오늘 날짜)
+    startDate = widget.book.startDate ?? DateTime.now(); // 초기 시작일 설정
+    endDate = widget.book.endDate ?? DateTime.now(); // 초기 종료일 설정 (null이면 오늘 날짜)
   }
 
   @override
   Widget build(BuildContext context) {
+    RecordViewModel vm = ref.watch(recordViewModelProvider.notifier);
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return SafeArea(
       child: Scaffold(
-        appBar: BooksAppBar(context),
+        appBar: BooksDetailAppBar(context),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -45,47 +50,83 @@ class _StopDetailPageState extends State<StopDetailPage> {
                   bottomLeft: Radius.circular(3),
                   bottomRight: Radius.circular(10),
                 ),
-                child: Image.network(
-                  '${widget.stop.book.book_image}',
-                  fit: BoxFit.fill,
-                  width: 150,
-                ),
+                child: !widget.book.isMyBook!
+                    ? Image.network(
+                        height: 180,
+                        fit: BoxFit.fill,
+                        widget.book.bookImage!,
+                      )
+                    : Image.asset(
+                        'assets/images/${widget.book.bookImage}',
+                        fit: BoxFit.fill,
+                        height: 180,
+                      ),
               ),
             ),
-            const SizedBox(height: 5),
             Container(
                 width: double.infinity,
-                child: customStarRating(widget.stop.rating, 1, 25)),
-            const SizedBox(height: 10),
-            Text(
-              '${widget.stop.book.book_title}',
-              style: Theme.of(context).textTheme.headlineLarge,
+                child: customStarRating(widget.book.rating!, 1, 25)),
+            const SizedBox(height: 15),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Text(
+                '${widget.book.bookTitle}',
+                style: Theme.of(context).textTheme.headlineLarge,
+                textAlign: TextAlign.center,
+              ),
             ),
             const SizedBox(height: 10),
             Text(
-              '${widget.stop.book.book_author} · ${widget.stop.book.book_publisher}',
+              '${widget.book.bookAuthor} · ${widget.book.bookPublisher}',
               style: Theme.of(context).textTheme.labelLarge,
             ),
             const SizedBox(height: 10),
-            customRecordLabel(4),
+            customRecordLabel(4, isDarkMode),
             const SizedBox(height: 20),
+            Divider(
+              color: Colors.grey[300],
+              thickness: 1,
+              indent: 20,
+              endIndent: 20,
+            ),
             // ListView를 스크롤 가능하도록 수정
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: ListView(
                   children: [
-                    const SizedBox(height: 20),
-                    readPeriod(),
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Icon(
+                          CupertinoIcons.bookmark_fill,
+                          color: !isDarkMode
+                              ? const Color(0xFF4D77B2)
+                              : Colors.grey[500],
+                          size: 18,
+                        ),
+                        const SizedBox(width: 4),
+                        Text('${widget.book.bookPage} 페이지에서 쉬고 있어요'),
+                      ],
+                    ),
+                    const SizedBox(height: 25),
+                    ReadPeriod(
+                      recordState: 4,
+                      isDarkMode: isDarkMode,
+                      onDateChanged: (startDate, endDate) {},
+                    ),
                     const SizedBox(height: 20),
                     Visibility(
-                      visible: widget.stop.comment != null,
+                      visible: widget.book.comment != null,
                       child: Column(
                         children: [
                           Row(
                             children: [
                               Icon(FontAwesomeIcons.penClip,
-                                  size: 15, color: Color(0xFF4D77B2)),
+                                  size: 15,
+                                  color: !isDarkMode
+                                      ? const Color(0xFF4D77B2)
+                                      : Colors.grey[500]),
                               const SizedBox(width: 5),
                               Text('나의 한 줄'),
                             ],
@@ -95,11 +136,13 @@ class _StopDetailPageState extends State<StopDetailPage> {
                             alignment: Alignment.center,
                             padding: EdgeInsets.symmetric(vertical: 15),
                             decoration: BoxDecoration(
-                              color: Colors.grey[100],
+                              color: !isDarkMode
+                                  ? Colors.grey[100]
+                                  : Colors.grey[800],
                               borderRadius: BorderRadius.circular(3),
                             ),
                             child: Text(
-                              '\"${widget.stop.comment}\"',
+                              '\"${widget.book.comment}\"',
                               style: Theme.of(context).textTheme.bodyLarge,
                             ),
                           ),
@@ -111,6 +154,13 @@ class _StopDetailPageState extends State<StopDetailPage> {
               ),
             ),
           ],
+        ),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 0),
+          child: deleteButton(
+            context,
+            () => vm.deleteRecord(stateId: widget.book.stateId!),
+          ),
         ),
       ),
     );
@@ -131,96 +181,7 @@ class _StopDetailPageState extends State<StopDetailPage> {
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                CupertinoIcons.bookmark_fill,
-                color: Color(0xFF4D77B2),
-                size: 20,
-              ),
-              const SizedBox(width: 4),
-              Text('${widget.stop.book.book_page} 페이지에서 쉬고 있어요'),
-            ],
-          ),
-          const SizedBox(height: 25),
-          Row(
-            children: [
-              Icon(
-                FontAwesomeIcons.thumbtack,
-                color: Color(0xFF4D77B2),
-                size: 20,
-              ),
-              const SizedBox(width: 4),
-              Text('독서 기간'),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(3),
-            ),
-            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                // 시작일 선택
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('시작일'),
-                    TextButton(
-                      onPressed: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2100),
-                          initialDate: startDate,
-                        );
-                        if (pickedDate != null) {
-                          setState(() {
-                            startDate = pickedDate;
-                          });
-                        }
-                      },
-                      child: Text(
-                        '${formatDate(startDate)}', // 날짜 포맷 적용
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    ),
-                  ],
-                ),
-                // 중단일 선택
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('중단일'),
-                    TextButton(
-                      onPressed: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          firstDate: startDate, // 종료일은 시작일 이후만 가능
-                          lastDate: DateTime(2100),
-                          initialDate: endDate,
-                        );
-                        if (pickedDate != null) {
-                          setState(() {
-                            endDate = pickedDate;
-                          });
-                        }
-                      },
-                      child: Text(
-                        '${formatDate(endDate)}', // 날짜 포맷 적용
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
+        children: [],
       ),
     );
   }

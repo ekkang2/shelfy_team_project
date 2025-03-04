@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class AdjustableProgressBar extends StatefulWidget {
   final int totalPage;
   final int? currentPage;
-  final Function(int) onProgressChanged; // ✅ 변경된 progress 값 전달할 콜백
+  final bool iconVisible;
+  final Function(int) onProgressChanged; //  변경된 progress 값 전달할 콜백
 
   const AdjustableProgressBar({
     Key? key,
     required this.totalPage,
+    required this.iconVisible,
     this.currentPage,
-    required this.onProgressChanged, // ✅ 필수 매개변수로 추가
+    required this.onProgressChanged, //  필수 매개변수로 추가
   }) : super(key: key);
 
   @override
@@ -48,7 +51,7 @@ class _AdjustableProgressBarState extends State<AdjustableProgressBar> {
       setState(() {
         _currentValue = newValue.toDouble();
       });
-      widget.onProgressChanged(newValue); // ✅ 부모 위젯으로 progress 값 전달
+      widget.onProgressChanged(newValue); //  부모 위젯으로 progress 값 전달
     }
     setState(() {
       _isEditing = false;
@@ -57,18 +60,39 @@ class _AdjustableProgressBarState extends State<AdjustableProgressBar> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 23.0),
-          child: Text(
-            '${ceilProgressPages(currentPage: _currentValue.toInt(), totalPage: widget.totalPage)}%',
-            style: Theme.of(context).textTheme.displayMedium,
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Row(
+            children: [
+              Visibility(
+                visible: widget.iconVisible,
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.bookmark,
+                      color: !isDarkMode
+                          ? const Color(0xFF4D77B2)
+                          : Colors.grey[500],
+                      size: 20,
+                    ),
+                    const SizedBox(width: 4),
+                  ],
+                ),
+              ),
+              Text(
+                '${ceilProgressPages(currentPage: _currentValue.toInt(), totalPage: widget.totalPage)}%',
+                style: Theme.of(context).textTheme.displayMedium,
+              ),
+            ],
           ),
         ),
 
-        // 📌 슬라이더
+        //  슬라이더
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             trackHeight: 8.0,
@@ -76,7 +100,11 @@ class _AdjustableProgressBarState extends State<AdjustableProgressBar> {
             overlayShape: const RoundSliderOverlayShape(overlayRadius: 20.0),
           ),
           child: Slider(
-            inactiveColor: Colors.grey[350],
+            inactiveColor: !isDarkMode ? Colors.grey[350] : Colors.grey[800],
+            thumbColor:
+                !isDarkMode ? const Color(0xFF4D77B2) : Colors.grey[500],
+            activeColor:
+                !isDarkMode ? const Color(0xFF4D77B2) : Colors.grey[400],
             value: _currentValue,
             min: 0,
             max: widget.totalPage.toDouble(),
@@ -87,12 +115,12 @@ class _AdjustableProgressBarState extends State<AdjustableProgressBar> {
                 _currentValue = value;
                 _currentPageController.text = _currentValue.toInt().toString();
               });
-              widget.onProgressChanged(_currentValue.toInt()); // ✅ 변경된 값 전달
+              widget.onProgressChanged(_currentValue.toInt());
             },
           ),
         ),
 
-        // 📌 현재 페이지 표시
+        //  현재 페이지 표시
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 23.0),
           child: Align(
