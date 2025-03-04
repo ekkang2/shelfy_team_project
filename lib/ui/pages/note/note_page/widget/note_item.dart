@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../../../data/gvm/note_view_model/note_list_view_model.dart';
+import '../../../../../data/gvm/user_view_model/session_view_model.dart';
 import '../../../../../data/model/note_model.dart';
+import '../../../../../providers/session_user_provider.dart';
 import '../note_view_page.dart';
 
 class NoteListView extends ConsumerWidget {
@@ -52,25 +54,39 @@ class NoteListView extends ConsumerWidget {
 }
 
 // ✅ 개별 노트 아이템 UI
-class NoteItem extends StatelessWidget {
+class NoteItem extends ConsumerWidget {
   final int? userId;
   final Note note;
 
   const NoteItem({super.key, required this.userId, required this.note});
 
+  Future<void> _navigateToNoteDetail(
+      BuildContext context, WidgetRef ref) async {
+    final shouldRefresh = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => NoteViewPage(noteId: note.noteId!)),
+    );
+
+    if (shouldRefresh == true) {
+      ref.invalidate(noteListViewModelProvider);
+      await Future.delayed(Duration(milliseconds: 100));
+
+      int validUserId = ref.read(sessionProvider).id ?? 0;
+      if (validUserId > 0) {
+        // _fetchNotesOnce(validUserId); // ✅ 중복 실행 방지하여 fetchNotes 호출
+      } else {
+        print("🚨 fetchNotes 실행 안 함: 유저 ID 없음");
+      }
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
       onTap: () {
         if (note.noteId != null) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => NoteViewPage(noteId: note.noteId!),
-            ),
-          );
-        } else {
-          print("🚨 noteId가 null이어서 페이지 이동을 중단함");
+          _navigateToNoteDetail(context, ref);
         }
       },
       child: Container(

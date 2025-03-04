@@ -10,6 +10,8 @@ import '../../../../data/model/user_model/session_user.dart';
 import 'note_statistcs_page.dart';
 import 'package:logger/logger.dart';
 
+import 'note_view_page.dart';
+
 final logger = Logger(); // Logger 인스턴스 추가
 
 class NotePage extends StatelessWidget {
@@ -31,49 +33,41 @@ class NoteStatsTab extends ConsumerStatefulWidget {
 class _NoteStatsTabState extends ConsumerState<NoteStatsTab>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  bool isLatestFirst = true; // 정렬 순서 상태 변수
-  bool isBookmarkedExpanded = true; // 기록 서랍 펼침 상태 추가
+  bool isLatestFirst = true;
+  bool isBookmarkedExpanded = true;
+  bool _isFetching = false; // ✅ 중복 실행 방지 플래그
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
 
-    // ✅ 초기 노트 목록 가져오기
-    Future.microtask(() {
-      final userId = ref.read(sessionProvider).id ?? 0;
-      if (userId != 0) {
-        ref.read(noteListViewModelProvider.notifier).fetchNotes(userId);
-      }
-    });
-  }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final sessionUser = ref.read(sessionProvider);
+      final userId = sessionUser.id ?? 0;
 
-  // ✅ 노트 리스트 정렬 함수 (최신순/오래된순)
-  List<Note> _sortedNotes(List<Note> notes) {
-    return List.from(notes)
-      ..sort((a, b) => isLatestFirst
-          ? DateTime.parse(b.createdAt).compareTo(DateTime.parse(a.createdAt))
-          : DateTime.parse(a.createdAt).compareTo(DateTime.parse(b.createdAt)));
+      // if (validUserId != 0) {
+      //   fetchNotesOnce(ref, validUserId, false); // ✅ 공통 함수 호출!
+      // }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final noteList = ref.watch(noteListViewModelProvider);
-    final noteListViewModel = ref.watch(noteListViewModelProvider.notifier);
     final noteItem = ref.watch(noteListViewModelProvider);
 
-    // ✅ 기록 서랍 (북마크된 노트만) -> 정렬 없이 그대로
     final bookmarkedNotes = noteList.where((note) => note.notePin).toList();
+    final sortedNotes = _sortByDate(noteList, isLatestFirst);
 
-    // ✅ 기록 조각 (전체 노트) -> 정렬 적용
-    final sortedNotes = _sortByDate(noteList, isLatestFirst); // ✅ 기록 조각만 정렬!
-
-    // ✅ sessionProvider 값 변경 감지 (로그인 상태 변경 시 `fetchNotes()` 실행)
+    // ✅ sessionProvider 값 변경 감지를 build() 내부에서 실행
     ref.listen<SessionUser>(sessionProvider, (previous, next) {
       if (previous?.id != next.id && next.id != null && mounted) {
-        noteListViewModel.fetchNotes(next.id!);
+        print("✅ 유저 정보 변경 감지: ${next.id}");
+        ref.read(noteListViewModelProvider.notifier).fetchNotes(next.id!);
       }
     });
+
     return Material(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,14 +81,11 @@ class _NoteStatsTabState extends ConsumerState<NoteStatsTab>
                   padding: const EdgeInsets.symmetric(
                       horizontal: 28.0, vertical: 24.0),
                   children: [
-                    // ✅ 기록 서랍 (정렬 없음)
-                    // ✅ 기록 서랍 (접고 펼치는 기능)
-                    // ✅ 기록 서랍 (리스트만 접고 펼침)
                     if (bookmarkedNotes.isNotEmpty)
                       NoteSection(
                         title: '기록 서랍',
                         icon: Icons.bookmarks,
-                        userId: getUserId(ref),
+                        userId: ref.read(sessionProvider).id ?? 0,
                         trailing: IconButton(
                           icon: Icon(
                             isBookmarkedExpanded
@@ -108,23 +99,19 @@ class _NoteStatsTabState extends ConsumerState<NoteStatsTab>
                             });
                           },
                         ),
-                        notes: isBookmarkedExpanded
-                            ? bookmarkedNotes
-                            : [], // ✅ 리스트만 숨김
+                        notes: isBookmarkedExpanded ? bookmarkedNotes : [],
                       ),
-
                     const SizedBox(height: 16),
-                    // ✅ 기록 조각 (정렬 적용)
                     if (sortedNotes.isNotEmpty)
                       NoteSection(
                         title: '기록 조각',
                         notes: sortedNotes,
                         icon: Icons.menu_book,
-                        userId: getUserId(ref),
+                        userId: ref.read(sessionProvider).id ?? 0,
                         trailing: _buildSortButton(),
                       )
                     else
-                      _buildEmptyNoteMessage(), // 🔥 노트가 없을 때 안내 메시지 표시
+                      _buildEmptyNoteMessage(),
                   ],
                 ),
                 NoteStatisticsPage(),
@@ -136,12 +123,11 @@ class _NoteStatsTabState extends ConsumerState<NoteStatsTab>
     );
   }
 
-// ✅ 정렬 버튼 (PopupMenuButton)
   Widget _buildSortButton() {
     return PopupMenuButton<String>(
       onSelected: (value) {
         setState(() {
-          isLatestFirst = (value == 'latest'); // ✅ 선택한 값 반영
+          isLatestFirst = (value == 'latest');
         });
       },
       itemBuilder: (context) => [
@@ -167,8 +153,7 @@ class _NoteStatsTabState extends ConsumerState<NoteStatsTab>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.edit_note,
-                size: 50, color: Colors.grey[400]), // 📝 아이콘 추가
+            Icon(Icons.edit_note, size: 50, color: Colors.grey[400]),
             const SizedBox(height: 10),
             Text(
               "노트가 비어있어요. 새로운 글을 남겨보세요!",
@@ -180,7 +165,6 @@ class _NoteStatsTabState extends ConsumerState<NoteStatsTab>
     );
   }
 
-// ✅ 날짜 정렬 함수 (기록 조각만 적용)
   List<Note> _sortByDate(List<Note> notes, bool isLatestFirst) {
     List<Note> sortedList = List.from(notes);
     sortedList.sort((a, b) {

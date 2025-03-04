@@ -9,6 +9,7 @@ import 'package:shelfy_team_project/ui/widgets/common_dialog.dart';
 import 'package:shelfy_team_project/ui/widgets/common_snackbar.dart';
 import 'package:shelfy_team_project/data/gvm/note_view_model/note_detail_view_model.dart';
 import 'package:shelfy_team_project/ui/pages/note/note_page/widget/note_book_Info.dart';
+import 'package:shelfy_team_project/data/gvm/note_view_model/note_detail_view_model.dart';
 
 import '../../../../data/gvm/note_view_model/note_list_view_model.dart';
 import '../../../../data/gvm/note_view_model/note_view_model.dart';
@@ -18,7 +19,6 @@ import '../../../../providers/session_user_provider.dart';
 import '../../main_screen.dart';
 
 final logger = Logger();
-
 
 class NoteViewPage extends ConsumerStatefulWidget {
   final int noteId;
@@ -31,7 +31,7 @@ class NoteViewPage extends ConsumerStatefulWidget {
 
 class _NoteViewPageState extends ConsumerState<NoteViewPage> {
   bool isEditMode = false;
-  bool isUpdated = false; // ✅ 추가됨
+  bool isUpdated = false; //  추가됨
   late TextEditingController contentController;
 
   @override
@@ -44,6 +44,30 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
   void dispose() {
     contentController.dispose();
     super.dispose();
+  }
+
+  Future<void> deleteNote(WidgetRef ref, int noteId) async {
+    try {
+      await ref.read(noteRepositoryProvider).delete(id: noteId);
+      ref.invalidate(noteListViewModelProvider);
+      CommonSnackbar.success(context, "노트가 삭제되었습니다!");
+      Navigator.pop(context); // 삭제 후 현재 화면 닫기
+    } catch (e) {
+      CommonSnackbar.error(context, "노트 삭제 실패: $e");
+    }
+  }
+
+  Future<void> updateNote(WidgetRef ref, Note updatedNote) async {
+    try {
+      await ref
+          .read(noteRepositoryProvider)
+          .update(updatedNote.noteId!, updatedNote.toJson());
+      ref.invalidate(noteDetailViewModelProvider(updatedNote.noteId!));
+      ref.invalidate(noteListViewModelProvider);
+      CommonSnackbar.success(context, "노트가 업데이트되었습니다!");
+    } catch (e) {
+      CommonSnackbar.error(context, "노트 업데이트 실패: $e");
+    }
   }
 
   void _toggleBookmark() async {
@@ -59,21 +83,21 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
           .updateNotePin(currentNote.noteId!, updatedPinStatus);
 
       setState(() {
-        isUpdated = true; // ✅ UI 변경 감지
+        isUpdated = true; //  UI 변경 감지
       });
 
       ref.invalidate(noteDetailViewModelProvider(widget.noteId));
 
-      // ✅ 유저 ID 가져오기
+      //  유저 ID 가져오기
       final userId = getUserId(ref);
       if (userId != 0) {
-        logger.d("✅ 유저 ID 확인됨: $userId - 리스트 새로고침 실행");
+        logger.d("유저 ID 확인됨: $userId - 리스트 새로고침 실행");
         ref.invalidate(noteListViewModelProvider);
         Future.microtask(() {
           ref.read(noteListViewModelProvider.notifier).fetchNotes(userId);
         });
       } else {
-        logger.e("🚨 유저 정보 없음! 리스트 새로고침 건너뜀");
+        logger.e("유저 정보 없음 리스트 새로고침 건너뜀");
       }
     } catch (e) {
       CommonSnackbar.error(context, '북마크 변경 실패: $e');
@@ -167,10 +191,9 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
     );
   }
 
-  void _saveChanges() async {
+  Future<void> _saveChanges() async {
     setState(() => isEditMode = false);
 
-    // ✅ 기존 노트 데이터를 가져와서 유지
     final currentNote =
         ref.read(noteDetailViewModelProvider(widget.noteId)).value;
     if (currentNote == null) {
@@ -181,19 +204,31 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
     final updatedNote = Note(
       noteId: currentNote.noteId,
       userId: currentNote.userId,
-      // 기존 유저 ID 유지
       title: currentNote.title,
-      // ✅ 제목을 유지
-      content: contentController.text,
-      // ✅ 내용만 업데이트 가능
+      content: contentController.text, //  내용 업데이트
       bookId: currentNote.bookId,
       notePin: currentNote.notePin,
-      createdAt: currentNote.createdAt, // ✅ 기존 createdAt 유지
+      createdAt: currentNote.createdAt,
     );
 
     try {
-      await updateNote(ref, updatedNote);
+      await updateNote(ref, updatedNote); //  updateNote 호출 추가
       CommonSnackbar.success(context, '수정이 완료되었습니다!');
+
+      //  UI 갱신을 위해 노트 데이터 다시 불러오기
+      ref.invalidate(noteDetailViewModelProvider(widget.noteId));
+      ref.invalidate(noteListViewModelProvider);
+
+      //  노트 목록이 유지되도록 ensureInitialized() 추가
+      Future.microtask(() {
+        final userId = getUserId(ref);
+        if (userId > 0) {
+          ref.read(noteListViewModelProvider.notifier).fetchNotes(userId);
+        }
+      });
+
+      //  수정 완료 후 뒤로 가기 (목록 화면으로 이동)
+      Navigator.pop(context, true); // true 값을 전달하여 목록 화면 갱신 트리거
     } catch (e) {
       CommonSnackbar.error(context, '수정 실패: $e');
     }
@@ -224,7 +259,7 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
         IconButton(
           icon: Icon(note.notePin ? Icons.bookmark : Icons.bookmark_border),
           color: Colors.grey,
-          onPressed: _toggleBookmark, // ✅ 북마크 버튼 동작 연결
+          onPressed: _toggleBookmark, //  북마크 버튼 동작 연결
         ),
       ],
     );
@@ -279,7 +314,7 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
                 snackBarIcon: Icons.delete_forever,
                 snackBarType: 'error',
                 onConfirm: () {
-                  _deleteNote(); // ✅ 삭제 함수 연결
+                  _deleteNote(ref, widget.noteId); //  ref와 noteId 전달
                 },
               );
             },
@@ -289,12 +324,12 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
     );
   }
 
-  void _deleteNote() async {
+  void _deleteNote(WidgetRef ref, int noteId) async {
     try {
-      await deleteNote(ref, widget.noteId); // ✅ API 요청 보내기
+      await deleteNote(ref, noteId); //  올바르게 deleteNote 호출
       CommonSnackbar.success(context, '노트가 삭제되었습니다!');
 
-      // ✅ 현재 화면을 닫고, 메인 화면의 "노트 탭(3번 인덱스)"으로 이동
+      //  현재 화면을 닫고, 메인 화면의 "노트 탭(3번 인덱스)"으로 이동
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => MainScreen(initialIndex: 3)),
@@ -303,7 +338,6 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
       CommonSnackbar.error(context, '삭제 실패: $e');
     }
   }
-
 
   String _formatDate(String dateString) {
     try {
