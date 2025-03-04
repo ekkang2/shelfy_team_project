@@ -153,7 +153,7 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
                         const SizedBox(height: 16),
                         _buildContentSection(context),
                         const SizedBox(height: 24),
-                        if (note.bookId != null && note.bookId!.isNotEmpty)
+                        if (note.bookId != null && note.bookId! > 0)
                           _buildBookInfoSection(context, bookData),
                       ],
                     ),

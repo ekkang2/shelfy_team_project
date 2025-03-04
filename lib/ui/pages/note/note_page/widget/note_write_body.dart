@@ -90,15 +90,34 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
     );
   }
 
+  // Future<void> _submitNote() async {
+  //   // sessionProvider에서 실제 유저 ID 사용
+  //   final userId = ref.read(sessionProvider).id ?? 0;
+  //   final selectedBook = ref.read(bookWriteProvider);
+  //
+  //   await ref.read(noteViewModelProvider.notifier).submitNote(Note(
+  //         title: widget.titleController.text.trim(),
+  //         content: widget.contentController.text.trim(),
+  //         userId: userId,
+  //         bookId: selectedBook?['book_id'] != null
+  //             ? int.parse(selectedBook!['book_id']!)
+  //             : null, //  bookId를 noteRStateId로 전송
+  //         createdAt: '',
+  //       ));
+  // }
   Future<void> _submitNote() async {
-    // sessionProvider에서 실제 유저 ID 사용
     final userId = ref.read(sessionProvider).id ?? 0;
+    final book = ref.watch(bookWriteProvider);
+    final int? bookId =
+        int.tryParse(book?['book_id'] ?? ''); //  String → int 변환
+
+    print("📌 저장 전 bookId: $bookId");
 
     await ref.read(noteViewModelProvider.notifier).submitNote(Note(
           title: widget.titleController.text.trim(),
           content: widget.contentController.text.trim(),
           userId: userId,
-          bookId: ref.read(bookWriteProvider)?['book_id'],
+          bookId: bookId, //  int? 타입 그대로 사용
           createdAt: '',
         ));
   }
@@ -193,10 +212,34 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
     );
   }
 
+  // Future<void> _selectBook() async {
+  //   final selectedBook = await Navigator.pushNamed(context, '/noteAddBook');
+  //   if (selectedBook is Map<String, String>) {
+  //     ref.read(bookWriteProvider.notifier).state = selectedBook;
+  //   }
+  // }
+
   Future<void> _selectBook() async {
     final selectedBook = await Navigator.pushNamed(context, '/noteAddBook');
-    if (selectedBook is Map<String, String>) {
-      ref.read(bookWriteProvider.notifier).state = selectedBook;
+
+    if (selectedBook is Map<String, dynamic> &&
+        selectedBook.containsKey('book_id')) {
+      final String bookIdString = selectedBook['book_id'] ?? ''; //  기본값 '' 처리
+      final int? parsedBookId = int.tryParse(bookIdString); //  int 변환
+
+      if (parsedBookId != null) {
+        ref.read(bookWriteProvider.notifier).state = {
+          'book_id': bookIdString, //  String 그대로 저장 (오류 해결)
+          'book_title': selectedBook['book_title'] ?? '제목 없음',
+          'book_author': selectedBook['book_author'] ?? '저자 없음',
+          'book_image': selectedBook['book_image'] ?? '',
+        };
+        print(" bookWriteProvider 업데이트됨: ${ref.read(bookWriteProvider)}");
+      } else {
+        print("❌ book_id 파싱 실패");
+      }
+    } else {
+      print("❌ 선택된 책 데이터 없음");
     }
   }
 

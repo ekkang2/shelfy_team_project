@@ -155,11 +155,6 @@ class _NoteStatsTabState extends ConsumerState<NoteStatsTab>
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.edit_note, size: 50, color: Colors.grey[400]),
-            const SizedBox(height: 10),
-            Text(
-              "노트가 비어있어요. 새로운 글을 남겨보세요!",
-              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-            ),
           ],
         ),
       ),

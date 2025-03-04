@@ -37,9 +37,6 @@ int _compareDates(Note a, Note b, bool isLatestFirst) {
       dateComparison = dateB.compareTo(dateA);
     }
 
-    logger.d(
-        "정렬 비교: A(${a.noteId}) → ${dateA.toIso8601String()}, B(${b.noteId}) → ${dateB.toIso8601String()}");
-
     return isLatestFirst ? dateComparison : -dateComparison;
   } catch (e) {
     print("날짜 비교 오류: $e");

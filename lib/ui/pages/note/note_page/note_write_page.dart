@@ -49,7 +49,9 @@ class _NoteWritePageState extends ConsumerState<NoteWritePage> {
       userId: userId, // ✅ 로그인한 유저 ID 사용 (없으면 1)
       title: title,
       content: content,
-      bookId: selectedBook?['book_id'], // 선택한 책 ID (없으면 null)
+      bookId: selectedBook?['book_id'] != null
+          ? int.tryParse(selectedBook!['book_id']!)
+          : null,
       createdAt: '',
     );
 
