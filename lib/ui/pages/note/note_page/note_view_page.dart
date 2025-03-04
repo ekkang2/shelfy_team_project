@@ -9,7 +9,6 @@ import 'package:shelfy_team_project/ui/widgets/common_dialog.dart';
 import 'package:shelfy_team_project/ui/widgets/common_snackbar.dart';
 import 'package:shelfy_team_project/data/gvm/note_view_model/note_detail_view_model.dart';
 import 'package:shelfy_team_project/ui/pages/note/note_page/widget/note_book_Info.dart';
-import 'package:shelfy_team_project/data/gvm/note_view_model/note_detail_view_model.dart';
 
 import '../../../../data/gvm/note_view_model/note_list_view_model.dart';
 import '../../../../data/gvm/note_view_model/note_view_model.dart';
@@ -33,16 +32,19 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
   bool isEditMode = false;
   bool isUpdated = false; //  추가됨
   late TextEditingController contentController;
+  late TextEditingController titleController;
 
   @override
   void initState() {
     super.initState();
     contentController = TextEditingController();
+    titleController = TextEditingController();
   }
 
   @override
   void dispose() {
     contentController.dispose();
+    titleController.dispose();
     super.dispose();
   }
 
@@ -50,21 +52,28 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
     try {
       await ref.read(noteRepositoryProvider).delete(id: noteId);
       ref.invalidate(noteListViewModelProvider);
-      CommonSnackbar.success(context, "노트가 삭제되었습니다!");
       Navigator.pop(context); // 삭제 후 현재 화면 닫기
     } catch (e) {
       CommonSnackbar.error(context, "노트 삭제 실패: $e");
     }
   }
 
-  Future<void> updateNote(WidgetRef ref, Note updatedNote) async {
+  Future<void> updateNoteInView(WidgetRef ref, Note updatedNote) async {
     try {
       await ref
           .read(noteRepositoryProvider)
           .update(updatedNote.noteId!, updatedNote.toJson());
+
       ref.invalidate(noteDetailViewModelProvider(updatedNote.noteId!));
       ref.invalidate(noteListViewModelProvider);
-      CommonSnackbar.success(context, "노트가 업데이트되었습니다!");
+
+      final userId = getUserId(ref);
+      if (userId > 0) {
+        await ref.read(noteListViewModelProvider.notifier).fetchNotes(userId);
+        ref.invalidate(noteListViewModelProvider); // ✅ 강제 무효화
+      }
+
+      setState(() {}); // ✅ UI 즉시 갱신
     } catch (e) {
       CommonSnackbar.error(context, "노트 업데이트 실패: $e");
     }
@@ -125,8 +134,12 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
             if (note == null) {
               return const Center(child: Text("노트가 존재하지 않습니다."));
             }
-
-            contentController.text = note.content;
+            if (titleController.text.isEmpty || !isEditMode) {
+              titleController.text = note.title; // 기존 제목 반영
+            }
+            if (contentController.text.isEmpty || !isEditMode) {
+              contentController.text = note.content; // 기존 내용 반영
+            }
 
             return Column(
               children: [
@@ -204,28 +217,26 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
     final updatedNote = Note(
       noteId: currentNote.noteId,
       userId: currentNote.userId,
-      title: currentNote.title,
+      title: titleController.text, // 제목 업데이트
       content: contentController.text, //  내용 업데이트
       bookId: currentNote.bookId,
       notePin: currentNote.notePin,
       createdAt: currentNote.createdAt,
+      updatedAt: DateTime.now().toIso8601String(),
     );
 
     try {
-      await updateNote(ref, updatedNote); //  updateNote 호출 추가
+      await updateNoteInView(ref, updatedNote); //  updateNote 호출 추가
       CommonSnackbar.success(context, '수정이 완료되었습니다!');
 
-      //  UI 갱신을 위해 노트 데이터 다시 불러오기
-      ref.invalidate(noteDetailViewModelProvider(widget.noteId));
-      ref.invalidate(noteListViewModelProvider);
+      // 최신 목록을 직접 가져옴
+      final userId = getUserId(ref);
+      if (userId > 0) {
+        await ref.read(noteListViewModelProvider.notifier).fetchNotes(userId);
+      }
 
-      //  노트 목록이 유지되도록 ensureInitialized() 추가
-      Future.microtask(() {
-        final userId = getUserId(ref);
-        if (userId > 0) {
-          ref.read(noteListViewModelProvider.notifier).fetchNotes(userId);
-        }
-      });
+      // 수정 완료 후, 노트 상세와 목록 Provider를 무효화할 필요가 있다면 invalidate도 실행 (선택 사항)
+      ref.invalidate(noteDetailViewModelProvider(widget.noteId));
 
       //  수정 완료 후 뒤로 가기 (목록 화면으로 이동)
       Navigator.pop(context, true); // true 값을 전달하여 목록 화면 갱신 트리거
@@ -248,11 +259,24 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                _formatDate(note.createdAt),
-                style: Theme.of(context).textTheme.bodyMedium,
+                _getDisplayedDate(note), // 작성일 또는 수정일 출력
+                style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 4),
-              Text(note.title, style: Theme.of(context).textTheme.titleMedium),
+              isEditMode
+                  ? TextField(
+                      controller: titleController,
+                      decoration: InputDecoration(
+                        hintText: '제목을 입력하세요',
+                        isDense: true,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                      style: Theme.of(context).textTheme.titleMedium,
+                    )
+                  : Text(
+                      note.title, // ✅ 기존 제목 유지
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
             ],
           ),
         ),
@@ -310,9 +334,9 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
                 title: '노트를 삭제하시겠습니까?',
                 subtitle: '삭제한 기록은 복구할 수 없어요!',
                 confirmText: '삭제',
-                snackBarMessage: '삭제 완료!',
+                snackBarMessage: '노트 삭제 완료!',
                 snackBarIcon: Icons.delete_forever,
-                snackBarType: 'error',
+                snackBarType: 'success',
                 onConfirm: () {
                   _deleteNote(ref, widget.noteId); //  ref와 noteId 전달
                 },
@@ -327,7 +351,6 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
   void _deleteNote(WidgetRef ref, int noteId) async {
     try {
       await deleteNote(ref, noteId); //  올바르게 deleteNote 호출
-      CommonSnackbar.success(context, '노트가 삭제되었습니다!');
 
       //  현재 화면을 닫고, 메인 화면의 "노트 탭(3번 인덱스)"으로 이동
       Navigator.pushReplacement(
@@ -346,5 +369,13 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
     } catch (e) {
       return '날짜 정보 없음';
     }
+  }
+
+  // 노트에 표시할 날짜 결정 (수정 날짜가 있으면 수정 날짜, 없으면 작성 날짜)
+  String _getDisplayedDate(Note note) {
+    if (note.updatedAt != null && note.updatedAt!.isNotEmpty) {
+      return "${_formatDate(note.updatedAt!)}"; // 수정된 날짜 출력
+    }
+    return "${_formatDate(note.createdAt)}"; // 작성 날짜 출력
   }
 }

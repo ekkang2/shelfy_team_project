@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../data/gvm/user_view_model/session_view_model.dart';
 import '../data/model/user_model/session_user.dart';
 
 // 유저 정보 관리 (StateNotifier)
@@ -24,8 +25,8 @@ final sessionUserProvider =
 
 // 현재 로그인한 유저 ID 가져오기 (불필요한 rebuild 방지)
 int getUserId(WidgetRef ref) {
-  final user = ref.watch(sessionUserProvider);
-  print("getUserId() 호출 - 현재 user: $user"); // ✅ 유저 정보 확인 로그 추가
+  final user = ref.watch(sessionProvider);
+  print("getUserId() 호출 - 현재 user: $user"); // 유저 정보 확인 로그
 
   if (user == null) {
     print("🚨 getUserId() 실패: 유저 정보 없음");

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
-import '../../_core/utils/logger.dart';
 import '../../_core/utils/m_http.dart';
 
 /*
@@ -9,15 +9,17 @@ import '../../_core/utils/m_http.dart';
   작성자 : 박경림
   내용 : 노트 repository 추가 - API 요청 처리
  */
+final logger = Logger();
+
 class NoteRepository {
   const NoteRepository();
 
   // 테스트 중 특정 유저의 노트 목록 조회 (기본 userId=1)
   Future<Map<String, dynamic>> findAllByUser({int userId = 1}) async {
     try {
-      print(" 서버 요청 - userId: $userId"); //  서버 요청 로그 추가
+      logger.d("API 호출: findAllByUser, userId: $userId");
       Response response = await dio.get('/api/note/user/$userId');
-      print(" 서버 응답 데이터: ${response.data}"); //  서버 응답 로그 추가
+      logger.d("API 응답: ${response.toString()}");
       return response.data;
     } catch (e) {
       print("🚨 findAllByUser 실패: $e");

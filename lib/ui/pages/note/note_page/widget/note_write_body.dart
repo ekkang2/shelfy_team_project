@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import '../../../../../data/gvm/note_view_model/note_list_view_model.dart';
 import '../../../../../data/gvm/note_view_model/note_view_model.dart';
+import '../../../../../data/gvm/user_view_model/session_view_model.dart';
 import '../../../../../data/model/note_model.dart';
 import '../../../../../providers/book_provider.dart';
 import '../../../main_screen.dart';
@@ -56,8 +58,20 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
         await Future.delayed(const Duration(milliseconds: 100));
 
         try {
+          final userId = ref.read(sessionProvider).id ?? 0;
+
+          //  노트 저장
           await _submitNote();
+
+          // fetchNotes 실행 확인
+          try {
+            await ref
+                .read(noteListViewModelProvider.notifier)
+                .fetchNotes(userId);
+          } catch (e) {}
+
           CommonSnackbar.success(context, '노트가 성공적으로 등록되었습니다!');
+
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (context.mounted) {
               Navigator.pushAndRemoveUntil(
@@ -77,10 +91,13 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
   }
 
   Future<void> _submitNote() async {
+    // sessionProvider에서 실제 유저 ID 사용
+    final userId = ref.read(sessionProvider).id ?? 0;
+
     await ref.read(noteViewModelProvider.notifier).submitNote(Note(
           title: widget.titleController.text.trim(),
           content: widget.contentController.text.trim(),
-          userId: 1,
+          userId: userId,
           bookId: ref.read(bookWriteProvider)?['book_id'],
           createdAt: '',
         ));

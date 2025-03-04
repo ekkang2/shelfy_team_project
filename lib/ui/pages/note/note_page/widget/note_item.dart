@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import '../../../../../data/gvm/note_view_model/note_list_view_model.dart';
 import '../../../../../data/gvm/user_view_model/session_view_model.dart';
 import '../../../../../data/model/note_model.dart';
 import '../../../../../providers/session_user_provider.dart';
 import '../note_view_page.dart';
+
+final logger = Logger(); // Logger 인스턴스 생성
 
 class NoteListView extends ConsumerWidget {
   final int? userId;
@@ -67,16 +70,23 @@ class NoteItem extends ConsumerWidget {
       MaterialPageRoute(
           builder: (context) => NoteViewPage(noteId: note.noteId!)),
     );
+    print(
+        "Navigator 리턴, shouldRefresh: $shouldRefresh"); // 직접 print() 추가 // Modified
+    logger.d("NoteDetailPage 리턴, shouldRefresh: $shouldRefresh");
 
     if (shouldRefresh == true) {
+      logger.d("리프레시 요청 감지, invalidate 호출");
       ref.invalidate(noteListViewModelProvider);
       await Future.delayed(Duration(milliseconds: 100));
 
       int validUserId = ref.read(sessionProvider).id ?? 0;
+      logger.d("유효한 유저 ID: $validUserId");
       if (validUserId > 0) {
-        // _fetchNotesOnce(validUserId); // ✅ 중복 실행 방지하여 fetchNotes 호출
+        await ref
+            .read(noteListViewModelProvider.notifier)
+            .fetchNotes(validUserId); // fetchNotes 호출
       } else {
-        print("🚨 fetchNotes 실행 안 함: 유저 ID 없음");
+        logger.e("🚨 fetchNotes 실행 안 함: 유저 ID 없음");
       }
     }
   }
@@ -111,8 +121,7 @@ class NoteItem extends ConsumerWidget {
                   ),
                 ),
                 Text(
-                  DateFormat("yyyy.MM.dd")
-                      .format(DateTime.parse(note.createdAt)),
+                  _getDisplayedDate(note),
                   style: const TextStyle(fontSize: 12, color: Colors.grey),
                 ),
               ],
@@ -128,5 +137,15 @@ class NoteItem extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  // 노트에 표시할 날짜 결정 (수정 날짜가 있으면 수정 날짜, 없으면 작성 날짜)
+  String _getDisplayedDate(Note note) {
+    if (note.updatedAt != null && note.updatedAt!.isNotEmpty) {
+      return DateFormat("yyyy.MM.dd")
+          .format(DateTime.parse(note.updatedAt!)); // 수정된 날짜 사용
+    }
+    return DateFormat("yyyy.MM.dd")
+        .format(DateTime.parse(note.createdAt)); // 작성 날짜 사용
   }
 }

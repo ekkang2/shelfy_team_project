@@ -46,26 +46,27 @@ class _NoteStatsTabState extends ConsumerState<NoteStatsTab>
       final sessionUser = ref.read(sessionProvider);
       final userId = sessionUser.id ?? 0;
 
-      // if (validUserId != 0) {
-      //   fetchNotesOnce(ref, validUserId, false); // ✅ 공통 함수 호출!
-      // }
+      if (userId != 0) {
+        print("initState에서 fetchNotes 호출: userId=$userId");
+        ref.read(noteListViewModelProvider.notifier).fetchNotes(userId);
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final noteList = ref.watch(noteListViewModelProvider);
-    final noteItem = ref.watch(noteListViewModelProvider);
 
     final bookmarkedNotes = noteList.where((note) => note.notePin).toList();
     final sortedNotes = _sortByDate(noteList, isLatestFirst);
 
     // ✅ sessionProvider 값 변경 감지를 build() 내부에서 실행
     ref.listen<SessionUser>(sessionProvider, (previous, next) {
-      if (previous?.id != next.id && next.id != null && mounted) {
-        print("✅ 유저 정보 변경 감지: ${next.id}");
+      if (previous?.id != next.id && next.id != null && next.id != 0) {
         ref.read(noteListViewModelProvider.notifier).fetchNotes(next.id!);
       }
+      ref.read(noteListViewModelProvider.notifier).fetchNotes(next.id!);
+      // }
     });
 
     return Material(

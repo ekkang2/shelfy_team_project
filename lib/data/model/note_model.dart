@@ -5,7 +5,8 @@ class Note {
   final String content;
   final String? bookId;
   final bool notePin; // 북마크 필드 추가
-  final String createdAt; // ✅ 추가 (서버에서 받아온 날짜)
+  final String createdAt;
+  final String? updatedAt;
 
   Note({
     this.noteId, // ✅ 기존 노트는 값 있음, 새 노트는 null 가능
@@ -15,20 +16,22 @@ class Note {
     this.bookId,
     this.notePin = false, // 기본값 설정
     required this.createdAt,
+    this.updatedAt,
   });
 
   // ✅ JSON → Note 객체 변환 (fromJson 추가)
   factory Note.fromJson(Map<String, dynamic> json) {
     return Note(
-      noteId: json['noteId'] as int?, // ✅ 기존 데이터에는 존재
+      noteId: json['noteId'] as int?, // 기존 데이터에는 존재
       userId: json['noteUserId'] != null
           ? json['noteUserId'] as int
           : 0, // ✅ null 방지 (기본값 0)
-      title: json['noteTitle'] ?? '제목 없음', // ✅ null 방지
-      content: json['noteContents'] ?? '내용 없음', // ✅ null 방지
+      title: json['noteTitle'] ?? '제목 없음', // null 방지
+      content: json['noteContents'] ?? '내용 없음', // null 방지
       bookId: json['noteRStateId'] as String?,
       notePin: json['notePin'] as bool? ?? false,
-      createdAt: json['noteCreatedAt'] ?? '', // ✅ 원본 문자열 그대로 저장
+      createdAt: json['noteCreatedAt'] ?? '', // 원본 문자열 그대로 저장
+      updatedAt: json['noteUpdatedAt'], // 수정 날짜 추가 (서버에서 받아옴)
     );
   }
 
@@ -42,6 +45,7 @@ class Note {
       "noteRStateId": bookId,
       "notePin": notePin,
       "noteCreatedAt": createdAt,
+      "noteUpdatedAt": updatedAt,
     };
   }
 
@@ -54,6 +58,7 @@ class Note {
     String? bookId,
     bool? notePin,
     String? createdAt,
+    String? updatedAt,
   }) {
     return Note(
       noteId: noteId ?? this.noteId,
@@ -63,6 +68,7 @@ class Note {
       bookId: bookId ?? this.bookId,
       notePin: notePin ?? this.notePin,
       createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 }

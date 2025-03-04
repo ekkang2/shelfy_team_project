@@ -43,11 +43,11 @@ class NoteViewModel extends StateNotifier<AsyncValue<void>> {
       }
 
       final result = await _repository.save(noteData); // 수정된 JSON 전송
-      logger.d("✅ 노트 저장 성공: $result");
+      logger.d("노트 저장 성공: $result");
 
       state = const AsyncData(null); // 성공 상태 초기화
     } catch (e, stack) {
-      logger.e("🚨 노트 저장 실패", error: e, stackTrace: stack); // ✅ 수정된 부분
+      logger.e("노트 저장 실패", error: e, stackTrace: stack); // 수정된 부분
       state = AsyncError(e, stack); // 에러 상태 저장
       rethrow; // 상위로 에러 전파
     }

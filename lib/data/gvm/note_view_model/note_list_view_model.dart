@@ -7,7 +7,9 @@ import '../../repository/note_repository.dart';
 import '../user_view_model/session_view_model.dart';
 import 'note_view_model.dart';
 
-final logger = Logger();
+final logger = Logger(
+  level: Level.debug, // 디버그 레벨로 설정되어 있는지 확인
+);
 
 // 노트 목록 ViewModel Provider
 final noteListViewModelProvider =
@@ -18,15 +20,40 @@ final noteListViewModelProvider =
 // 선택된 노트 Provider
 final selectedNoteProvider = StateProvider<Note?>((ref) => null);
 
-// 날짜 비교 함수
+// 날짜 비교 함수: updatedAt 또는 createdAt 기준 최신순 정렬
 int _compareDates(Note a, Note b, bool isLatestFirst) {
   try {
-    DateTime dateA = DateFormat("yyyy-MM-ddTHH:mm:ss").parse(a.createdAt);
-    DateTime dateB = DateFormat("yyyy-MM-ddTHH:mm:ss").parse(b.createdAt);
-    return isLatestFirst ? dateB.compareTo(dateA) : dateA.compareTo(dateB);
+    // 최신 날짜를 가져옴 (수정 날짜가 있으면 그것을, 없으면 작성 날짜를 사용)
+    DateTime dateA = _getLatestDate(a);
+    DateTime dateB = _getLatestDate(b);
+
+    // 날짜만 비교
+    int dateComparison = DateFormat("yyyy-MM-dd")
+        .format(dateB)
+        .compareTo(DateFormat("yyyy-MM-dd").format(dateA));
+
+    if (dateComparison == 0) {
+      // 같은 날짜라면 시간 비교
+      dateComparison = dateB.compareTo(dateA);
+    }
+
+    logger.d(
+        "정렬 비교: A(${a.noteId}) → ${dateA.toIso8601String()}, B(${b.noteId}) → ${dateB.toIso8601String()}");
+
+    return isLatestFirst ? dateComparison : -dateComparison;
   } catch (e) {
+    print("날짜 비교 오류: $e");
     return 0;
   }
+}
+
+// 노트의 최신 날짜를 가져오는 함수 (시간까지 포함)
+DateTime _getLatestDate(Note note) {
+  String? latestDate = note.updatedAt != null && note.updatedAt!.isNotEmpty
+      ? note.updatedAt
+      : note.createdAt;
+
+  return DateFormat("yyyy-MM-ddTHH:mm:ss").parse(latestDate!);
 }
 
 // 노트 목록을 관리하는 ViewModel
@@ -46,20 +73,15 @@ class NoteListViewModel extends StateNotifier<List<Note>> {
 
   Future<void> fetchNotes(int userId) async {
     if (!mounted) {
-      logger.w("fetchNotes 실행 안 함: ViewModel이 dispose됨");
       return;
     }
 
     if (userId == 0) {
-      logger.w("유효하지 않은 유저 ID (로그인 필요)");
       state = [];
       return;
     }
 
-    if (state.isNotEmpty && state.first.userId == userId) {
-      logger.w("fetchNotes 중복 실행 방지됨 (userId: $userId)");
-      return;
-    }
+    // 중복 실행 방지 로직 삭제 -> 항상 최신 데이터를 받아옴
     logger.d("fetchNotes 실행됨 (userId: $userId)");
 
     try {
@@ -69,6 +91,8 @@ class NoteListViewModel extends StateNotifier<List<Note>> {
         state = [];
         return;
       }
+      print("서버 응답: ${response.toString()}"); // Modified
+      logger.d("서버 응답: ${response.toString()}");
 
       final List<Map<String, dynamic>> jsonList =
           List<Map<String, dynamic>>.from(response['response']);
@@ -76,9 +100,11 @@ class NoteListViewModel extends StateNotifier<List<Note>> {
 
       if (mounted) {
         state = List.from(_sortedNotes(notes, isLatestFirst));
-        logger.d("상태 업데이트 완료! 노트 개수: ${state.length}");
+        // UI 강제 업데이트
+        state = [...state]; // 새로운 리스트로 할당하여 강제 리렌더링 유도
       }
     } catch (e, stackTrace) {
+      print("노트 목록 불러오기 실패: $e"); // Modified
       logger.e("노트 목록 불러오기 실패: $e", error: e, stackTrace: stackTrace);
     }
   }
@@ -89,16 +115,4 @@ class NoteListViewModel extends StateNotifier<List<Note>> {
     sortedList.sort((a, b) => _compareDates(a, b, isLatestFirst));
     return sortedList;
   }
-}
-
-void fetchNotesOnce(WidgetRef ref, int userId, bool isFetching) {
-  if (isFetching) return; // 중복 실행 방지
-
-  final sessionUser = ref.read(sessionProvider);
-  if (sessionUser.id == null) {
-    print("유저 정보 없음! fetchNotes 실행 안 함");
-    return;
-  }
-
-  ref.read(noteListViewModelProvider.notifier).fetchNotes(userId);
 }
