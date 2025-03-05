@@ -29,6 +29,8 @@ class NoteWriteBody extends ConsumerStatefulWidget {
 class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
   bool isFormValid = false;
   late String currentDate;
+  bool isLoading = false; // 로딩 상태 관리
+  bool isSnackbarShown = false; // 스낵바 중복 호출 방지
 
   @override
   void initState() {
@@ -47,14 +49,17 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
   }
 
   Future<void> _handleNoteCompletion(BuildContext context) async {
+    if (isLoading) return; // 중복 실행 방지
+    setState(() => isLoading = true);
+
     showConfirmationDialog(
       context: context,
       title: '노트 작성을 완료하시겠습니까?',
       confirmText: '확인',
       onConfirm: () async {
         if (Navigator.canPop(context)) Navigator.pop(context);
-
         FocusScope.of(context).unfocus();
+
         await Future.delayed(const Duration(milliseconds: 100));
 
         try {
@@ -63,30 +68,26 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
           //  노트 저장
           await _submitNote();
 
-          // fetchNotes 실행 확인
-          try {
-            await ref
-                .read(noteListViewModelProvider.notifier)
-                .fetchNotes(userId);
-          } catch (e) {}
+          await ref.read(noteListViewModelProvider.notifier).fetchNotes(userId);
 
-          CommonSnackbar.success(context, '노트가 성공적으로 등록되었습니다!');
-
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => MainScreen(initialIndex: 3)),
-                (route) => false,
-              );
-            }
-          });
+          // UI 정상 갱신 후 페이지 이동
+          if (context.mounted) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MainScreen(initialIndex: 3)),
+              (route) => false,
+            );
+          }
         } catch (e) {
           CommonSnackbar.error(context, '노트 저장 실패: $e');
+        } finally {
+          setState(() {
+            isLoading = false; // 로딩 종료
+          });
         }
       },
-      snackBarMessage: '',
+      snackBarMessage: '노트가 성공적으로 등록되었습니다!ㅁ',
     );
   }
 
@@ -119,17 +120,17 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
 
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    ref.listen<AsyncValue<void>>(noteViewModelProvider, (_, state) {
-      state.when(
-        data: (_) => CommonSnackbar.success(context, '노트가 성공적으로 등록되었습니다!'),
-        error: (error, _) => CommonSnackbar.error(context, '노트 저장 실패: $error'),
-        loading: () => showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (_) => const Center(child: CircularProgressIndicator()),
-        ),
-      );
-    });
+    // ref.listen<AsyncValue<void>>(noteViewModelProvider, (_, state) {
+    //   state.when(
+    //     data: (_) => CommonSnackbar.success(context, '노트가 성공적으로 등록되었습니다!'),
+    //     error: (error, _) => CommonSnackbar.error(context, '노트 저장 실패: $error'),
+    //     loading: () => showDialog(
+    //       context: context,
+    //       barrierDismissible: false,
+    //       builder: (_) => const Center(child: CircularProgressIndicator()),
+    //     ),
+    //   );
+    // });
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -142,7 +143,10 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
           const SizedBox(height: 24),
           _buildBookInfoSection(book),
           const SizedBox(height: 16),
-          _buildSubmitButton(),
+          if (isLoading) // 로딩 상태일 때 로딩 인디케이터 표시
+            const Center(child: CircularProgressIndicator())
+          else
+            _buildSubmitButton(),
         ],
       ),
     );

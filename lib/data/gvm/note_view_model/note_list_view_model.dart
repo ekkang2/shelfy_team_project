@@ -1,10 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
-import '../../../providers/session_user_provider.dart';
 import '../../model/note_model.dart';
 import '../../repository/note_repository.dart';
-import '../user_view_model/session_view_model.dart';
 import 'note_view_model.dart';
 
 final logger = Logger(
@@ -78,9 +76,6 @@ class NoteListViewModel extends StateNotifier<List<Note>> {
       return;
     }
 
-    // 중복 실행 방지 로직 삭제 -> 항상 최신 데이터를 받아옴
-    logger.d("fetchNotes 실행됨 (userId: $userId)");
-
     try {
       final response = await _repository.findAllByUser(userId: userId);
 
@@ -88,8 +83,6 @@ class NoteListViewModel extends StateNotifier<List<Note>> {
         state = [];
         return;
       }
-      print("서버 응답: ${response.toString()}"); // Modified
-      logger.d("서버 응답: ${response.toString()}");
 
       final List<Map<String, dynamic>> jsonList =
           List<Map<String, dynamic>>.from(response['response']);
@@ -100,10 +93,7 @@ class NoteListViewModel extends StateNotifier<List<Note>> {
         // UI 강제 업데이트
         state = [...state]; // 새로운 리스트로 할당하여 강제 리렌더링 유도
       }
-    } catch (e, stackTrace) {
-      print("노트 목록 불러오기 실패: $e"); // Modified
-      logger.e("노트 목록 불러오기 실패: $e", error: e, stackTrace: stackTrace);
-    }
+    } catch (e, stackTrace) {}
   }
 
   // 최신순/오래된순 정렬 함수 (isLatestFirst 매개변수 추가)

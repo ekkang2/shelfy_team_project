@@ -50,8 +50,15 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
   Future<void> deleteNote(WidgetRef ref, int noteId) async {
     try {
       await ref.read(noteRepositoryProvider).delete(id: noteId);
+
       ref.invalidate(noteListViewModelProvider);
-      Navigator.pop(context); // 삭제 후 현재 화면 닫기
+
+      final userId = getUserId(ref);
+      if (userId > 0) {
+        await ref.read(noteListViewModelProvider.notifier).fetchNotes(userId);
+      }
+
+      Navigator.pop(context);
     } catch (e) {
       CommonSnackbar.error(context, "노트 삭제 실패: $e");
     }
@@ -120,10 +127,8 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
 
     try {
       final book = bookList.firstWhere((book) => book.book_id == bookId);
-      print("bookId($bookId)를 찾았습니다! - ${book.book_title}");
       return book;
     } catch (e) {
-      print("bookId($bookId)를 가진 책을 찾지 못함. 현재 bookList 확인 필요!");
       return null;
     }
   }
@@ -347,7 +352,7 @@ class _NoteViewPageState extends ConsumerState<NoteViewPage> {
                 title: '노트를 삭제하시겠습니까?',
                 subtitle: '삭제한 기록은 복구할 수 없어요!',
                 confirmText: '삭제',
-                snackBarMessage: '노트 삭제 완료!',
+                snackBarMessage: '노트가 삭제되었습니다!',
                 snackBarIcon: Icons.delete_forever,
                 snackBarType: 'success',
                 onConfirm: () {

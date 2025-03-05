@@ -5,7 +5,6 @@ import 'package:logger/logger.dart';
 import '../../../../../data/gvm/note_view_model/note_list_view_model.dart';
 import '../../../../../data/gvm/user_view_model/session_view_model.dart';
 import '../../../../../data/model/note_model.dart';
-import '../../../../../providers/session_user_provider.dart';
 import '../note_view_page.dart';
 
 final logger = Logger(); // Logger 인스턴스 생성
@@ -19,7 +18,7 @@ class NoteListView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final noteViewModel = ref.watch(noteListViewModelProvider);
 
-    // ✅ 유저 ID가 없거나 0이면 전체 리스트에서 메시지 표시
+    //  유저 ID가 없거나 0이면 전체 리스트에서 메시지 표시
     if (userId == null || userId == 0) {
       return const Center(
         child: Padding(
@@ -32,7 +31,7 @@ class NoteListView extends ConsumerWidget {
       );
     }
 
-    // ✅ 노트가 없으면 전체 리스트에서 한 번만 메시지 표시
+    //  노트가 없으면 전체 리스트에서 한 번만 메시지 표시
     if (noteViewModel.isEmpty) {
       return const Center(
         child: Padding(
@@ -45,7 +44,7 @@ class NoteListView extends ConsumerWidget {
       );
     }
 
-    // ✅ 노트 리스트 표시
+    //  노트 리스트 표시
     return ListView.builder(
       itemCount: noteViewModel.length,
       itemBuilder: (context, index) {
@@ -56,7 +55,7 @@ class NoteListView extends ConsumerWidget {
   }
 }
 
-// ✅ 개별 노트 아이템 UI
+// 개별 노트 아이템 UI
 class NoteItem extends ConsumerWidget {
   final int? userId;
   final Note note;
@@ -70,24 +69,17 @@ class NoteItem extends ConsumerWidget {
       MaterialPageRoute(
           builder: (context) => NoteViewPage(noteId: note.noteId!)),
     );
-    print(
-        "Navigator 리턴, shouldRefresh: $shouldRefresh"); // 직접 print() 추가 // Modified
-    logger.d("NoteDetailPage 리턴, shouldRefresh: $shouldRefresh");
 
     if (shouldRefresh == true) {
-      logger.d("리프레시 요청 감지, invalidate 호출");
       ref.invalidate(noteListViewModelProvider);
       await Future.delayed(Duration(milliseconds: 100));
 
       int validUserId = ref.read(sessionProvider).id ?? 0;
-      logger.d("유효한 유저 ID: $validUserId");
       if (validUserId > 0) {
         await ref
             .read(noteListViewModelProvider.notifier)
             .fetchNotes(validUserId); // fetchNotes 호출
-      } else {
-        logger.e("🚨 fetchNotes 실행 안 함: 유저 ID 없음");
-      }
+      } else {}
     }
   }
 

@@ -27,7 +27,7 @@ class NoteInputField extends StatelessWidget {
       controller: controller,
       enabled: isEditMode,
       style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-            color: Colors.black, // ✅ 글쓰기/글보기 모두 검정색으로 설정
+            color: Colors.black,
           ),
       decoration: InputDecoration(
         hintText: hintText,

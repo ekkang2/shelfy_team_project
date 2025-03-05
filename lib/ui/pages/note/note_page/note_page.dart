@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shelfy_team_project/providers/session_user_provider.dart';
 import 'package:shelfy_team_project/ui/pages/note/note_page/widget/note_section.dart';
 import 'package:shelfy_team_project/ui/pages/note/note_page/widget/note_tab.dart';
 import 'package:shelfy_team_project/data/gvm/note_view_model/note_list_view_model.dart';
@@ -9,8 +8,6 @@ import '../../../../data/model/note_model.dart';
 import '../../../../data/model/user_model/session_user.dart';
 import 'note_statistcs_page.dart';
 import 'package:logger/logger.dart';
-
-import 'note_view_page.dart';
 
 final logger = Logger(); // Logger 인스턴스 추가
 
@@ -35,7 +32,7 @@ class _NoteStatsTabState extends ConsumerState<NoteStatsTab>
   late TabController _tabController;
   bool isLatestFirst = true;
   bool isBookmarkedExpanded = true;
-  bool _isFetching = false; // ✅ 중복 실행 방지 플래그
+  bool _isFetching = false; //  중복 실행 방지 플래그
 
   @override
   void initState() {
@@ -60,7 +57,7 @@ class _NoteStatsTabState extends ConsumerState<NoteStatsTab>
     final bookmarkedNotes = noteList.where((note) => note.notePin).toList();
     final sortedNotes = _sortByDate(noteList, isLatestFirst);
 
-    // ✅ sessionProvider 값 변경 감지를 build() 내부에서 실행
+    //  sessionProvider 값 변경 감지를 build() 내부에서 실행
     ref.listen<SessionUser>(sessionProvider, (previous, next) {
       if (previous?.id != next.id && next.id != null && next.id != 0) {
         ref.read(noteListViewModelProvider.notifier).fetchNotes(next.id!);

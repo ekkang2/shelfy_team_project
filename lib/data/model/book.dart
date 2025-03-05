@@ -94,17 +94,6 @@ final List<Book> bookList = [
       book_page: 220,
       book_published_at: '2025-04-12'),
   Book(
-      book_id: 7,
-      book_image:
-          'https:\/\/image.aladin.co.kr\/product\/35474\/30\/coversum\/895794575x_1.jpg',
-      book_title: '2025년, 미래의 직업',
-      book_desc: '변화하는 시대에 맞는 직업에 대한 통찰과 준비 방법을 다룬 책입니다.',
-      book_author: '강성민 지음',
-      book_publisher: '직업세계',
-      book_isbn: 'K402036373',
-      book_page: 250,
-      book_published_at: '2025-05-05'),
-  Book(
       book_id: 8,
       book_image:
           'https:\/\/image.aladin.co.kr\/product\/35473\/92\/coversum\/8957945776_1.jpg',
