@@ -58,25 +58,6 @@ class CustomTextformfield extends StatelessWidget {
                 color: !isDarkMode ? Colors.grey : Colors.white,
                 size: 20,
               ),
-              suffix: keyboardType != null
-                  ? ElevatedButton(
-                      style: ButtonStyle(
-                        padding: WidgetStatePropertyAll(
-                          EdgeInsets.symmetric(horizontal: 12),
-                        ),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        backgroundColor: WidgetStatePropertyAll(
-                          !isDarkMode ? Colors.grey[100] : Colors.grey[700],
-                        ),
-                      ),
-                      onPressed: onPressed,
-                      child: Text('인증하기'),
-                    )
-                  : null,
               // 기본 TextFormField 디자인을 설정한다.
               enabledBorder: UnderlineInputBorder(
                 borderSide:
