@@ -70,24 +70,24 @@ AppBar SearchAppBar(BuildContext context) {
         )
       ],
     ),
-    actions: [
-      IconButton(
-        onPressed: () {
-          // TODO - 페이지 이동 임포트 빼기
-          // 페이지 이동
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddBook(), // 이동할 페이지
-            ),
-          );
-        },
-        icon: Icon(
-          Icons.add_outlined,
-          color: Colors.white,
-        ),
-      ),
-    ],
+    // actions: [
+    //   IconButton(
+    //     onPressed: () {
+    //       // TODO - 페이지 이동 임포트 빼기
+    //       // 페이지 이동
+    //       Navigator.push(
+    //         context,
+    //         MaterialPageRoute(
+    //           builder: (context) => AddBook(), // 이동할 페이지
+    //         ),
+    //       );
+    //     },
+    //     icon: Icon(
+    //       Icons.add_outlined,
+    //       color: Colors.white,
+    //     ),
+    //   ),
+    // ],
   );
 }
 

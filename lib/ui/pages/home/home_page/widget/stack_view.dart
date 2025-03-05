@@ -82,7 +82,7 @@ class _StackViewState extends State<StackView> {
         ),
         Positioned.fill(
           child: filteredBooks.isNotEmpty
-              ? ListView(
+              ? Column(
                   children: [
                     const SizedBox(height: 5),
                     Center(
@@ -109,115 +109,123 @@ class _StackViewState extends State<StackView> {
                       ),
                     ),
                     Expanded(
-                        child: SingleChildScrollView(
-                      reverse: true,
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: filteredBooks.asMap().entries.map((entry) {
-                          final index = entry.key;
-                          final record = entry.value;
-                          final bookHeight = record.bookPage! * 0.2;
+                      child: SingleChildScrollView(
+                        reverse: true, // ✅ 스크롤이 아래에서 시작되도록 설정
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: filteredBooks
+                              .asMap()
+                              .entries
+                              .toList()
+                              .reversed // ✅ 아래에서부터 쌓이도록 역순으로 정렬
+                              .map((entry) {
+                            final index = entry.key;
+                            final record = entry.value;
+                            final bookHeight = record.bookPage! * 0.2;
 
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 70.0),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Transform.translate(
-                                offset: Offset(xOffsets[index], 0),
-                                child: Container(
-                                  margin: const EdgeInsets.only(bottom: 1),
-                                  height: bookHeight,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.6,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4),
-                                    color: Colors.grey[300],
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
-                                        blurRadius: 5,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                DoneDetailPage(book: record)),
-                                      );
-                                    },
-                                    child: ClipRRect(
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 70.0),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Transform.translate(
+                                  offset: Offset(xOffsets[index], 0),
+                                  child: Container(
+                                    margin: const EdgeInsets.only(bottom: 1),
+                                    height: bookHeight,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.6,
+                                    decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(4),
-                                      child: Stack(
-                                        alignment: Alignment.center,
-                                        children: [
-                                          Transform.translate(
-                                            offset: const Offset(-10, 10),
-                                            child: Transform.rotate(
-                                              alignment: Alignment.center,
-                                              angle:
-                                                  90 * 3.1415926535897932 / 180,
-                                              child: SizedBox.expand(
-                                                child: FittedBox(
-                                                  fit: BoxFit.cover,
-                                                  child: ColorFiltered(
-                                                    colorFilter:
-                                                        ColorFilter.mode(
-                                                            Colors
-                                                                .black
-                                                                .withOpacity(
-                                                                    0.2),
-                                                            BlendMode.darken),
-                                                    child: record.isMyBook!
-                                                        ? Image.asset(
-                                                            'assets/images/${record.bookImage}')
-                                                        : Image.network(
-                                                            record.bookImage!),
+                                      color: Colors.grey[300],
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.1),
+                                          blurRadius: 5,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DoneDetailPage(book: record)),
+                                        );
+                                      },
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(4),
+                                        child: Stack(
+                                          alignment: Alignment.center,
+                                          children: [
+                                            Transform.translate(
+                                              offset: const Offset(-10, 10),
+                                              child: Transform.rotate(
+                                                alignment: Alignment.center,
+                                                angle: 90 *
+                                                    3.1415926535897932 /
+                                                    180,
+                                                child: SizedBox.expand(
+                                                  child: FittedBox(
+                                                    fit: BoxFit.cover,
+                                                    child: ColorFiltered(
+                                                      colorFilter:
+                                                          ColorFilter.mode(
+                                                              Colors
+                                                                  .black
+                                                                  .withOpacity(
+                                                                      0.2),
+                                                              BlendMode.darken),
+                                                      child: record.isMyBook!
+                                                          ? Image.asset(
+                                                              'assets/images/${record.bookImage}')
+                                                          : Image.network(record
+                                                              .bookImage!),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20.0),
-                                            child: Text(
-                                              record.bookTitle!,
-                                              style: TextStyle(
-                                                fontFamily:
-                                                    'Pretendard-SemiBold',
-                                                color: Colors.white,
-                                                fontSize: 14,
-                                                shadows: [
-                                                  Shadow(
-                                                    color: Colors.black
-                                                        .withOpacity(0.9),
-                                                    offset: Offset(1, 1),
-                                                    blurRadius: 7,
-                                                  ),
-                                                ],
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 20.0),
+                                              child: Text(
+                                                record.bookTitle!,
+                                                style: TextStyle(
+                                                  fontFamily:
+                                                      'Pretendard-SemiBold',
+                                                  color: Colors.white,
+                                                  fontSize: 14,
+                                                  shadows: [
+                                                    Shadow(
+                                                      color: Colors.black
+                                                          .withOpacity(0.9),
+                                                      offset: Offset(1, 1),
+                                                      blurRadius: 7,
+                                                    ),
+                                                  ],
+                                                ),
+                                                textAlign: TextAlign.center,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.visible,
                                               ),
-                                              textAlign: TextAlign.center,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.visible,
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        }).toList(),
+                            );
+                          }).toList(),
+                        ),
                       ),
-                    )),
+                    ),
                   ],
                 )
               : Center(
