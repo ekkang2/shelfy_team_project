@@ -50,7 +50,6 @@ class _DoingRecordStateTabState extends ConsumerState<DoingRecordStateTab> {
         Expanded(
           child: ListView(
             controller: _scrollController,
-            padding: const EdgeInsets.symmetric(horizontal: 15),
             children: [
               const SizedBox(height: 20),
               Center(
@@ -85,63 +84,71 @@ class _DoingRecordStateTabState extends ConsumerState<DoingRecordStateTab> {
                   });
                 },
               ),
-              const SizedBox(height: 20),
-
-              // 시작 날짜 선택
-              Text(
-                '언제부터 읽기 시작했나요?',
-                style: TextStyle(
-                    fontFamily: 'Pretendard-Bold', color: Colors.grey[600]),
-              ),
-              const SizedBox(height: 10),
-              Container(
-                decoration: BoxDecoration(
-                  color: !isDarkMode ? Colors.grey[200] : Colors.grey[800],
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: TextButton(
-                  onPressed: () async {
-                    DateTime? pickedDate = await showDatePicker(
-                      context: context,
-                      initialDate: _startDate,
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2100),
-                    );
-                    if (pickedDate != null && pickedDate != _startDate) {
-                      setState(() {
-                        _startDate = pickedDate;
-                      });
-                    }
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Icon(Icons.date_range,
-                          color: !isDarkMode
-                              ? Colors.grey[500]
-                              : Colors.grey[300]),
-                      Text(
-                        '${_startDate.year}.${_startDate.month}.${_startDate.day}',
-                        style: TextStyle(
-                            color:
-                                isDarkMode ? Colors.grey[300] : Colors.black),
+              const SizedBox(height: 25),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 시작 날짜 선택
+                    Text(
+                      '시작일',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      decoration: BoxDecoration(
+                        color:
+                            !isDarkMode ? Colors.grey[200] : Colors.grey[800],
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                    ],
-                  ),
+                      child: TextButton(
+                        onPressed: () async {
+                          DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: _startDate,
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2100),
+                          );
+                          if (pickedDate != null && pickedDate != _startDate) {
+                            setState(() {
+                              _startDate = pickedDate;
+                            });
+                          }
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Icon(Icons.date_range,
+                                color: !isDarkMode
+                                    ? Colors.grey[500]
+                                    : Colors.grey[300]),
+                            Text(
+                              '${_startDate.year}.${_startDate.month}.${_startDate.day}',
+                              style: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.grey[300]
+                                      : Colors.black),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(' 이 책을 다 읽으면'),
+                        Text(
+                          ' ${(widget.bookPage * 0.01).toStringAsFixed(1)} cm',
+                          style: Theme.of(context).textTheme.displayMedium,
+                        ),
+                        Text(' 높아져요!'),
+                      ],
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 5),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(' 이 책을 다 읽으면'),
-                  Text(
-                    ' ${(widget.bookPage * 0.01).toStringAsFixed(1)} cm',
-                    style: Theme.of(context).textTheme.displayMedium,
-                  ),
-                  Text(' 높아져요!'),
-                ],
-              ),
+              )
             ],
           ),
         ),

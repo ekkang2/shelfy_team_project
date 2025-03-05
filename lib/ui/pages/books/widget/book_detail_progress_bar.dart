@@ -1,28 +1,33 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shelfy_team_project/data/gvm/record_view_model/record_view_model.dart';
 
-class AdjustableProgressBar extends StatefulWidget {
+class AdjustableProgressBar extends ConsumerStatefulWidget {
+  final int? recordId;
   final int totalPage;
   final int? currentPage;
   final bool iconVisible;
-  final Function(int) onProgressChanged; //  변경된 progress 값 전달할 콜백
+  final Function(int) onProgressChanged;
 
   const AdjustableProgressBar({
     Key? key,
     required this.totalPage,
     required this.iconVisible,
     this.currentPage,
-    required this.onProgressChanged, //  필수 매개변수로 추가
+    this.recordId,
+    required this.onProgressChanged,
   }) : super(key: key);
 
   @override
   _AdjustableProgressBarState createState() => _AdjustableProgressBarState();
 }
 
-class _AdjustableProgressBarState extends State<AdjustableProgressBar> {
+class _AdjustableProgressBarState extends ConsumerState<AdjustableProgressBar> {
   late double _currentValue;
   late TextEditingController _currentPageController;
   bool _isEditing = false;
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -35,6 +40,7 @@ class _AdjustableProgressBarState extends State<AdjustableProgressBar> {
   @override
   void dispose() {
     _currentPageController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -47,15 +53,43 @@ class _AdjustableProgressBarState extends State<AdjustableProgressBar> {
 
   void _submitPage(String value) {
     int? newValue = int.tryParse(value);
-    if (newValue != null && newValue >= 0 && newValue <= widget.totalPage) {
-      setState(() {
-        _currentValue = newValue.toDouble();
-      });
-      widget.onProgressChanged(newValue); //  부모 위젯으로 progress 값 전달
+    if (newValue != null &&
+        newValue >= 0 &&
+        newValue <= widget.totalPage &&
+        newValue != _currentValue.toInt()) {
+      _updateProgress(newValue);
     }
     setState(() {
       _isEditing = false;
     });
+  }
+
+  void _onSliderChanged(double value) {
+    if (_currentValue != value) {
+      setState(() {
+        _currentValue = value;
+        _currentPageController.text = _currentValue.toInt().toString();
+      });
+
+      if (_debounce?.isActive ?? false) _debounce!.cancel();
+      _debounce = Timer(const Duration(milliseconds: 500), () {
+        _updateProgress(_currentValue.toInt());
+      });
+    }
+  }
+
+  void _updateProgress(int newProgress) {
+    if (widget.recordId != null && newProgress != widget.currentPage) {
+      widget.onProgressChanged(newProgress);
+
+      final vm = ref.read(recordViewModelProvider.notifier);
+      vm.updateRecordAttribute(
+        recordType: 2,
+        recordId: widget.recordId!,
+        type: 1,
+        progress: newProgress,
+      );
+    }
   }
 
   @override
@@ -69,9 +103,8 @@ class _AdjustableProgressBarState extends State<AdjustableProgressBar> {
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Row(
             children: [
-              Visibility(
-                visible: widget.iconVisible,
-                child: Row(
+              if (widget.iconVisible)
+                Row(
                   children: [
                     Icon(
                       Icons.bookmark,
@@ -83,7 +116,6 @@ class _AdjustableProgressBarState extends State<AdjustableProgressBar> {
                     const SizedBox(width: 4),
                   ],
                 ),
-              ),
               Text(
                 '${ceilProgressPages(currentPage: _currentValue.toInt(), totalPage: widget.totalPage)}%',
                 style: Theme.of(context).textTheme.displayMedium,
@@ -91,8 +123,6 @@ class _AdjustableProgressBarState extends State<AdjustableProgressBar> {
             ],
           ),
         ),
-
-        //  슬라이더
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             trackHeight: 8.0,
@@ -110,17 +140,9 @@ class _AdjustableProgressBarState extends State<AdjustableProgressBar> {
             max: widget.totalPage.toDouble(),
             divisions: widget.totalPage,
             label: "${_currentValue.toInt()}p",
-            onChanged: (value) {
-              setState(() {
-                _currentValue = value;
-                _currentPageController.text = _currentValue.toInt().toString();
-              });
-              widget.onProgressChanged(_currentValue.toInt());
-            },
+            onChanged: _onSliderChanged,
           ),
         ),
-
-        //  현재 페이지 표시
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 23.0),
           child: Align(
@@ -134,7 +156,7 @@ class _AdjustableProgressBarState extends State<AdjustableProgressBar> {
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.labelMedium,
                       autofocus: true,
-                      onSubmitted: _submitPage,
+                      onSubmitted: (value) => _submitPage(value),
                       onEditingComplete: () {
                         _submitPage(_currentPageController.text);
                       },

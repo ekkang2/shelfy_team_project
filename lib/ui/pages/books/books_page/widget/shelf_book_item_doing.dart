@@ -21,20 +21,44 @@ class _ShelfBookItemDoingState extends State<ShelfBookItemDoing>
   @override
   void initState() {
     super.initState();
+    _initializeAnimation();
+  }
+
+  void _initializeAnimation() {
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 1), // 애니메이션 시간 설정
+      duration: const Duration(seconds: 1),
     );
 
     _progressAnimation = Tween<double>(
       begin: 0.0,
-      end: widget.doing.progress! / widget.doing.bookPage!,
+      end: _calculateProgress(),
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeOut,
     ));
 
-    _animationController.forward(); // 애니메이션 실행
+    _animationController.forward();
+  }
+
+  void _restartAnimation() {
+    _animationController.reset();
+    _progressAnimation = Tween<double>(
+      begin: 0.0,
+      end: _calculateProgress(),
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOut,
+    ));
+
+    _animationController.forward();
+  }
+
+  double _calculateProgress() {
+    if (widget.doing.bookPage == null || widget.doing.bookPage == 0) {
+      return 0.0;
+    }
+    return (widget.doing.progress ?? 0) / widget.doing.bookPage!;
   }
 
   @override
@@ -48,12 +72,16 @@ class _ShelfBookItemDoingState extends State<ShelfBookItemDoing>
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return InkWell(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        // 페이지 이동 후 결과 감지
+        await Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => DoingDetailPage(book: widget.doing)),
+            builder: (context) => DoingDetailPage(book: widget.doing),
+          ),
         );
+        // 돌아오면 애니메이션 다시 실행
+        _restartAnimation();
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20),
@@ -68,7 +96,9 @@ class _ShelfBookItemDoingState extends State<ShelfBookItemDoing>
                 borderRadius: BorderRadius.circular(3),
                 child: Image.network(
                   height: 105,
-                  widget.doing.bookImage!,
+                  widget.doing.bookImage ?? '',
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.image_not_supported),
                 ),
               ),
             ),
@@ -79,7 +109,7 @@ class _ShelfBookItemDoingState extends State<ShelfBookItemDoing>
                 SizedBox(
                   width: getDrawerWidth(context),
                   child: Text(
-                    widget.doing.bookTitle!,
+                    widget.doing.bookTitle ?? '제목 없음',
                     style: Theme.of(context).textTheme.titleLarge,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -87,7 +117,7 @@ class _ShelfBookItemDoingState extends State<ShelfBookItemDoing>
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${DateFormat('yyyy년 MM월 dd일').format(widget.doing.startDate!)}에 읽기 시작했어요',
+                  '${DateFormat('yyyy년 MM월 dd일').format(widget.doing.startDate ?? DateTime.now())}에 읽기 시작했어요',
                   style: Theme.of(context).textTheme.labelMedium,
                 ),
                 const SizedBox(height: 16),
@@ -121,13 +151,13 @@ class _ShelfBookItemDoingState extends State<ShelfBookItemDoing>
                     );
                   },
                 ),
-                Container(
+                SizedBox(
                   width: getDrawerWidth(context),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '${(widget.doing.progress! / widget.doing.bookPage! * 100).toStringAsFixed(1)}%',
+                        '${(_calculateProgress() * 100).toStringAsFixed(1)}%',
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
                       Text(

@@ -115,7 +115,8 @@ class _DoneDetailPageState extends ConsumerState<DoneDetailPage> {
                       ReadPeriod(
                         startDate: widget.book.startDate,
                         endDate: widget.book.endDate,
-                        isDarkMode: isDarkMode,
+                        recordId: widget.book.recordId,
+                        recordType: 1,
                         recordState: 1,
                         onDateChanged: (startDate, endDate) {},
                       ),

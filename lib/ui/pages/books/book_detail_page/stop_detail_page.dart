@@ -125,7 +125,8 @@ class _StopDetailPageState extends ConsumerState<StopDetailPage> {
                     const SizedBox(height: 25),
                     ReadPeriod(
                       recordState: 4,
-                      isDarkMode: isDarkMode,
+                      recordId: widget.book.recordId,
+                      recordType: 4,
                       onDateChanged: (startDate, endDate) {},
                     ),
                     const SizedBox(height: 20),

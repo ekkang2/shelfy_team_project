@@ -92,12 +92,10 @@ class _DoneRecordStateTabState extends ConsumerState<DoneRecordStateTab> {
 
               //  독서기간
               Text('독서기간', style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 4),
               ReadPeriod(
                 startDate: _startDate,
                 endDate: _endDate,
                 recordState: 0,
-                isDarkMode: isDarkMode,
                 onDateChanged: (start, end) {
                   setState(() {
                     _startDate = start;

@@ -75,14 +75,14 @@ class _WishRecordStateTabState extends ConsumerState<WishRecordStateTab> {
                   });
                 },
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 70),
 
               // 기대평 타이틀
               Text(
                 '기대평',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 4),
 
               // 기대평 입력창
               Container(

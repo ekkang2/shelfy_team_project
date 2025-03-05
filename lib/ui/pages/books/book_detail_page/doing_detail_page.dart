@@ -83,26 +83,29 @@ class _DoingDetailPageState extends State<DoingDetailPage> {
               indent: 20,
               endIndent: 20,
             ),
-            // ListView를 스크롤 가능하도록 수정
             Expanded(
               child: ListView(
                 children: [
                   const SizedBox(height: 20),
-                  const SizedBox(height: 4),
+                  // 프로그래스 바
                   AdjustableProgressBar(
                     iconVisible: true,
                     totalPage: widget.book.bookPage!,
                     currentPage: widget.book.progress,
                     onProgressChanged: (int) {},
+                    recordId: widget.book.recordId,
                   ),
                   const SizedBox(height: 20),
+
+                  // 독서 기간
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: ReadPeriod(
                       startDate: widget.book.startDate,
-                      isDarkMode: isDarkMode,
                       recordState: 2,
                       onDateChanged: (startDate, endDate) {},
+                      recordId: widget.book.recordId,
+                      recordType: 2,
                     ),
                   ),
                 ],
@@ -113,17 +116,19 @@ class _DoingDetailPageState extends State<DoingDetailPage> {
         bottomNavigationBar: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text('예상 별점'),
-                  const SizedBox(width: 10),
-                  customStarRating(3.5, 2, 18),
-                ],
-              ),
-            ),
+            // Visibility(
+            //   child: Padding(
+            //     padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.end,
+            //       children: [
+            //         Text('예상 별점'),
+            //         const SizedBox(width: 10),
+            //         customStarRating(3.5, 2, 18),
+            //       ],
+            //     ),
+            //   ),
+            // ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
               child: ElevatedButton(

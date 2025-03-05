@@ -127,7 +127,9 @@ class _BooksPageState extends ConsumerState<BooksPage>
           ListView.builder(
             itemCount: doing.length,
             itemBuilder: (context, index) {
-              return ShelfBookItemDoing(doing: doing[index]);
+              return ShelfBookItemDoing(
+                doing: doing[index],
+              );
             },
           ),
           ListView.builder(
