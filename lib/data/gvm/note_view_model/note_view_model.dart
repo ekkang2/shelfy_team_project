@@ -17,7 +17,6 @@ final noteRepositoryProvider =
     Provider<NoteRepository>((ref) => NoteRepository());
 
 // 상태 관리 Provider 정의
-// (이 Provider는 NoteWritePage 등에서 노트 저장을 요청할 때 사용)
 final noteViewModelProvider =
     StateNotifierProvider<NoteViewModel, AsyncValue<void>>((ref) {
   return NoteViewModel(ref.read(noteRepositoryProvider));

@@ -12,7 +12,7 @@ final logger = Logger(
 // 노트 목록 ViewModel Provider
 final noteListViewModelProvider =
     StateNotifierProvider<NoteListViewModel, List<Note>>(
-  (ref) => NoteListViewModel(ref.watch(noteRepositoryProvider)),
+  (ref) => NoteListViewModel(ref.read(noteRepositoryProvider)),
 );
 
 // 선택된 노트 Provider
@@ -67,7 +67,7 @@ class NoteListViewModel extends StateNotifier<List<Note>> {
   }
 
   Future<void> fetchNotes(int userId) async {
-    if (!mounted) {
+    if (!mounted || userId == 0) {
       return;
     }
 
@@ -90,7 +90,6 @@ class NoteListViewModel extends StateNotifier<List<Note>> {
 
       if (mounted) {
         state = List.from(_sortedNotes(notes, isLatestFirst));
-        // UI 강제 업데이트
         state = [...state]; // 새로운 리스트로 할당하여 강제 리렌더링 유도
       }
     } catch (e, stackTrace) {}

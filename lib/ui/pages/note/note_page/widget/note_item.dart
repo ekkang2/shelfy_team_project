@@ -78,7 +78,7 @@ class NoteItem extends ConsumerWidget {
       if (validUserId > 0) {
         await ref
             .read(noteListViewModelProvider.notifier)
-            .fetchNotes(validUserId); // fetchNotes 호출
+            .fetchNotes(validUserId);
       } else {}
     }
   }

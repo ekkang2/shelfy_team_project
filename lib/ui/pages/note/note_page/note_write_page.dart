@@ -31,11 +31,7 @@ class _NoteWritePageState extends ConsumerState<NoteWritePage> {
     final title = _titleController.text;
     final content = _contentController.text;
     final selectedBook = ref.read(bookWriteProvider); // 선택한 책 정보 가져오기
-
-    // sessionProvider를 사용해 로그인한 유저 ID를 가져옴
-    // (만약 sessionProvider가 아닌 sessionUserProvider가 맞다면, 해당 provider 내부에서 올바른 ID가 들어가도록 수정해야 합니다.)
     final userId = ref.read(sessionProvider).id ?? 0;
-    log.logger.d("NoteWritePage - userId: $userId"); //  충돌 방지
 
     // 제목 & 내용 필수 체크
     if (title.isEmpty || content.isEmpty) {

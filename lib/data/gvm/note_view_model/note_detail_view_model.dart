@@ -56,9 +56,10 @@ class NoteDetailViewModel extends StateNotifier<Note?> {
         if (userId > 0) {
           _ref.invalidate(noteListViewModelProvider);
 
-          Future.microtask(() {
-            _ref.read(noteListViewModelProvider.notifier).fetchNotes(userId);
-          });
+          // Future.microtask(() {
+          //   _ref.read(noteListViewModelProvider.notifier).fetchNotes(userId);
+          // });
+          _ref.read(noteListViewModelProvider.notifier).fetchNotes(userId);
         } else {}
       } catch (e) {}
     } catch (e) {}
