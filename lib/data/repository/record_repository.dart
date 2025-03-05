@@ -36,4 +36,19 @@ class RecordRepository {
     Map<String, dynamic> responseBody = response.data;
     return responseBody;
   }
+
+  Future<Map<String, dynamic>> updateAttribute(
+      {required int recordType,
+      required int recordId,
+      required int type,
+      required Map<String, dynamic> data}) async {
+    //
+    Response response = await dio.put(
+      '/api/record/${recordType}/${recordId}',
+      queryParameters: {'type': type},
+      data: data,
+    );
+    Map<String, dynamic> responseBody = response.data;
+    return responseBody;
+  }
 }

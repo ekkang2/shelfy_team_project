@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
 import 'package:shelfy_team_project/ui/widgets/custom_appbar.dart';
 
+import '../../../../_core/utils/size.dart';
 import '../../../../data/gvm/record_view_model/record_view_model.dart';
 import '../../../widgets/custom_record_label.dart';
 import '../../../widgets/custom_star_rating.dart';
@@ -19,9 +20,20 @@ class WishDetailPage extends ConsumerStatefulWidget {
 }
 
 class _WishDetailPageState extends ConsumerState<WishDetailPage> {
+  bool isEditingComment = false; // 코멘트 편집 상태 관리
+  late TextEditingController _commentController; // 코멘트 입력 필드 컨트롤러
+  final FocusNode _focusNode = FocusNode();
   @override
   void initState() {
     super.initState();
+    _commentController = TextEditingController(text: widget.book.comment ?? '');
+  }
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    _focusNode.dispose();
+    super.dispose();
   }
 
   // 날짜 포맷 함수
@@ -104,47 +116,122 @@ class _WishDetailPageState extends ConsumerState<WishDetailPage> {
                           Visibility(
                             visible: widget.book.comment != null &&
                                 !widget.book.comment!.isEmpty,
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(FontAwesomeIcons.penClip,
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  isEditingComment = true;
+                                });
+                                Future.delayed(Duration(milliseconds: 100), () {
+                                  _focusNode.requestFocus();
+                                });
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // 타이틀
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        FontAwesomeIcons.penClip,
                                         size: 15,
                                         color: !isDarkMode
                                             ? const Color(0xFF4D77B2)
-                                            : Colors.grey[500]),
-                                    const SizedBox(width: 5),
-                                    Text('기대평'),
-                                  ],
-                                ),
-                                const SizedBox(height: 6),
-                                Container(
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 15, horizontal: 15),
-                                  decoration: BoxDecoration(
-                                    color: !isDarkMode
-                                        ? Colors.grey[100]
-                                        : Colors.grey[800],
-                                    borderRadius: BorderRadius.circular(3),
+                                            : Colors.grey[500],
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text('기대평'),
+                                    ],
                                   ),
-                                  child: Text(
-                                    '\"${widget.book.comment}\"',
-                                    style:
-                                        Theme.of(context).textTheme.bodyLarge,
+                                  const SizedBox(height: 6),
+
+                                  // 텍스트 박스 (보기 모드 / 편집 모드)
+                                  Container(
+                                    width: getScreenWidth(context),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: !isEditingComment ? 15 : 15,
+                                        vertical: !isEditingComment ? 15 : 3),
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color: !isDarkMode
+                                          ? Colors.grey[100]
+                                          : Colors.grey[800],
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: isEditingComment
+                                        ? TextField(
+                                            controller: _commentController,
+                                            focusNode: _focusNode,
+                                            maxLines: null,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                            decoration: InputDecoration(
+                                              hintText: '한줄평을 입력하세요...',
+                                              hintStyle: Theme.of(context)
+                                                  .textTheme
+                                                  .labelMedium,
+                                              border: InputBorder.none, // 보더 제거
+                                              contentPadding: EdgeInsets.zero,
+                                            ),
+                                          )
+                                        : Text('\" ${widget.book.comment} \"',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge),
                                   ),
-                                ),
-                              ],
+
+                                  // 취소/저장 버튼 (텍스트 박스 아래)
+                                  if (isEditingComment)
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        TextButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              isEditingComment = false;
+                                              _commentController.text =
+                                                  widget.book.comment ??
+                                                      ''; // 기존 값 유지
+                                            });
+                                          },
+                                          child: Text(
+                                            '취소',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium,
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            vm.updateRecordAttribute(
+                                                recordType: 3,
+                                                recordId: widget.book.recordId!,
+                                                type: 2,
+                                                comment:
+                                                    _commentController.text);
+                                            setState(() {
+                                              widget.book.comment =
+                                                  _commentController.text;
+                                              isEditingComment = false;
+                                            });
+                                          },
+                                          child: Text(
+                                            '저장',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                ],
+                              ),
                             ),
-                          ),
-                          Text(
-                            '${formatDate(widget.book.startDate!)}', // 날짜 포맷 적용
-                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 20),
                     Container(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,6 +264,11 @@ class _WishDetailPageState extends ConsumerState<WishDetailPage> {
                           ),
                         ],
                       ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      '${formatDate(widget.book.startDate!)} 저장됨', // 날짜 포맷 적용
+                      style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ],
                 ),

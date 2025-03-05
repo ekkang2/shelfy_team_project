@@ -7,6 +7,7 @@ import 'package:shelfy_team_project/data/model/record_model/record_response_mode
 import 'package:shelfy_team_project/ui/pages/books/widget/read_period.dart';
 import 'package:shelfy_team_project/ui/widgets/custom_appbar.dart';
 import 'package:shelfy_team_project/ui/widgets/custom_star_rating.dart';
+import '../../../../_core/utils/size.dart';
 import '../../../widgets/custom_record_label.dart';
 import '../../../widgets/delete_button.dart';
 
@@ -23,11 +24,23 @@ class _StopDetailPageState extends ConsumerState<StopDetailPage> {
   late DateTime startDate;
   late DateTime endDate;
 
+  bool isEditingComment = false; // 코멘트 편집 상태 관리
+  late TextEditingController _commentController; // 코멘트 입력 필드 컨트롤러
+  final FocusNode _focusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
     startDate = widget.book.startDate ?? DateTime.now(); // 초기 시작일 설정
     endDate = widget.book.endDate ?? DateTime.now(); // 초기 종료일 설정 (null이면 오늘 날짜)
+    _commentController = TextEditingController(text: widget.book.comment ?? '');
+  }
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    _focusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -118,35 +131,114 @@ class _StopDetailPageState extends ConsumerState<StopDetailPage> {
                     const SizedBox(height: 20),
                     Visibility(
                       visible: widget.book.comment != null,
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Icon(FontAwesomeIcons.penClip,
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isEditingComment = true;
+                          });
+                          Future.delayed(Duration(milliseconds: 100), () {
+                            _focusNode.requestFocus();
+                          });
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // 타이틀
+                            Row(
+                              children: [
+                                Icon(
+                                  FontAwesomeIcons.penClip,
                                   size: 15,
                                   color: !isDarkMode
                                       ? const Color(0xFF4D77B2)
-                                      : Colors.grey[500]),
-                              const SizedBox(width: 5),
-                              Text('나의 한 줄'),
-                            ],
-                          ),
-                          const SizedBox(height: 6),
-                          Container(
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.symmetric(vertical: 15),
-                            decoration: BoxDecoration(
-                              color: !isDarkMode
-                                  ? Colors.grey[100]
-                                  : Colors.grey[800],
-                              borderRadius: BorderRadius.circular(3),
+                                      : Colors.grey[500],
+                                ),
+                                const SizedBox(width: 5),
+                                Text('나의 한 줄'),
+                              ],
                             ),
-                            child: Text(
-                              '\"${widget.book.comment}\"',
-                              style: Theme.of(context).textTheme.bodyLarge,
+                            const SizedBox(height: 6),
+
+                            // 텍스트 박스 (보기 모드 / 편집 모드)
+                            Container(
+                              width: getScreenWidth(context),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: !isEditingComment ? 15 : 15,
+                                  vertical: !isEditingComment ? 15 : 3),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: !isDarkMode
+                                    ? Colors.grey[100]
+                                    : Colors.grey[800],
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: isEditingComment
+                                  ? TextField(
+                                      controller: _commentController,
+                                      focusNode: _focusNode,
+                                      maxLines: null,
+                                      style:
+                                          Theme.of(context).textTheme.bodyLarge,
+                                      decoration: InputDecoration(
+                                        hintText: '한줄평을 입력하세요...',
+                                        hintStyle: Theme.of(context)
+                                            .textTheme
+                                            .labelMedium,
+                                        border: InputBorder.none, // 보더 제거
+                                        contentPadding: EdgeInsets.zero,
+                                      ),
+                                    )
+                                  : Text('\" ${widget.book.comment} \"',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge),
                             ),
-                          ),
-                        ],
+
+                            // 취소/저장 버튼 (텍스트 박스 아래)
+                            if (isEditingComment)
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        isEditingComment = false;
+                                        _commentController.text =
+                                            widget.book.comment ??
+                                                ''; // 기존 값 유지
+                                      });
+                                    },
+                                    child: Text(
+                                      '취소',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      vm.updateRecordAttribute(
+                                          recordType: 1,
+                                          recordId: widget.book.recordId!,
+                                          type: 2,
+                                          comment: _commentController.text);
+                                      setState(() {
+                                        widget.book.comment =
+                                            _commentController.text;
+                                        isEditingComment = false;
+                                      });
+                                    },
+                                    child: Text(
+                                      '저장',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                          ],
+                        ),
                       ),
                     ),
                   ],

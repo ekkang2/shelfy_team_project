@@ -122,6 +122,64 @@ class RecordViewModel extends Notifier<RecordModel> {
       ExceptionHandler.handleException(e, stackTrace);
     }
   }
+
+  /**
+   * 1: progress / 2: comment / 3: date / 4: rating
+   */
+  void updateRecordAttribute(
+      {required int recordType,
+      required int recordId,
+      required int type,
+      // 여기서부터 속성값 옵셔널 타입으로 받아온다
+      int? progress,
+      String? comment,
+      DateTime? startDate,
+      DateTime? endDate,
+      double? rating}) async {
+    //
+    Map<String, dynamic> data = {
+      if (type != null) 'type': type,
+      if (progress != null) 'progress': progress,
+      if (comment != null) 'comment': comment,
+      if (startDate != null) 'startDate': startDate.toIso8601String(),
+      if (endDate != null) 'endDate': endDate.toIso8601String(),
+      if (rating != null) 'rating': rating,
+    };
+    try {
+      Map<String, dynamic> responseBody =
+          await recordRepository.updateAttribute(
+              recordType: recordType,
+              recordId: recordId,
+              type: type,
+              data: data);
+
+      if (!responseBody['success']) {
+        ScaffoldMessenger.of(mContext)
+            .showSnackBar(SnackBar(content: Text("기록 수정 실패")));
+
+        ExceptionHandler.handleException(
+            responseBody['errorMessage'], StackTrace.current);
+        return;
+      }
+
+      FocusScope.of(mContext).unfocus();
+      CommonSnackbar.show(mContext, "수정되었습니다.");
+      state = RecordModel(
+        stateId: null,
+        bookId: null,
+        userId: null,
+        stateType: null,
+        startDate: null,
+        endDate: null,
+        comment: null,
+        progress: null,
+        rating: null,
+        isWriteCompleted: false,
+      );
+    } catch (e, stackTrace) {
+      ExceptionHandler.handleException(e, stackTrace);
+    }
+  }
 }
 
 // 창고관리자
