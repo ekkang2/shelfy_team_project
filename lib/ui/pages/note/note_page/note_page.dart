@@ -151,7 +151,8 @@ class _NoteStatsTabState extends ConsumerState<NoteStatsTab>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.edit_note, size: 50, color: Colors.grey[400]),
+            Text("아직 작성된 노트가 없습니다.",
+                style: Theme.of(context).textTheme.labelLarge),
           ],
         ),
       ),
