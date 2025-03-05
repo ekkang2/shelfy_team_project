@@ -37,7 +37,7 @@ class _DoneDetailPageState extends ConsumerState<DoneDetailPage> {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return SafeArea(
       child: Scaffold(
-        appBar: BooksDetailAppBar(context),
+        appBar: BooksDetailAppBar(context, widget.book, 0),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -133,7 +133,7 @@ class _DoneDetailPageState extends ConsumerState<DoneDetailPage> {
                               borderRadius: BorderRadius.circular(3),
                             ),
                             child: Text(
-                              '\"${widget.book.comment}\"',
+                              '\" ${widget.book.comment} \"',
                               style: Theme.of(context).textTheme.bodyLarge,
                             ),
                           ),

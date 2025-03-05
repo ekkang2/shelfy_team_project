@@ -4,9 +4,11 @@ import 'package:shelfy_team_project/_core/utils/size.dart';
 import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
 import 'package:shelfy_team_project/ui/widgets/custom_appbar.dart';
 import 'package:shelfy_team_project/ui/pages/books/widget/book_detail_progress_bar.dart';
+import 'package:shelfy_team_project/ui/widgets/modal_bottom_sheet/edit_book_record_state.dart';
 
 import '../../../widgets/custom_record_label.dart';
 import '../../../widgets/custom_star_rating.dart';
+import '../../../widgets/modal_bottom_sheet/book_record_state.dart';
 import '../widget/read_period.dart';
 
 class DoingDetailPage extends StatefulWidget {
@@ -32,7 +34,7 @@ class _DoingDetailPageState extends State<DoingDetailPage> {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return SafeArea(
       child: Scaffold(
-        appBar: BooksAppBar(context),
+        appBar: BooksDetailAppBar(context, widget.book, 0),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -128,19 +130,35 @@ class _DoingDetailPageState extends State<DoingDetailPage> {
                 onPressed: () {
                   showModalBottomSheet(
                     context: context,
-                    isScrollControlled: true, // 모달 크기 조정 가능하게 설정
-                    shape: RoundedRectangleBorder(
+                    isScrollControlled: true, //  키보드가 올라오면 높이 조정 가능
+                    shape: const RoundedRectangleBorder(
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(16)),
                     ),
                     builder: (context) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height *
-                            0.51, // 50% 크기로 설정
-                        // child: BookRecordState(
-                        //   book: ,
-                        //   index: 0,
-                        // ),
+                      return StatefulBuilder(
+                        //  모달 내부 상태 업데이트를 위해 추가
+                        builder: (context, setState) {
+                          double keyboardHeight = MediaQuery.of(context)
+                              .viewInsets
+                              .bottom; // 키보드 높이 감지
+
+                          return AnimatedPadding(
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeOut,
+                            padding: EdgeInsets.only(bottom: keyboardHeight),
+                            //  키보드 크기만큼 모달을 위로 이동
+                            child: FractionallySizedBox(
+                              heightFactor: 0.51, //  기본 모달 높이 (화면의 90%)
+                              child: Container(
+                                child: EditBookRecordState(
+                                  record: widget.book,
+                                  index: 0,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       );
                     },
                   );

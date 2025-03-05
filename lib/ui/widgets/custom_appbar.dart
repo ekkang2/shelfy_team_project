@@ -1,8 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
+import 'package:shelfy_team_project/ui/widgets/common_dialog.dart';
 
+import '../../_core/utils/size.dart';
 import '../pages/search/search_page/widget/add_book.dart';
+import 'modal_bottom_sheet/edit_book_record_state.dart';
 
 AppBar HomeAppBar(VoidCallback onSearchPressed, BuildContext context) {
   return AppBar(
@@ -112,7 +116,8 @@ AppBar BooksAppBar(BuildContext context) {
   );
 }
 
-AppBar BooksDetailAppBar(BuildContext context) {
+AppBar BooksDetailAppBar(
+    BuildContext context, RecordResponseModel record, index) {
   return AppBar(
     // 타이틀 위치
     titleSpacing: (ModalRoute.of(context)?.canPop ?? false) ? -10 : 8,
@@ -136,7 +141,49 @@ AppBar BooksDetailAppBar(BuildContext context) {
     ),
     actions: [
       IconButton(
-        onPressed: () {},
+        onPressed: () {
+          showConfirmationDialog(
+            context: context,
+            title: '이 책에 대한 새로운 기록을 추가하시겠어요?',
+            confirmText: '확인',
+            onConfirm: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true, //  키보드가 올라오면 높이 조정 가능
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                ),
+                builder: (context) {
+                  return StatefulBuilder(
+                    //  모달 내부 상태 업데이트를 위해 추가
+                    builder: (context, setState) {
+                      double keyboardHeight =
+                          MediaQuery.of(context).viewInsets.bottom; // 키보드 높이 감지
+
+                      return AnimatedPadding(
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeOut,
+                        padding: EdgeInsets.only(bottom: keyboardHeight),
+                        //  키보드 크기만큼 모달을 위로 이동
+                        child: FractionallySizedBox(
+                          heightFactor: 0.51, //  기본 모달 높이 (화면의 90%)
+                          child: Container(
+                            child: EditBookRecordState(
+                              record: record,
+                              index: index,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              );
+            },
+            snackBarMessage: '',
+            snackBarType: 'none',
+          );
+        },
         icon: Icon(Icons.edit_note_outlined),
       )
     ],

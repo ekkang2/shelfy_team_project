@@ -9,7 +9,7 @@ void showConfirmationDialog({
   required VoidCallback onConfirm,
   required String snackBarMessage,
   IconData? snackBarIcon,
-  String snackBarType = 'success', // ✅ 공통 스낵바 타입 설정
+  String snackBarType = 'success', //  공통 스낵바 타입 설정
 }) {
   showDialog(
     context: context,
@@ -52,22 +52,22 @@ void showConfirmationDialog({
                       Navigator.of(context).pop();
                       onConfirm();
 
-                      // ✅ 스낵바 색상을 CommonSnackbar에서 관리하도록 수정
-                      switch (snackBarType) {
-                        case 'success':
-                          CommonSnackbar.success(context, snackBarMessage);
-                          break;
-                        case 'error':
-                          CommonSnackbar.error(context, snackBarMessage);
-                          break;
-                        case 'warning':
-                          CommonSnackbar.warning(context, snackBarMessage);
-                          break;
-                        case 'info':
-                        default:
-                          CommonSnackbar.info(context, snackBarMessage);
-                          break;
-                      }
+                      if (snackBarType != 'none')
+                        //  스낵바 색상을 CommonSnackbar에서 관리하도록 수정
+                        switch (snackBarType) {
+                          case 'success':
+                            CommonSnackbar.success(context, snackBarMessage);
+                            break;
+                          case 'error':
+                            CommonSnackbar.error(context, snackBarMessage);
+                            break;
+                          case 'warning':
+                            CommonSnackbar.warning(context, snackBarMessage);
+                            break;
+                          case 'info':
+                            CommonSnackbar.info(context, snackBarMessage);
+                            break;
+                        }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.transparent,

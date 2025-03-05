@@ -36,7 +36,7 @@ class _WishDetailPageState extends ConsumerState<WishDetailPage> {
 
     return SafeArea(
       child: Scaffold(
-        appBar: BooksDetailAppBar(context),
+        appBar: BooksDetailAppBar(context, widget.book, 1),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

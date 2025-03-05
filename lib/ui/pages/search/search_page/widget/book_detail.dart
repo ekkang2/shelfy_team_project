@@ -45,38 +45,6 @@ class BookDetail extends ConsumerWidget {
                 )
               ],
             ),
-            // actions: [
-            //   TextButton(
-            //     onPressed: () {
-            //       showModalBottomSheet(
-            //         context: context,
-            //         isScrollControlled: true, // 모달 크기 조정 가능하게 설정
-            //         shape: RoundedRectangleBorder(
-            //           borderRadius:
-            //               BorderRadius.vertical(top: Radius.circular(16)),
-            //         ),
-            //         builder: (context) {
-            //           return Container(
-            //             height: MediaQuery.of(context).size.height *
-            //                 0.51, // 50% 크기로 설정
-            //             child: BookRecordState(
-            //               book: widget.book,
-            //               index: 1,
-            //             ),
-            //           );
-            //         },
-            //       );
-            //     }, // 저장 버튼 클릭 이벤트
-            //     child: Text(
-            //       "저장",
-            //       style: TextStyle(
-            //         color: Colors.white,
-            //         fontFamily: 'JUA',
-            //         fontSize: 20,
-            //       ),
-            //     ),
-            //   ),
-            // ],
           ),
           body: ListView(
             children: [
@@ -122,15 +90,14 @@ class BookDetail extends ConsumerWidget {
                             onTap: () {
                               showModalBottomSheet(
                                 context: context,
-                                isScrollControlled:
-                                    true, // ✅ 키보드가 올라오면 높이 조정 가능
+                                isScrollControlled: true, //  키보드가 올라오면 높이 조정 가능
                                 shape: const RoundedRectangleBorder(
                                   borderRadius: BorderRadius.vertical(
                                       top: Radius.circular(16)),
                                 ),
                                 builder: (context) {
                                   return StatefulBuilder(
-                                    // ✅ 모달 내부 상태 업데이트를 위해 추가
+                                    //  모달 내부 상태 업데이트를 위해 추가
                                     builder: (context, setState) {
                                       double keyboardHeight =
                                           MediaQuery.of(context)
@@ -143,10 +110,10 @@ class BookDetail extends ConsumerWidget {
                                         curve: Curves.easeOut,
                                         padding: EdgeInsets.only(
                                             bottom: keyboardHeight),
-                                        // ✅ 키보드 크기만큼 모달을 위로 이동
+                                        //  키보드 크기만큼 모달을 위로 이동
                                         child: FractionallySizedBox(
                                           heightFactor:
-                                              0.51, // ✅ 기본 모달 높이 (화면의 90%)
+                                              0.51, //  기본 모달 높이 (화면의 90%)
                                           child: Container(
                                             child: BookRecordState(
                                               bookPage: book.bookPage!,

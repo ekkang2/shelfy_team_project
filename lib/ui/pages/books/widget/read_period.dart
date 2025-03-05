@@ -41,9 +41,8 @@ class _ReadPeriodState extends State<ReadPeriod> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Visibility(
-            visible: widget.recordState != 0,
-            child: Row(
+          if (widget.recordState != 0)
+            Row(
               children: [
                 Icon(
                   Icons.access_alarm,
@@ -57,10 +56,9 @@ class _ReadPeriodState extends State<ReadPeriod> {
                         '${dateCalculation(startDate!, endDate!)}일 동안 ${widget.recordState == 1 ? '읽었어요.' : '읽고 있어요.'} ',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
+                SizedBox(height: 10),
               ],
             ),
-          ),
-          SizedBox(height: 10),
           Container(
             decoration: BoxDecoration(
               color: !widget.isDarkMode ? Colors.grey[100] : Colors.grey[850],
@@ -70,7 +68,7 @@ class _ReadPeriodState extends State<ReadPeriod> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                // 📌 시작일 선택 버튼
+                //  시작일 선택 버튼
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -92,7 +90,7 @@ class _ReadPeriodState extends State<ReadPeriod> {
                             }
                           });
                           widget.onDateChanged(
-                              startDate, endDate); // 🔥 변경된 날짜 전달
+                              startDate, endDate); //  변경된 날짜 전달
                         }
                       },
                       child: Text(
@@ -103,7 +101,7 @@ class _ReadPeriodState extends State<ReadPeriod> {
                   ],
                 ),
 
-                // 📌 종료일 선택 버튼
+                //  종료일 선택 버튼
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -121,11 +119,13 @@ class _ReadPeriodState extends State<ReadPeriod> {
                             endDate = pickedDate;
                           });
                           widget.onDateChanged(
-                              startDate, endDate); // 🔥 변경된 날짜 전달
+                              startDate, endDate); //  변경된 날짜 전달
                         }
                       },
                       child: Text(
-                        endDate != null ? formatSingleDate(endDate!) : '-',
+                        widget.recordState != 2
+                            ? formatSingleDate(endDate!)
+                            : '-',
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                     ),

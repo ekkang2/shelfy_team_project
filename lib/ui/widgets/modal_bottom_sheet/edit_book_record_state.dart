@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
 
 import 'doing_record_state_tab.dart';
 import 'done_record_state_tab.dart';
 import 'stop_record_state_tab.dart';
 import 'wish_record_state_tab.dart';
 
-class BookRecordState extends StatefulWidget {
+class EditBookRecordState extends StatefulWidget {
   int index;
-  String bookId;
-  String bookTitle;
-  int bookPage;
+  RecordResponseModel record;
 
-  BookRecordState({
-    required this.bookId,
-    required this.bookTitle,
-    required this.bookPage,
+  EditBookRecordState({
+    required this.record,
     required this.index,
   });
 
@@ -22,7 +19,7 @@ class BookRecordState extends StatefulWidget {
   _BookRecordStateState createState() => _BookRecordStateState();
 }
 
-class _BookRecordStateState extends State<BookRecordState>
+class _BookRecordStateState extends State<EditBookRecordState>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -83,31 +80,40 @@ class _BookRecordStateState extends State<BookRecordState>
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: DoneRecordStateTab(bookId: widget.bookId),
+                child: DoneRecordStateTab(
+                  bookId: widget.record.bookId!,
+                  startDate: widget.record.startDate,
+                  endDate: widget.record.endDate,
+                  comment: widget.record.comment,
+                  rating: widget.record.rating,
+                ),
               ),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
                 child: DoingRecordStateTab(
-                  bookId: widget.bookId,
-                  bookPage: widget.bookPage,
-                  bookTitle: widget.bookTitle,
+                  bookId: widget.record.bookId!,
+                  bookPage: widget.record.bookPage!,
+                  bookTitle: widget.record.bookTitle!,
+                  progress: widget.record.progress,
+                  startDate: widget.record.startDate,
                 ),
               ),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: WishRecordStateTab(
-                  bookId: widget.bookId,
-                  bookPage: widget.bookPage,
-                  bookTitle: widget.bookTitle,
+                  bookId: widget.record.bookId!,
+                  bookPage: widget.record.bookPage!,
+                  bookTitle: widget.record.bookTitle!,
                 ),
               ),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: StopRecordStateTab(
-                    bookId: widget.bookId, bookPage: widget.bookPage),
+                    bookId: widget.record.bookId!,
+                    bookPage: widget.record.bookPage!),
               ),
             ],
           ),

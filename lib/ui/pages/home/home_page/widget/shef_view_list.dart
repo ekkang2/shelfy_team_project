@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shelfy_team_project/data/model/record_model/record_response_model.dart';
 import '../../../../widgets/custom_star_rating.dart';
+import '../../../books/book_detail_page/done_detail_page.dart';
 
 class ShefViewList extends StatefulWidget {
   final RecordResponseModel book;
@@ -32,19 +33,29 @@ class _ShefViewListState extends State<ShefViewList> {
                   ),
                 ],
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(3.0),
-                child: !widget.book.isMyBook!
-                    ? Image.network(
-                        widget.book.bookImage!,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      )
-                    : Image.asset(
-                        'assets/images/${widget.book.bookImage}',
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            DoneDetailPage(book: widget.book)),
+                  );
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(3.0),
+                  child: !widget.book.isMyBook!
+                      ? Image.network(
+                          widget.book.bookImage!,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.asset(
+                          'assets/images/${widget.book.bookImage}',
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                ),
               ),
             ),
           ],
