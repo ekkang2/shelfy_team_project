@@ -170,6 +170,7 @@ class _NoteAddBookPageState extends State<NoteAddBookPage>
 
             if (!isSelected) {
               Navigator.pop(context, {
+                'book_id': book.book_id.toString(), // 책의 ID를 문자열로 반환
                 'book_image': book.book_image,
                 'book_title': book.book_title,
                 'book_author': book.book_author,

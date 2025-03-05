@@ -28,7 +28,9 @@ class Note {
           : 0, //  null 방지 (기본값 0)
       title: json['noteTitle'] ?? '제목 없음', // null 방지
       content: json['noteContents'] ?? '내용 없음', // null 방지
-      bookId: json['noteRStateId'] as int?, //  int?로 변환
+      bookId: json['noteRStateId'] != null
+          ? int.tryParse(json['noteRStateId'].toString())
+          : null,
       notePin: json['notePin'] as bool? ?? false,
       createdAt: json['noteCreatedAt'] ?? '', // 원본 문자열 그대로 저장
       updatedAt: json['noteUpdatedAt'], // 수정 날짜 추가 (서버에서 받아옴)

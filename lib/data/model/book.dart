@@ -1,3 +1,5 @@
+library book_data; // 다른 파일에서 접근할 수 있도록 설정
+
 class Book {
   int book_id;
   String book_image;
@@ -22,7 +24,7 @@ class Book {
 }
 
 // 샘플 데이터
-List<Book> bookList = [
+final List<Book> bookList = [
   Book(
       book_id: 1,
       book_image:

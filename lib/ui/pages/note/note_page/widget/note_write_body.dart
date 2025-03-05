@@ -90,34 +90,21 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
     );
   }
 
-  // Future<void> _submitNote() async {
-  //   // sessionProvider에서 실제 유저 ID 사용
-  //   final userId = ref.read(sessionProvider).id ?? 0;
-  //   final selectedBook = ref.read(bookWriteProvider);
-  //
-  //   await ref.read(noteViewModelProvider.notifier).submitNote(Note(
-  //         title: widget.titleController.text.trim(),
-  //         content: widget.contentController.text.trim(),
-  //         userId: userId,
-  //         bookId: selectedBook?['book_id'] != null
-  //             ? int.parse(selectedBook!['book_id']!)
-  //             : null, //  bookId를 noteRStateId로 전송
-  //         createdAt: '',
-  //       ));
-  // }
   Future<void> _submitNote() async {
     final userId = ref.read(sessionProvider).id ?? 0;
     final book = ref.watch(bookWriteProvider);
-    final int? bookId =
-        int.tryParse(book?['book_id'] ?? ''); //  String → int 변환
 
-    print("📌 저장 전 bookId: $bookId");
+    // book['book_id']가 빈 문자열이면 null, 그렇지 않으면 int로 변환
+    final int? bookId =
+        book?['book_id'] != null && (book?['book_id'] as String).isNotEmpty
+            ? int.tryParse(book?['book_id'] as String)
+            : null;
 
     await ref.read(noteViewModelProvider.notifier).submitNote(Note(
           title: widget.titleController.text.trim(),
           content: widget.contentController.text.trim(),
           userId: userId,
-          bookId: bookId, //  int? 타입 그대로 사용
+          bookId: bookId, // int? 타입 그대로 사용
           createdAt: '',
         ));
   }
@@ -125,6 +112,11 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
   @override
   Widget build(BuildContext context) {
     final book = ref.watch(bookWriteProvider);
+    final int? bookId =
+        book?['book_id'] != null && (book?['book_id'] as String).isNotEmpty
+            ? int.tryParse(book?['book_id'] as String)
+            : null;
+
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     ref.listen<AsyncValue<void>>(noteViewModelProvider, (_, state) {
@@ -212,50 +204,46 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
     );
   }
 
-  // Future<void> _selectBook() async {
-  //   final selectedBook = await Navigator.pushNamed(context, '/noteAddBook');
-  //   if (selectedBook is Map<String, String>) {
-  //     ref.read(bookWriteProvider.notifier).state = selectedBook;
-  //   }
-  // }
-
   Future<void> _selectBook() async {
     final selectedBook = await Navigator.pushNamed(context, '/noteAddBook');
 
+    // 반환된 데이터가 Map<String, dynamic> 타입인지 확인
     if (selectedBook is Map<String, dynamic> &&
         selectedBook.containsKey('book_id')) {
-      final String bookIdString = selectedBook['book_id'] ?? ''; //  기본값 '' 처리
-      final int? parsedBookId = int.tryParse(bookIdString); //  int 변환
+      final String bookIdString = (selectedBook['book_id'] as String?) ?? '';
+      final String bookTitle =
+          (selectedBook['book_title'] as String?) ?? '제목 없음';
+      final String bookAuthor =
+          (selectedBook['book_author'] as String?) ?? '저자 없음';
+      final String bookImage = (selectedBook['book_image'] as String?) ?? '';
 
-      if (parsedBookId != null) {
-        ref.read(bookWriteProvider.notifier).state = {
-          'book_id': bookIdString, //  String 그대로 저장 (오류 해결)
-          'book_title': selectedBook['book_title'] ?? '제목 없음',
-          'book_author': selectedBook['book_author'] ?? '저자 없음',
-          'book_image': selectedBook['book_image'] ?? '',
-        };
-        print(" bookWriteProvider 업데이트됨: ${ref.read(bookWriteProvider)}");
-      } else {
-        print("❌ book_id 파싱 실패");
-      }
-    } else {
-      print("❌ 선택된 책 데이터 없음");
-    }
+      // bookWriteProvider의 상태를 업데이트 (Map<String, String>로)
+      ref.read(bookWriteProvider.notifier).state = {
+        'book_id': bookIdString,
+        'book_title': bookTitle,
+        'book_author': bookAuthor,
+        'book_image': bookImage,
+      };
+    } else {}
   }
 
   void _deleteBook() => ref.read(bookWriteProvider.notifier).state = null;
 
   Widget _buildSubmitButton() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ElevatedButton(
-        onPressed: isFormValid ? () => _handleNoteCompletion(context) : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor:
-              isFormValid ? Theme.of(context).colorScheme.primary : Colors.grey,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ElevatedButton(
+          onPressed: isFormValid ? () => _handleNoteCompletion(context) : null,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: isFormValid
+                ? Theme.of(context).colorScheme.primary
+                : Colors.grey,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+          child: Text('기록 추가', style: Theme.of(context).textTheme.displayLarge),
         ),
-        child: Text('기록 추가', style: Theme.of(context).textTheme.displayLarge),
       ),
     );
   }
