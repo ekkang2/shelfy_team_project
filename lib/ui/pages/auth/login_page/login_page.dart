@@ -109,44 +109,44 @@ class LoginPage extends ConsumerWidget {
                           ),
 
                           // 비밀번호 찾기 기능 ( textButton )
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: TextButton(
-                              child: Text(
-                                '비밀번호를 잊으셨나요?',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelMedium
-                                    ?.copyWith(
-                                      decoration: TextDecoration.underline,
-                                      decorationColor: Colors.grey,
-                                    ),
-                              ),
-                              onPressed: () {
-                                // todo - 비밀번호 찾기 페이지 및 기능 구현
-                              },
-                            ),
-                          ),
+                          // Align(
+                          //   alignment: Alignment.centerLeft,
+                          //   child: TextButton(
+                          //     child: Text(
+                          //       '비밀번호를 잊으셨나요?',
+                          //       style: Theme.of(context)
+                          //           .textTheme
+                          //           .labelMedium
+                          //           ?.copyWith(
+                          //             decoration: TextDecoration.underline,
+                          //             decorationColor: Colors.grey,
+                          //           ),
+                          //     ),
+                          //     onPressed: () {
+                          //       // todo - 비밀번호 찾기 페이지 및 기능 구현
+                          //     },
+                          //   ),
+                          // ),
 
                           // 소셜 로그인 버튼 여러 개
-                          ElevatedButton(
-                            onPressed: () {},
-                            child: Text('구글로 로그인하기'),
-                          ),
-                          ElevatedButton(
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    WidgetStatePropertyAll(Colors.green)),
-                            onPressed: () {},
-                            child: Text('네이버로 로그인하기'),
-                          ),
-                          ElevatedButton(
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    WidgetStatePropertyAll(Colors.yellow)),
-                            onPressed: () {},
-                            child: Text('카카오 로그인하기'),
-                          ),
+                          // ElevatedButton(
+                          //   onPressed: () {},
+                          //   child: Text('구글로 로그인하기'),
+                          // ),
+                          // ElevatedButton(
+                          //   style: ButtonStyle(
+                          //       backgroundColor:
+                          //           WidgetStatePropertyAll(Colors.green)),
+                          //   onPressed: () {},
+                          //   child: Text('네이버로 로그인하기'),
+                          // ),
+                          // ElevatedButton(
+                          //   style: ButtonStyle(
+                          //       backgroundColor:
+                          //           WidgetStatePropertyAll(Colors.yellow)),
+                          //   onPressed: () {},
+                          //   child: Text('카카오 로그인하기'),
+                          // ),
                           // 회원가입 버튼
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,

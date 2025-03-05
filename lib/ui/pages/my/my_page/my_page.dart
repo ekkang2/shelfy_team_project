@@ -39,24 +39,24 @@ class MyPage extends ConsumerWidget {
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ),
-                  buildMyListTile(
-                    icon: Icons.person,
-                    context: context,
-                    text: '프로필 설정',
-                    url: '/profile',
-                  ),
-                  buildMyListTile(
-                    icon: Icons.file_download_sharp,
-                    context: context,
-                    text: '독서기록 내보내기',
-                    url: '/profile',
-                  ),
-                  buildMyListTile(
-                    icon: Icons.palette,
-                    context: context,
-                    text: '컬러·폰트 설정',
-                    url: '/profile',
-                  ),
+                  // buildMyListTile(
+                  //   icon: Icons.person,
+                  //   context: context,
+                  //   text: '프로필 설정',
+                  //   url: '/profile',
+                  // ),
+                  // buildMyListTile(
+                  //   icon: Icons.file_download_sharp,
+                  //   context: context,
+                  //   text: '독서기록 내보내기',
+                  //   url: '/profile',
+                  // ),
+                  // buildMyListTile(
+                  //   icon: Icons.palette,
+                  //   context: context,
+                  //   text: '컬러·폰트 설정',
+                  //   url: '/profile',
+                  // ),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: Icon(
@@ -104,57 +104,57 @@ class MyPage extends ConsumerWidget {
                                 snackBarMessage: '로그아웃 되었습니다.');
                           },
                         ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(
-                      '지원',
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                  ),
-                  buildMyListTile(
-                    icon: CupertinoIcons.question_circle_fill,
-                    context: context,
-                    text: '자주 묻는 질문',
-                    url: '/faq',
-                  ),
-                  buildMyListTile(
-                    icon: Icons.mail_rounded,
-                    context: context,
-                    text: '문의하기',
-                    url: '/inquiry',
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(
-                      '앱 정보',
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                  ),
-                  buildMyListTile(
-                    icon: CupertinoIcons.question_circle_fill,
-                    context: context,
-                    text: '평점 남기기',
-                    url: '/rateApp',
-                  ),
-                  buildMyListTile(
-                    icon: CupertinoIcons.person_3_fill,
-                    context: context,
-                    text: '팀 소개',
-                    url: '/introduceTeam',
-                  ),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: Icon(
-                      Icons.library_books_sharp,
-                      color: Colors.grey[600],
-                    ),
-                    title: Text(
-                      '서비스 이용약관',
-                      style: Theme.of(context).textTheme.labelLarge,
-                    ),
-                    trailing: null,
-                    onTap: () {},
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  //   child: Text(
+                  //     '지원',
+                  //     style: Theme.of(context).textTheme.labelMedium,
+                  //   ),
+                  // ),
+                  // buildMyListTile(
+                  //   icon: CupertinoIcons.question_circle_fill,
+                  //   context: context,
+                  //   text: '자주 묻는 질문',
+                  //   url: '/faq',
+                  // ),
+                  // buildMyListTile(
+                  //   icon: Icons.mail_rounded,
+                  //   context: context,
+                  //   text: '문의하기',
+                  //   url: '/inquiry',
+                  // ),
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  //   child: Text(
+                  //     '앱 정보',
+                  //     style: Theme.of(context).textTheme.labelMedium,
+                  //   ),
+                  // ),
+                  // buildMyListTile(
+                  //   icon: CupertinoIcons.question_circle_fill,
+                  //   context: context,
+                  //   text: '평점 남기기',
+                  //   url: '/rateApp',
+                  // ),
+                  // buildMyListTile(
+                  //   icon: CupertinoIcons.person_3_fill,
+                  //   context: context,
+                  //   text: '팀 소개',
+                  //   url: '/introduceTeam',
+                  // ),
+                  // ListTile(
+                  //   contentPadding: EdgeInsets.zero,
+                  //   leading: Icon(
+                  //     Icons.library_books_sharp,
+                  //     color: Colors.grey[600],
+                  //   ),
+                  //   title: Text(
+                  //     '서비스 이용약관',
+                  //     style: Theme.of(context).textTheme.labelLarge,
+                  //   ),
+                  //   trailing: null,
+                  //   onTap: () {},
+                  // ),
                 ],
               ),
             ),
