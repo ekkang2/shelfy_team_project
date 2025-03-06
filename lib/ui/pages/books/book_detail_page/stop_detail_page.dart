@@ -127,7 +127,16 @@ class _StopDetailPageState extends ConsumerState<StopDetailPage> {
                       recordState: 4,
                       recordId: widget.book.recordId,
                       recordType: 4,
-                      onDateChanged: (startDate, endDate) {},
+                      onDateChanged: (startDate, endDate) {
+                        if (mounted) {
+                          setState(() {
+                            startDate = startDate;
+                            endDate = endDate;
+                          });
+                        }
+                      },
+                      startDate: widget.book.startDate,
+                      endDate: widget.book.endDate,
                     ),
                     const SizedBox(height: 20),
                     Visibility(

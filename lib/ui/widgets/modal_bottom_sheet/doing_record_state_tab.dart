@@ -79,9 +79,11 @@ class _DoingRecordStateTabState extends ConsumerState<DoingRecordStateTab> {
                 totalPage: widget.bookPage!,
                 currentPage: _progress,
                 onProgressChanged: (newProgress) {
-                  setState(() {
-                    _progress = newProgress;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      _progress = newProgress; // 최신 페이지 수 반영
+                    });
+                  }
                 },
               ),
               const SizedBox(height: 25),

@@ -35,29 +35,31 @@ class _ReadPeriodState extends ConsumerState<ReadPeriod> {
     super.initState();
     _startDate = widget.startDate ?? DateTime.now();
     _endDate = widget.endDate;
+
+    _recordViewModel = ref.read(recordViewModelProvider.notifier);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _recordViewModel = ref.read(recordViewModelProvider.notifier);
   }
 
   void _updateDate({DateTime? startDate, DateTime? endDate}) {
-    if (widget.recordId == null || widget.recordType == null) {
-      debugPrint('레코드 ID나 타입이 null입니다.');
-      return;
+    setState(() {
+      _startDate = startDate ?? _startDate;
+      _endDate = endDate;
+    });
+
+    if (widget.recordId != null && widget.recordType != null) {
+      _recordViewModel.updateRecordAttribute(
+        recordType: widget.recordType!,
+        recordId: widget.recordId!,
+        type: 3,
+        startDate: _startDate,
+        endDate: _endDate,
+      );
     }
-
-    _recordViewModel.updateRecordAttribute(
-      recordType: widget.recordType!,
-      recordId: widget.recordId!,
-      type: 3,
-      startDate: startDate,
-      endDate: endDate,
-    );
-
-    widget.onDateChanged(startDate ?? _startDate, endDate);
+    widget.onDateChanged(_startDate, _endDate);
   }
 
   Future<void> _selectStartDate() async {
@@ -75,7 +77,8 @@ class _ReadPeriodState extends ConsumerState<ReadPeriod> {
           _endDate = null;
         }
       });
-      _updateDate(startDate: _startDate, endDate: _endDate);
+      _updateDate(endDate: _endDate, startDate: _startDate);
+      // widget.onDateChanged(_startDate, _endDate);
     }
   }
 
@@ -91,7 +94,9 @@ class _ReadPeriodState extends ConsumerState<ReadPeriod> {
       setState(() {
         _endDate = pickedDate;
       });
-      _updateDate(startDate: _startDate, endDate: _endDate);
+      _updateDate(endDate: _endDate, startDate: _startDate);
+
+      // widget.onDateChanged(_startDate, _endDate);
     }
   }
 

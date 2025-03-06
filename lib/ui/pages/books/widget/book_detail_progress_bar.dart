@@ -28,6 +28,7 @@ class _AdjustableProgressBarState extends ConsumerState<AdjustableProgressBar> {
   late TextEditingController _currentPageController;
   bool _isEditing = false;
   Timer? _debounce;
+  late RecordViewModel _recordViewModel;
 
   @override
   void initState() {
@@ -35,6 +36,7 @@ class _AdjustableProgressBarState extends ConsumerState<AdjustableProgressBar> {
     _currentValue = (widget.currentPage ?? 0).toDouble();
     _currentPageController =
         TextEditingController(text: _currentValue.toInt().toString());
+    _recordViewModel = ref.read(recordViewModelProvider.notifier);
   }
 
   @override
@@ -79,16 +81,16 @@ class _AdjustableProgressBarState extends ConsumerState<AdjustableProgressBar> {
   }
 
   void _updateProgress(int newProgress) {
-    if (widget.recordId != null && newProgress != widget.currentPage) {
+    if (newProgress != widget.currentPage) {
       widget.onProgressChanged(newProgress);
-
-      final vm = ref.read(recordViewModelProvider.notifier);
-      vm.updateRecordAttribute(
-        recordType: 2,
-        recordId: widget.recordId!,
-        type: 1,
-        progress: newProgress,
-      );
+      if (widget.recordId != null) {
+        _recordViewModel.updateRecordAttribute(
+          recordType: 2,
+          recordId: widget.recordId!,
+          type: 1,
+          progress: newProgress,
+        );
+      }
     }
   }
 
@@ -156,10 +158,9 @@ class _AdjustableProgressBarState extends ConsumerState<AdjustableProgressBar> {
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.labelMedium,
                       autofocus: true,
-                      onSubmitted: (value) => _submitPage(value),
-                      onEditingComplete: () {
-                        _submitPage(_currentPageController.text);
-                      },
+                      onSubmitted: _submitPage,
+                      onEditingComplete: () =>
+                          _submitPage(_currentPageController.text),
                     ),
                   )
                 : GestureDetector(

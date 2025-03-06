@@ -161,7 +161,7 @@ class RecordViewModel extends Notifier<RecordModel> {
             responseBody['errorMessage'], StackTrace.current);
         return;
       }
-      ref.read(recordListProvider.notifier).init();
+      await ref.read(recordListProvider.notifier).init();
       FocusScope.of(mContext).unfocus();
       CommonSnackbar.show(mContext, "수정되었습니다.");
       state = RecordModel(

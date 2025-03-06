@@ -95,10 +95,12 @@ class _StopRecordStateTabState extends ConsumerState<StopRecordStateTab> {
                 endDate: _endDate,
                 recordState: 0,
                 onDateChanged: (start, end) {
-                  setState(() {
-                    _startDate = start;
-                    _endDate = end;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      _startDate = start;
+                      _endDate = end;
+                    });
+                  }
                 },
               ),
 

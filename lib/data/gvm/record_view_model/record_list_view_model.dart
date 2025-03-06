@@ -38,7 +38,6 @@ class RecordListViewModel extends Notifier<List<RecordResponseModel>> {
       state = (responseBody['response'] as List)
           .map((e) => RecordResponseModel.fromMap(e))
           .toList();
-      logger.d('여기 찍히나?');
     } catch (e, stackTrace) {
       ExceptionHandler.handleException('독서 기록 로딩 오류', stackTrace);
     }
