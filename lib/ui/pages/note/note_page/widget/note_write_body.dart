@@ -87,7 +87,7 @@ class _NoteWriteBodyState extends ConsumerState<NoteWriteBody> {
           });
         }
       },
-      snackBarMessage: '노트가 성공적으로 등록되었습니다!ㅁ',
+      snackBarMessage: '노트가 성공적으로 등록되었습니다!',
     );
   }
 
