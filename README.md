@@ -14,7 +14,7 @@
 강은경 (rkddmsrud27@gmail.com)
 - **회원 / 다크모드**<br>
 전규찬 (ian810900@gmail.com)
-- **나의 책장 / 도서 기록 관리**<br>
+- **나의 책장 / 도서 기록**<br>
 박연화 (ppyyhh3285@gmail.com)
 - **노트 / 나의 통계**<br>
 박경림 (pkl1004125@gmail.com)
